@@ -1,0 +1,36 @@
+SpriteSet?
+
+Eventing
+  add eventing to layers and more eventing to elements
+  replacement for setTimeout / setInterval?
+
+update documentation for imported gfx classes
+
+rotate over time
+
+Scrollable layers
+  scroll to point
+  documentation!
+  fillStyle set methods
+
+double check for comment references to pix elements and sprites
+
+is there a way of dimming layers without clearing the layer?
+- also use internal time instead of setTimeout - use replacement in common eventing system?
+
+support for turning mouse tracking off
+
+remove all elements
+
+move element from one layer to another
+  parentLayer
+  canvasContext
+
+LocalStorage - from RuneTx
+
+pix element?
+
+
+Known Issues:
+If GfxElement is flipped horizontally or vertically, rotation will be reversed.
+If flipped both horizontally and vertically, rotation will be as normal.

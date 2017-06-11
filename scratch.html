@@ -1,0 +1,170 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Scratch Page</title>
+  <script type="text/javascript" src="Utils.js"></script>
+  <script type="text/javascript" src="PriorityQueue.js"></script>
+  <script type="text/javascript" src="UniquePriorityQueue.js"></script>
+  <script type="text/javascript" src="Queue.js"></script>
+  <script type="text/javascript" src="EventNotifierMixin.js"></script>
+  <script type="text/javascript" src="Event.js"></script>
+  <script type="text/javascript" src="./Graphics/Utils.js"></script>
+  <script type="text/javascript" src="./Graphics/EventTypes.js"></script>
+  <script type="text/javascript" src="./Graphics/ImageLoader.js"></script>
+  <script type="text/javascript" src="./Graphics/CanvasContextWrapper.js"></script>
+  <script type="text/javascript" src="./Graphics/Layer.js"></script>
+  <script type="text/javascript" src="./Graphics/LayerFactory.js"></script>
+  <script type="text/javascript" src="./Graphics/MoveOrder.js"></script>
+  <script type="text/javascript" src="./Graphics/GfxElementZIndexComparable.js"></script>
+  <script type="text/javascript" src="./Graphics/GfxElement.js"></script>
+  <script type="text/javascript" src="./Graphics/GfxLayer.js"></script>
+  <script type="text/javascript" src="./Graphics/SpriteAnimationFrame.js"></script>
+  <script type="text/javascript" src="./Graphics/Sprite.js"></script>
+  <script type="text/javascript" src="./Graphics/ImageRenderer.js"></script>
+  <script type="text/javascript" src="./Graphics/ImageElement.js"></script>
+  <script type="text/javascript" src="./Graphics/ImageSpriteFrame.js"></script>
+  <script type="text/javascript" src="./Graphics/ImageSprite.js"></script>
+  <script type="text/javascript" src="./Graphics/Screen.js"></script>
+<style>
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div id="buttons"><button onclick="screen.setPaused(!screen.isPaused());">Pause</button></div>
+  <div id="info"></div>
+
+  <script type="text/javascript">
+  var SL = SL || {};
+  SL.debug = true;
+  var screen = null,
+  canvas,
+  context,
+    gfxLayer = null,
+    images = null,
+    element = null;
+  var config = {
+    "backgroundColor":"grey",
+    "scaleX" : 1,
+    "scaleY" : 1,
+    "fpsElem" : document.getElementById('info')
+  };
+
+  function initialize(targetDiv, config) {
+    screen = new SL.Screen(targetDiv, null, config);
+    screen.initialize();
+    gfxLayer = screen.createLayer("GfxLayer");
+    screen.render();
+
+    var frame1 = new SL.ImageSpriteFrame({
+      duration : 200,
+      sourceX : 4,
+      sourceY : 0,
+      sourceWidth : 24,
+      sourceHeight : 32
+    });
+    var frame2 = new SL.ImageSpriteFrame({
+      duration : 200,
+      sourceX : 70,
+      sourceY : 0,
+      sourceWidth : 24,
+      sourceHeight : 32
+    });
+
+    element2 = new SL.ImageSprite(screen, gfxLayer, {
+      image:images.gnome.image,
+      x:200,
+      y:100,
+      width:24,
+      height:32,
+      scaleX:2,
+      scaleY:2,
+      verticalFlip:Math.random() > 0.5 ? true : false,
+      horizontalFlip:Math.random() > 0.5 ? true : false,
+      rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
+      // rotation:SL.degreesToRadians(30)
+    });
+    // element2.setRotation(SL.degreesToRadians(1));
+    element2.addFrame(frame1);
+    element2.addFrame(frame2);
+    gfxLayer.addElement(element2);
+
+    var el = null;
+    for (var i = 0; i < 40; i++) {
+      el = new SL.ImageSprite(screen, gfxLayer, {
+        image:images.gnome.image,
+        x:Math.floor(Math.random() * 640),
+        y:Math.floor(Math.random() * 480),
+        width:24,
+        height:32,
+        scaleX:2,
+        scaleY:2,
+        verticalFlip:Math.random() > 0.5 ? true : false,
+        horizontalFlip:Math.random() > 0.5 ? true : false,
+        rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
+      });
+      el.addFrame(frame1);
+      el.addFrame(frame2);
+      // gfxLayer.addElement(el);
+      // setInterval(function (e) {e.setRotation( e.getRotation() + 0.02);}.bind(null,el), 20);
+    }
+
+    element = new SL.ImageSprite(screen, gfxLayer, {
+      image:images.gnome.image,
+      x:100,
+      y:100,
+      width:24,
+      height:32,
+      scaleX:2,
+      scaleY:2
+    });
+    element.addFrame(frame1);
+    element.addFrame(frame2);
+    gfxLayer.addElement(element);
+    element.identifier = true;
+  }
+
+  function updateLayer() {
+    var layer = screen._layers[0];
+    layer.setViewOriginX(layer.getViewOriginX() + 1);
+    if (layer.getViewOriginX() > 640){
+      layer.setViewOriginX(-640);
+    }
+  }
+
+  function updateLayer2() {
+    this.increment = this.increment || -1;
+    var layer = screen._layers[0];
+    layer.setViewOriginX(layer.getViewOriginX() + this.increment);
+    if (layer.getViewOriginX() < -640) {
+      this.increment = 1;
+    }
+
+    if (layer.getViewOriginX() > 640){
+     this.increment = -1;
+    }
+  }
+
+  function logElement1() {
+
+  }
+
+  new SL.ImageLoader({
+    gnome:{path:"all_gnomes.png"},
+    blueBall:{path:"spriteTest.png"}
+  }).loadImages(
+    function(imagesHash) {
+      images = imagesHash;
+      initialize(document.getElementById("content"), config);
+    }
+  );
+
+
+  </script>
+</body>
+</html>

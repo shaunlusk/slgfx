@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="mocha.css" />
+    <style>
+      body {
+        background: #331800;
+        color: #FFFFFF;
+      }
+      #mocha-stats em {
+        color: #FFFFFF;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="messages"></div>
+    <div id="fixtures"></div>
+    <script src="mocha.js"></script>
+    <script src="blanket.min.js" data-cover-adapter="mocha-blanket.js"></script>
+    <script>mocha.setup('bdd');</script>
+    <script type="text/javascript" src="../Utils.js" data-cover></script>
+    <script type="text/javascript" src="../Queue.js" data-cover></script>
+    <script type="text/javascript" src="../PriorityQueue.js" data-cover></script>
+    <script type="text/javascript" src="../UniquePriorityQueue.js" data-cover></script>
+    <script type="text/javascript" src="../LinkedList.js" data-cover></script>
+    <script type="text/javascript" src="../Event.js" data-cover></script>
+    <script type="text/javascript" src="../EventNotifierMixin.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/EventTypes.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/Screen.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/Layer.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/GfxLayer.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/MoveOrder.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/GfxElement.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/GfxElementZIndexComparable.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/ImageRenderer.js" data-cover></script>
+    <script type="text/javascript" src="../Graphics/ImageElement.js" data-cover></script>
+    <script type="text/javascript" src="./Mocks.js"></script>
+    <script type="text/javascript" src="./testUtil.js"></script>
+    <!-- <script src="Utils.test.js"></script> -->
+    <script src="Screen.test.js"></script>
+    <script src="Queue.test.js"></script>
+    <script src="LinkedList.test.js"></script>
+    <script src="PriorityQueue.test.js"></script>
+    <script src="UniquePriorityQueue.test.js"></script>
+    <script src="GfxLayer.test.js"></script>
+    <script src="MoveOrder.test.js"></script>
+    <script src="GfxElement.test.js"></script>
+    <script src="GfxElementZIndexComparable.test.js"></script>
+    <script src="ImageRenderer.test.js"></script>
+    <script src="ImageElement.test.js"></script>
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
