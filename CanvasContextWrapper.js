@@ -72,8 +72,6 @@ SL.CanvasContextWrapper.prototype.isOutOfView = function(x, y, width, height) {
     this._viewOriginY + y > this._height;
 };
 
-
-/*
-
-fillStyle - needs to be applied at fillRect time
-*/
+SL.CanvasContextWrapper.prototype.setFillStyle = function(style) {
+  this._canvasContext.fillStyle = style;
+};
