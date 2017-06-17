@@ -75,3 +75,23 @@ SL.CanvasContextWrapper.prototype.isOutOfView = function(x, y, width, height) {
 SL.CanvasContextWrapper.prototype.setFillStyle = function(style) {
   this._canvasContext.fillStyle = style;
 };
+
+SL.CanvasContextWrapper.prototype.beginPath = function() {
+  this._canvasContext.beginPath();
+};
+
+SL.CanvasContextWrapper.prototype.moveTo = function(x, y) {
+  this._canvasContext.moveTo(this._viewOriginX + x, this._viewOriginY + y);
+};
+
+SL.CanvasContextWrapper.prototype.lineTo = function(x, y) {
+  this._canvasContext.lineTo(this._viewOriginX + x, this._viewOriginY + y);
+};
+
+SL.CanvasContextWrapper.prototype.closePath = function() {
+  this._canvasContext.closePath();
+};
+
+SL.CanvasContextWrapper.prototype.stroke = function() {
+  this._canvasContext.stroke();
+};
