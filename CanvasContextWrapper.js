@@ -95,3 +95,15 @@ SL.CanvasContextWrapper.prototype.closePath = function() {
 SL.CanvasContextWrapper.prototype.stroke = function() {
   this._canvasContext.stroke();
 };
+
+SL.CanvasContextWrapper.prototype.rect = function(x, y, width, height) {
+  this._canvasContext.rect(x, y, width, height);
+};
+
+SL.CanvasContextWrapper.prototype.setLineWidth = function(width) {
+  this._canvasContext.lineWidth = width;
+};
+
+SL.CanvasContextWrapper.prototype.setStrokeStyle = function(strokeStyle) {
+  this._canvasContext.strokeStyle = strokeStyle;
+};
