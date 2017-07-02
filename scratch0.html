@@ -1,0 +1,95 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Scratch Page</title>
+  <script type="text/javascript" src="./node_modules/slcommon/Utils.js"></script>
+  <script type="text/javascript" src="./node_modules/slcommon/PriorityQueue.js"></script>
+  <script type="text/javascript" src="./node_modules/slcommon/UniquePriorityQueue.js"></script>
+  <script type="text/javascript" src="./node_modules/slcommon/Queue.js"></script>
+  <script type="text/javascript" src="./node_modules/slcommon/EventNotifierMixin.js"></script>
+  <script type="text/javascript" src="./node_modules/slcommon/Event.js"></script>
+  <script type="text/javascript" src="./Utils.js"></script>
+  <script type="text/javascript" src="./EventTypes.js"></script>
+  <script type="text/javascript" src="./ImageLoader.js"></script>
+  <script type="text/javascript" src="./CanvasContextWrapper.js"></script>
+  <script type="text/javascript" src="./Layer.js"></script>
+  <script type="text/javascript" src="./LayerFactory.js"></script>
+  <script type="text/javascript" src="./MoveOrder.js"></script>
+  <script type="text/javascript" src="./GfxElementZIndexComparable.js"></script>
+  <script type="text/javascript" src="./GfxElement.js"></script>
+  <script type="text/javascript" src="./GfxLayer.js"></script>
+  <script type="text/javascript" src="./SpriteAnimationFrame.js"></script>
+  <script type="text/javascript" src="./Sprite.js"></script>
+  <script type="text/javascript" src="./ImageRenderer.js"></script>
+  <script type="text/javascript" src="./ImageElement.js"></script>
+  <script type="text/javascript" src="./ImageSpriteFrame.js"></script>
+  <script type="text/javascript" src="./ImageSprite.js"></script>
+  <script type="text/javascript" src="./TextRenderer.js"></script>
+  <script type="text/javascript" src="./Screen.js"></script>
+<style>
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div id="buttons"><button onclick="screen.setPaused(!screen.isPaused());">Pause</button></div>
+  <div id="info"></div>
+
+  <script type="text/javascript">
+  var SL = SL || {};
+  SL.debug = true;
+  var screen = null,
+  canvas,
+  context,
+    gfxLayer = null,
+    images = null,
+    renderer,
+    element = null;
+  var config = {
+    "backgroundColor":"grey",
+    "scaleX" : 1,
+    "scaleY" : 1,
+    "fpsElem" : document.getElementById('info')
+  };
+
+  function initialize(targetDiv, config) {
+    screen = new SL.Screen(targetDiv, null, config);
+    screen.initialize();
+    gfxLayer = screen.createLayer("GfxLayer");
+    screen.render();
+
+    context = screen._layers[0].getCanvasContext();
+    renderer = new SL.TextRenderer(1,1);
+  }
+
+  function updateLayer() {
+    var layer = screen._layers[0];
+    layer.setViewOriginX(layer.getViewOriginX() + 1);
+    if (layer.getViewOriginX() > 640){
+      layer.setViewOriginX(-640);
+    }
+  }
+
+  function updateLayer2() {
+    this.increment = this.increment || -1;
+    var layer = screen._layers[0];
+    layer.setViewOriginX(layer.getViewOriginX() + this.increment);
+    if (layer.getViewOriginX() < -640) {
+      this.increment = 1;
+    }
+
+    if (layer.getViewOriginX() > 640){
+     this.increment = -1;
+    }
+  }
+
+  initialize(document.getElementById("content"), config);
+
+  </script>
+</body>
+</html>

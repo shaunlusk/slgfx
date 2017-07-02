@@ -1,16 +1,16 @@
 var SL = SL || {};
 
-SL.renderWithTranslation = function (context, x, y, flipHorizontally, flipVertically, rotation, renderCallback) {
+SL.renderWithTranslation = function (context, x, y, flipHorizontally, flipVertically, rotation, scaleX, scaleY, renderCallback) {
   context.save();
-  SL.translateCanvasContext(context, x, y, flipHorizontally, flipVertically, rotation);
+  SL.translateCanvasContext(context, x, y, flipHorizontally, flipVertically, rotation, scaleX, scaleY);
   renderCallback();
   context.restore();
 };
 
-SL.translateCanvasContext = function (context, x, y, flipHorizontally, flipVertically, rotation) {
+SL.translateCanvasContext = function (context, x, y, flipHorizontally, flipVertically, rotation, scaleX, scaleY) {
   context.translate(x, y);
   if (flipHorizontally || flipVertically) {
-    context.scale(flipHorizontally ? -1 : 1, flipVertically ? -1 : 1);
+    context.scale(flipHorizontally ? 0-scaleX : scaleX, flipVertically ? 0-scaleY : scaleY);
   }
   if (rotation) {
     context.rotate(rotation);

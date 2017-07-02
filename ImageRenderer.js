@@ -47,7 +47,8 @@ SL.ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth
 SL.ImageRenderer.prototype.renderImageWithTranslation = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
   var translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
   var translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;
-  SL.renderWithTranslation(context, translationX, translationY, flipHorizontally, flipVertically, rotation, function() {
+  // sending scaleX/Y as 1; scaling handled in the image draw itself
+  SL.renderWithTranslation(context, translationX, translationY, flipHorizontally, flipVertically, rotation, 1, 1, function() {
     context.drawImageWithTranslation(
       image,
       sx,

@@ -97,7 +97,7 @@ SL.CanvasContextWrapper.prototype.stroke = function() {
 };
 
 SL.CanvasContextWrapper.prototype.rect = function(x, y, width, height) {
-  this._canvasContext.rect(x, y, width, height);
+  this._canvasContext.rect(this._viewOriginX + x, this._viewOriginY + y, width, height);
 };
 
 SL.CanvasContextWrapper.prototype.setLineWidth = function(width) {
@@ -109,28 +109,26 @@ SL.CanvasContextWrapper.prototype.setStrokeStyle = function(strokeStyle) {
 };
 
 SL.CanvasContextWrapper.prototype.strokeRect = function(x, y, width, height) {
-  this._canvasContext.strokeRect(x, y, width, height);
+  this._canvasContext.strokeRect(this._viewOriginX + x, this._viewOriginY + y, width, height);
 };
-//---
-
-/*
-
-fillText(text, x, y [, maxWidth])
-    Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
-strokeText(text, x, y [, maxWidth])
-    Strokes a given text at the given (x,y) position. Optionally with a maximum width to draw.
-
-*/
 
 /** Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
 */
 SL.CanvasContextWrapper.prototype.fillText = function(text, x, y, maxWidth) {
-  this._canvasContext.fillText(text, x, y, maxWidth);
+  this._canvasContext.fillText(text, this._viewOriginX + x, this._viewOriginY + y, maxWidth);
 };
 
 /** Strokes a given text at the given (x,y) position. Optionally with a maximum width to draw.
 */
 SL.CanvasContextWrapper.prototype.strokeText = function(text, x, y, maxWidth) {
+  this._canvasContext.strokeText(text, this._viewOriginX + x, this._viewOriginY + y, maxWidth);
+};
+
+SL.CanvasContextWrapper.prototype.fillTextWithTranslation = function(text, x, y, maxWidth) {
+  this._canvasContext.fillText(text, x, y, maxWidth);
+};
+
+SL.CanvasContextWrapper.prototype.strokeTextWithTranslation = function(text, x, y, maxWidth) {
   this._canvasContext.strokeText(text, x, y, maxWidth);
 };
 
@@ -160,4 +158,12 @@ SL.CanvasContextWrapper.prototype.setTextBaseline = function(val) {
 */
 SL.CanvasContextWrapper.prototype.setTextDirection = function(val) {
   this._canvasContext.direction = val;
+};
+
+/**
+* Returns a TextMetrics object containing the width, in pixels,
+* that the specified text will be when drawn in the current text style.
+*/
+SL.CanvasContextWrapper.prototype.measureText = function(text) {
+  return this._canvasContext.measureText(text);
 };
