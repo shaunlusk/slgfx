@@ -110,8 +110,8 @@ body {
       });
       el.addFrame(frame1);
       el.addFrame(frame2);
-      // gfxLayer.addElement(el);
-      // setInterval(function (e) {e.setRotation( e.getRotation() + 0.02);}.bind(null,el), 20);
+      gfxLayer.addElement(el);
+      setInterval(function (e) {e.setRotation( e.getRotation() + 0.02);}.bind(null,el), 20);
     }
 
     element = new SL.ImageSprite(screen, gfxLayer, {

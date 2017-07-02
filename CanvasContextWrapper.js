@@ -107,3 +107,57 @@ SL.CanvasContextWrapper.prototype.setLineWidth = function(width) {
 SL.CanvasContextWrapper.prototype.setStrokeStyle = function(strokeStyle) {
   this._canvasContext.strokeStyle = strokeStyle;
 };
+
+SL.CanvasContextWrapper.prototype.strokeRect = function(x, y, width, height) {
+  this._canvasContext.strokeRect(x, y, width, height);
+};
+//---
+
+/*
+
+fillText(text, x, y [, maxWidth])
+    Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
+strokeText(text, x, y [, maxWidth])
+    Strokes a given text at the given (x,y) position. Optionally with a maximum width to draw.
+
+*/
+
+/** Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
+*/
+SL.CanvasContextWrapper.prototype.fillText = function(text, x, y, maxWidth) {
+  this._canvasContext.fillText(text, x, y, maxWidth);
+};
+
+/** Strokes a given text at the given (x,y) position. Optionally with a maximum width to draw.
+*/
+SL.CanvasContextWrapper.prototype.strokeText = function(text, x, y, maxWidth) {
+  this._canvasContext.strokeText(text, x, y, maxWidth);
+};
+
+/** Set the font style for the canvas.
+* @param val string Style in format of '12px Sans'; the font size and the font families, separated with spaces.
+*/
+SL.CanvasContextWrapper.prototype.setFontStyle = function(val) {
+  this._canvasContext.font = val;
+};
+
+/**
+* Text alignment setting. Possible values: start, end, left, right or center. The default value is start.
+*/
+SL.CanvasContextWrapper.prototype.setTextAlign = function(val) {
+  this._canvasContext.textAlign = val;
+};
+
+/**
+* Baseline alignment setting. Possible values: top, hanging, middle, alphabetic, ideographic, bottom. The default value is alphabetic.
+*/
+SL.CanvasContextWrapper.prototype.setTextBaseline = function(val) {
+  this._canvasContext.textBaseline = val;
+};
+
+/**
+* Directionality. Possible values: ltr, rtl, inherit. The default value is inherit.
+*/
+SL.CanvasContextWrapper.prototype.setTextDirection = function(val) {
+  this._canvasContext.direction = val;
+};
