@@ -22,7 +22,9 @@ SL.TextRenderer = function(screenScaleX, screenScaleY) {
 */
 SL.TextRenderer.prototype.renderText = function(context, text, fill, fontFamily, fontSize, x, y, width, height, elementScaleX, elementScaleY, flipHorizontally, flipVertically, rotation) {
   var drawFunction = context.strokeText.bind(context);
-  context.setFontStyle(fontSize + " " + fontFamily);
+
+  context.setFontStyle(fontSize + "px " + fontFamily);
+  context.setTextBaseline("top");
 
   if (flipHorizontally || flipVertically || rotation || elementScaleX !== 1 || elementScaleY !== 1) {
     drawFunction = fill ? context.fillTextWithTranslation.bind(context) : context.strokeTextWithTranslation.bind(context);
