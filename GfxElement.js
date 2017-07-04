@@ -404,7 +404,7 @@ SL.GfxElement.prototype.wasRotated = function() {return this._wasRotated;};
 SL.GfxElement.prototype.setWasRotated = function(wasRotated) {
   this._wasRotated = wasRotated;
 };
-SL.GfxElement.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this._rotation) || this._rotation === 0);};
+SL.GfxElement.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
 
 SL.GfxElement.prototype.getRotatedX = function() {return this._rotatedX;};
 SL.GfxElement.prototype.getRotatedY = function() {return this._rotatedY;};
