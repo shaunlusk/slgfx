@@ -1,4 +1,6 @@
 var SL = SL || {};
+SL.CELLWIDTH = 8;
+SL.CELLHEIGHT = 8;
 
 /**
 * Draws Characters on a layer.
