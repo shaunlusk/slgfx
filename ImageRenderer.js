@@ -26,6 +26,9 @@ SL.ImageRenderer = function(screenScaleX, screenScaleY) {
 * @param {number} height The target height of the drawn image. If different than the dimensions of the image subsection, the image subsection will be stretched or shrunk.
 * @param {integer} imageScaleX The amount to scale the drawn image horizontally.
 * @param {integer} imageScaleY The amount to scale the drawn image vertically.
+* @param {boolean} isHorizontallyFlipped Whether the element is flipped horizontally.
+* @param {boolean} isVerticallyFlipped Whether the element is flipped vertically.
+* @param {number} rotation The element's rotation in radians.
 */
 SL.ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
   if (flipHorizontally || flipVertically || rotation) {
