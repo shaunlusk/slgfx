@@ -45,6 +45,10 @@ SL.CanvasContextWrapper.prototype.drawImageWithTranslation = function(image, sx,
   this._canvasContext.drawImage(image, sx, sy, sWidth, sHeight, x, y, width, height);
 };
 
+SL.CanvasContextWrapper.prototype.fillRectWithTranslation = function(x, y, width, height) {
+  this._canvasContext.fillRect(x, y, width, height);
+};
+
 SL.CanvasContextWrapper.prototype.save = function() {
   this._canvasContext.save();
 };
