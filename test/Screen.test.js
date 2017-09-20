@@ -161,18 +161,18 @@ describe("Screen", function() {
       scrn.on(eventType, function() {
         assert(true);
         done();
-      });
-      scrn._eventListeners[eventType][0]();
+      }, "testHandler");
+      scrn._eventListeners[eventType].testHandler();
     });
   });
   describe("#clearEventHandlers()", function(){
     it("should add callback to list", function(done) {
       var eventType = "newType";
-      scrn.on(eventType, function() {});
+      scrn.on(eventType, function() {}, "testHandler");
 
       scrn.clearEventHandlers(eventType);
 
-      assert(scrn._eventListeners[eventType].length === 0, "should have cleared handler list");
+      assert(scrn._eventListeners[eventType].testHandler === undefined, "should have cleared handler list");
       done();
     });
     it("should throw error", function(done) {

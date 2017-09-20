@@ -189,19 +189,20 @@ describe("GfxLayer", function() {
     });
   });
   describe("#render()", function() {
-    it("should call clear on dirtyElements", function(done) {
+    it("should call preRender on dirtyElements", function(done) {
       var mockElement1 = SL.Mocks.getMockGfxElement();
-      mockElement1.clear = function() {this.calledIt = true;};
+      mockElement1.preRender = function() {this.calledIt = true;};
       gfxLayer._dirtyElements.push(mockElement1.getZIndexComparable());
 
       gfxLayer.render();
 
-      assert(mockElement1.calledIt === true, "should have called clear");
+      assert(mockElement1.calledIt === true, "should have called preRender");
       done();
     });
     it("should call render on dirtyElements", function(done) {
       var mockElement1 = SL.Mocks.getMockGfxElement();
       mockElement1.render = function() {this.calledIt = true;};
+      mockElement1.preRender = function() {return true;};
       gfxLayer._dirtyElements.push(mockElement1.getZIndexComparable());
 
       gfxLayer.render();
