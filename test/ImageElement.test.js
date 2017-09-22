@@ -15,22 +15,6 @@ describe("ImageElement", function() {
     );
   });
   describe("#render()", function() {
-    it("should return if hidden", function(done) {
-      imageElement.hide();
-
-      imageElement.render(1, 1);
-
-      assert(calledRenderImage === false, "should not have called renderImage");
-      done();
-    });
-    it("should return if not dirty", function(done) {
-      imageElement.setDirty(false);
-
-      imageElement.render(1, 1);
-
-      assert(calledRenderImage === false, "should not have called renderImage");
-      done();
-    });
     it("should call renderImage", function(done) {
       imageElement.render(1, 1);
 

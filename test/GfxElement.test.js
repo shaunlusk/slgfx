@@ -842,18 +842,18 @@ describe("GfxElement", function() {
       element.on(eventType, function() {
         assert(true);
         done();
-      });
-      element._eventListeners[eventType][0]();
+      }, "testHandler");
+      element._eventListeners[eventType].testHandler();
     });
   });
   describe("#clearEventHandlers()", function(){
     it("should add callback to list", function(done) {
       var eventType = "newType";
-      element.on(eventType, function() {});
+      element.on(eventType, function() {}, "testHandler");
 
       element.clearEventHandlers(eventType);
 
-      assert(element._eventListeners[eventType].length === 0, "should have cleared handler list");
+      assert(element._eventListeners[eventType].testHandler === undefined, "should have cleared handler list");
       done();
     });
     it("should throw error", function(done) {

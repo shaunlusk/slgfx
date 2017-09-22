@@ -231,12 +231,19 @@ describe("Screen", function() {
     });
     it("should notify before and after render event", function(done) {
       var eventTypes = [];
-      scrn.notify = function(event) {eventTypes.push(event.type);};
+      var calledBeforeRender = false;
+      var calledAfterRender = false;
+      scrn.on(SL.EventType.BEFORE_RENDER, function(event) {
+        calledBeforeRender = true;
+      });
+      scrn.on(SL.EventType.AFTER_RENDER, function(event) {
+        calledAfterRender = true;
+      });
 
       scrn.render(1);
 
-      assert(eventTypes[0] === SL.EventType.BEFORE_RENDER, "should have notified of before render event.");
-      assert(eventTypes[1] === SL.EventType.AFTER_RENDER, "should have notified of after render event.");
+      assert(calledBeforeRender === true, "should have notified of before render event.");
+      assert(calledAfterRender === true, "should have notified of after render event.");
       done();
     });
     it("should call updateFps", function(done) {
@@ -379,11 +386,15 @@ describe("Screen", function() {
     it("should call update on each layer", function(done) {
       var calledRender1 = false;
       var layer1 = {
-        render : function() {calledRender1 = true;}
+        render : function() {calledRender1 = true;},
+        prerender : function() {},
+        postrender : function() {}
       };
       var calledRender2 = false;
       var layer2 = {
-        render : function() {calledRender2 = true;}
+        render : function() {calledRender2 = true;},
+        prerender : function() {},
+        postrender : function() {}
       };
       scrn.addLayer(layer1);
       scrn.addLayer(layer2);
