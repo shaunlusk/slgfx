@@ -115,16 +115,6 @@ SL.CanvasContextWrapper.prototype.setStrokeStyle = function(strokeStyle) {
 SL.CanvasContextWrapper.prototype.strokeRect = function(x, y, width, height) {
   this._canvasContext.strokeRect(x, y, width, height);
 };
-//---
-
-/*
-
-fillText(text, x, y [, maxWidth])
-    Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
-strokeText(text, x, y [, maxWidth])
-    Strokes a given text at the given (x,y) position. Optionally with a maximum width to draw.
-
-*/
 
 /** Fills a given text at the given (x,y) position. Optionally with a maximum width to draw.
 */

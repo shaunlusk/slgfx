@@ -11,9 +11,6 @@ rotate over time
 Scrollable layers
   scroll to point
   documentation!
-  fillStyle set methods
-
-double check for comment references to pix elements and sprites
 
 is there a way of dimming layers without clearing the layer?
 - also use internal time instead of setTimeout - use replacement in common eventing system?
@@ -29,7 +26,6 @@ move element from one layer to another
 LocalStorage - from RuneTx
 
 pix element?
-
 
 Known Issues:
 If GfxElement is flipped horizontally or vertically, rotation will be reversed.

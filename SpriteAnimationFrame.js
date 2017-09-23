@@ -5,7 +5,6 @@ var SL = SL || {};
 * These are intended to be lightweight, and purpose built for the type of Sprite.
 * @interface AnimationFrame
 * @see SL.ImageSprite
-* @see SL.PixSprite
 */
 SL.AnimationFrame = function() {};
 

@@ -1,3 +1,3 @@
 # slgfx
 
-Common Graphics frame work for Shaun's projects.
+Common Graphics framework for Shaun's projects.
