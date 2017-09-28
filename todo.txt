@@ -1,3 +1,7 @@
+Sprite Frames
+  variable size
+  offset from base
+
 Tests
   ImageLoader
   Image sprite?
@@ -7,7 +11,7 @@ Tests
 
 Documentation
   CanvasContextWrapper
-  
+
 
 
 SpriteSet?
