@@ -1,6 +1,7 @@
-Sprite Frames
-  variable size
-  offset from base
+LpcElementSet
+  base element set?
+  finish LpcElementSet_GfxElementWrapper
+  check namespaces
 
 Tests
   ImageLoader
