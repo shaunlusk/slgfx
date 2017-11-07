@@ -1,103 +1,9 @@
 var SL = SL || {};
 
-SL.GfxElement = function(screenContext, parentLayer, props) {
-  props = props || {};
-  this._id = SL.GfxElement.id++;
-  this._screenContext = screenContext;
-  this._parentLayer = parentLayer;
-  this._canvasContext = parentLayer ? parentLayer.getCanvasContext() : null;
-  this._scaleX = props.scaleX || 1;
-  this._scaleY = props.scaleY || 1;
-  this._currentMove = null;
-  this._moveQueue = new SL.Queue();
-  this._xMoveRate = 0;
-  this._xMoveFractionalAccumulator = 0;
-  this._yMoveRate = 0;
-  this._yMoveFractionalAccumulator = 0;
-  this._dirty = true;
-  this._hasCollision = false;
-  this._hadCollisionPreviousFrame = false;
-  this._hidden = props.hidden || false;
-  this._x = props.x || 0;
-  this._y = props.y || 0;
-  this._lastX = 0;
-  this._lastY = 0;
-  this._mouseIsOver = false;
-  this._zIndex = props.zIndex || -1;
-  this._zIndexComparable = new SL.GfxElementZIndexComparable(this);
-  this._width = props.width;
-  this._height = props.height;
-
-  this._rotation = props.rotation || null;
-  this._baseRotation = props.baseRotation || null;
-  this._wasRotated = props.rotation ? true: false ;
-
-  this._diagonalSize = 0; // only needed for determining collision box when rotated
-  this._rotatedX = 0;
-  this._rotatedY = 0;
-  this._rotatedLastX = 0;
-  this._rotatedLastY = 0;
-  this._lastDiagonalSize = 0;
-
-  this._horizontalFlip = props.horizontalFlip || false;
-  this._verticalFlip = props.verticalFlip || false;
-
-  this._flashDoneCallback = null;
-  this._isFlashing = false;
-  this._flashStartTime = -1;
-  this._flashDuration = 0;
-  this._flashHidden = false;
-  this._flashElapsed = 0;
-  this._flashInterval = 0;
-
-  this._nudgeDoneCallback = null;
-  this._isProcessingNudge = false;
-
-  this._shakeDoneCallback = null;
-  this._isProcessingShake = false;
-
-  this.EventNotifierMixinInitializer({
-    eventListeners:[
-      SL.EventType.ELEMENT_MOVED,
-      SL.EventType.ELEMENT_STARTED_MOVING,
-      SL.EventType.ELEMENT_STOPPED_MOVING,
-      SL.EventType.ELEMENT_COLLISION,
-      SL.EventType.MOUSE_ENTER_ELEMENT,
-      SL.EventType.MOUSE_EXIT_ELEMENT,
-      SL.EventType.MOUSE_MOVE_OVER_ELEMENT,
-      SL.EventType.MOUSE_DOWN_ON_ELEMENT,
-      SL.EventType.MOUSE_UP_ON_ELEMENT,
-      SL.EventType.ELEMENT_HIT_LEFT_EDGE,
-      SL.EventType.ELEMENT_HIT_RIGHT_EDGE,
-      SL.EventType.ELEMENT_HIT_TOP_EDGE,
-      SL.EventType.ELEMENT_HIT_BOTTOM_EDGE
-    ]
-  });
-
-  this._recalculateDiagonalSize();
-  this._recalculateRotatedCollisionBox();
-};
-
-SL.EventNotifierMixin.call(SL.GfxElement.prototype);
-SL.GfxElement.prototype._baseNotify = SL.GfxElement.prototype.notify;
-
-SL.GfxElement.prototype.notify = function(event) {
-  this._baseNotify(event);
-  this.getScreenContext().notify(event);
-};
-
-/** @private */
-SL.GfxElement.id = 0;
-
-/** Return the unique id of this element.
-* @return {integer} This element's unique id.
-*/
-SL.GfxElement.prototype.getId = function() {return this._id;};
-
 /** Return whether this element is dirty.
 * @return {boolean}
 */
-SL.GfxElement.prototype.isDirty = function() {
+SL.GfxElementSet.prototype.isDirty = function() {
   return this._dirty || this._hasCollision || this._hadCollisionPreviousFrame;
 };
 
@@ -105,50 +11,50 @@ SL.GfxElement.prototype.isDirty = function() {
 * Set whether element is dirty.  If dirty, the element will be cleared and redrawn during the next render phase.
 * @param {boolean} dirty
 */
-SL.GfxElement.prototype.setDirty = function(dirty) {this._dirty = dirty;};
+SL.GfxElementSet.prototype.setDirty = function(dirty) {this._dirty = dirty;};
 
 /** Return whether this element is hidden.
 * @return {boolean}
 */
-SL.GfxElement.prototype.isHidden = function() {return this._hidden;};
+SL.GfxElementSet.prototype.isHidden = function() {return this._hidden;};
 
 /**
 * Set whether element is hidden.
 * @param {boolean} hidden
 */
-SL.GfxElement.prototype.setHidden = function(hidden) {this._hidden = hidden;};
+SL.GfxElementSet.prototype.setHidden = function(hidden) {this._hidden = hidden;};
 
 /** Return whether this element had a collision during the most recent update phase.
 * @return {boolean}
 */
-SL.GfxElement.prototype.hasCollision = function() {return this._hasCollision;};
+SL.GfxElementSet.prototype.hasCollision = function() {return this._hasCollision;};
 
 /**
 * Set whether the element has a collision. If a collision has occurred the element will be cleared and redrawn during the next render phase.
 * @param {boolean} hidden
 */
-SL.GfxElement.prototype.setHasCollision = function(hasCollision) {this._hasCollision = hasCollision;};
+SL.GfxElementSet.prototype.setHasCollision = function(hasCollision) {this._hasCollision = hasCollision;};
 
 /**
 * Return this element's zIndex.
 * @return {number}
 */
-SL.GfxElement.prototype.getZIndex = function() {return this._zIndex;};
+SL.GfxElementSet.prototype.getZIndex = function() {return this._zIndex;};
 
 /**
 * Set this element's zIndex. Elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
 * @param {number} zIndex
 */
-SL.GfxElement.prototype.setZIndex = function(zIndex) {
+SL.GfxElementSet.prototype.setZIndex = function(zIndex) {
   this._zIndex = zIndex;
   this.setDirty(true);
 };
 
 /** Return this element's zindeComparable.
 * Used by parent layer to determine rendering order.
-* @return {SL.GfxElementZIndexComparable}
+* @return {SL.GfxElementSetZIndexComparable}
 */
-SL.GfxElement.prototype.getZIndexComparable = function() {
+SL.GfxElementSet.prototype.getZIndexComparable = function() {
   return this._zIndexComparable;
 };
 
@@ -156,61 +62,61 @@ SL.GfxElement.prototype.getZIndexComparable = function() {
 * Return this element's parent layer.
 * @return {SL.GfxLayer}
 */
-SL.GfxElement.prototype.getParentLayer = function() {return this._parentLayer;};
+SL.GfxElementSet.prototype.getParentLayer = function() {return this._parentLayer;};
 
 /**
 * Return the canvas context for this element's parent layer.
 * @return {CanvasContext}
 */
-SL.GfxElement.prototype.getCanvasContext = function() {return this._canvasContext;};
+SL.GfxElementSet.prototype.getCanvasContext = function() {return this._canvasContext;};
 
 /**
 * Return the parent Screen for this element.
 * @return {SL.Screen}
 */
-SL.GfxElement.prototype.getScreenContext = function() {return this._screenContext;};
+SL.GfxElementSet.prototype.getScreenContext = function() {return this._screenContext;};
 
 /**
 * Return the horizontal scale of this element's parent screen.
 * @return {integer}
 */
-SL.GfxElement.prototype.getScreenScaleX = function() {return this.getScreenContext().getScaleX();};
+SL.GfxElementSet.prototype.getScreenScaleX = function() {return this.getScreenContext().getScaleX();};
 
 /**
 * Return the vertical scale of this element's parent screen.
 * @return {integer}
 */
-SL.GfxElement.prototype.getScreenScaleY = function() {return this.getScreenContext().getScaleY();};
+SL.GfxElementSet.prototype.getScreenScaleY = function() {return this.getScreenContext().getScaleY();};
 
 /**
 * Return the total horizontal scale for this element (screen scale * element scale).
 * @return {integer}
 */
-SL.GfxElement.prototype.getTotalScaleX = function() {return this.getElementScaleX() * this.getScreenContext().getScaleX();};
+SL.GfxElementSet.prototype.getTotalScaleX = function() {return this.getElementScaleX() * this.getScreenContext().getScaleX();};
 
 /**
 * Return the total vertical scale for this element (screen scale * element scale).
 * @return {integer}
 */
-SL.GfxElement.prototype.getTotalScaleY = function() {return this.getElementScaleY() * this.getScreenContext().getScaleY();};
+SL.GfxElementSet.prototype.getTotalScaleY = function() {return this.getElementScaleY() * this.getScreenContext().getScaleY();};
 
 /**
 * Return the horizontal scale of this element.
 * @return {integer}
 */
-SL.GfxElement.prototype.getElementScaleX = function() {return this._scaleX;};
+SL.GfxElementSet.prototype.getElementScaleX = function() {return this._scaleX;};
 
 /**
 * Return the vertical scale of this element.
 * @return {integer}
 */
-SL.GfxElement.prototype.getElementScaleY = function() {return this._scaleY;};
+SL.GfxElementSet.prototype.getElementScaleY = function() {return this._scaleY;};
 
 /**
 * Set the horizontal scale of this element.
 * @param {integer} scaleX
 */
-SL.GfxElement.prototype.setElementScaleX = function(scaleX) {
+SL.GfxElementSet.prototype.setElementScaleX = function(scaleX) {
   this._scaleX = scaleX;
 };
 
@@ -218,19 +124,19 @@ SL.GfxElement.prototype.setElementScaleX = function(scaleX) {
 * Set the vertical scale of this element.
 * @param {integer} scaleY
 */
-SL.GfxElement.prototype.setElementScaleY = function(scaleY) {this._scaleY = scaleY;};
+SL.GfxElementSet.prototype.setElementScaleY = function(scaleY) {this._scaleY = scaleY;};
 
 /**
 * Get the x coordinate of this element.
 * @return {number}
 */
-SL.GfxElement.prototype.getX = function() {return this._x;};
+SL.GfxElementSet.prototype.getX = function() {return this._x;};
 
 /**
 * Get the screen x coordinate of this element.
 * @return {number}
 */
-SL.GfxElement.prototype.getScaledX = function() {
+SL.GfxElementSet.prototype.getScaledX = function() {
   return this.getX() * this.getScreenScaleX();
 };
 
@@ -238,13 +144,13 @@ SL.GfxElement.prototype.getScaledX = function() {
 * Get the y coordinate of this element.
 * @return {number}
 */
-SL.GfxElement.prototype.getY = function() {return this._y;};
+SL.GfxElementSet.prototype.getY = function() {return this._y;};
 
 /**
 * Get the screen x coordinate of this element.
 * @return {number}
 */
-SL.GfxElement.prototype.getScaledY = function() {
+SL.GfxElementSet.prototype.getScaledY = function() {
   return this.getY() * this.getScreenScaleY();
 };
 
@@ -252,7 +158,7 @@ SL.GfxElement.prototype.getScaledY = function() {
 * Set the x coordinate of this element.
 * @param {number} x
 */
-SL.GfxElement.prototype.setX = function(x) {
+SL.GfxElementSet.prototype.setX = function(x) {
   if (x !== this._x) this.setDirty(true);
   this._x = x;
 };
@@ -261,7 +167,7 @@ SL.GfxElement.prototype.setX = function(x) {
 * Set the y coordinate of this element.
 * @param {number} y
 */
-SL.GfxElement.prototype.setY = function(y) {
+SL.GfxElementSet.prototype.setY = function(y) {
   if (y !== this._y) this.setDirty(true);
   this._y = y;
 };
@@ -270,67 +176,67 @@ SL.GfxElement.prototype.setY = function(y) {
 * Get the x coordinate of this element for the previous frame.
 * @return {number}
 */
-SL.GfxElement.prototype.getLastX = function() {return this._lastX;};
+SL.GfxElementSet.prototype.getLastX = function() {return this._lastX;};
 
 /**
 * Get the y coordinate of this element for the previous frame.
 * @return {number}
 */
-SL.GfxElement.prototype.getLastY = function() {return this._lastY;};
+SL.GfxElementSet.prototype.getLastY = function() {return this._lastY;};
 
 /** Override if dimensions can change */
-SL.GfxElement.prototype.getLastWidth = function() {return this.getWidth();};
+SL.GfxElementSet.prototype.getLastWidth = function() {return this.getWidth();};
 
 /** Override if dimensions can change */
-SL.GfxElement.prototype.getLastHeight = function() {return this.getHeight();};
+SL.GfxElementSet.prototype.getLastHeight = function() {return this.getHeight();};
 
 /** @private */
-SL.GfxElement.prototype.setLastX = function(x) {this._lastX = x;};
+SL.GfxElementSet.prototype.setLastX = function(x) {this._lastX = x;};
 /** @private */
-SL.GfxElement.prototype.setLastY = function(y) {this._lastY = y;};
+SL.GfxElementSet.prototype.setLastY = function(y) {this._lastY = y;};
 
 /**
 * Return whether the mouse is over this element.
 * @return {boolean}
 */
-SL.GfxElement.prototype.isMouseOver = function() {return this._mouseIsOver;};
+SL.GfxElementSet.prototype.isMouseOver = function() {return this._mouseIsOver;};
 
 /**
 * Return this element's width.
 * @abstract
 * @return {number}
 */
-SL.GfxElement.prototype.getWidth = function() {return this._width;};
+SL.GfxElementSet.prototype.getWidth = function() {return this._width;};
 
 /**
 * Return this element's width, incorporating screen and element-local scaling.
 * @return {number}
 */
-SL.GfxElement.prototype.getScaledWidth = function() {return this.getWidth() * this.getTotalScaleX();};
+SL.GfxElementSet.prototype.getScaledWidth = function() {return this.getWidth() * this.getTotalScaleX();};
 
 /**
 * Return this elements height.
 * @abstract
 * @return {number}
 */
-SL.GfxElement.prototype.getHeight = function() {return this._height;};
+SL.GfxElementSet.prototype.getHeight = function() {return this._height;};
 
 /**
 * Return this element's height, incorporating screen and element-local scaling.
 * @return {number}
 */
-SL.GfxElement.prototype.getScaledHeight = function() {return this.getHeight() * this.getTotalScaleY();};
+SL.GfxElementSet.prototype.getScaledHeight = function() {return this.getHeight() * this.getTotalScaleY();};
 
-SL.GfxElement.prototype.getUnAdjustedRotation = function() { return this._rotation; };
-SL.GfxElement.prototype.getBaseRotation = function() { return this._baseRotation; };
-SL.GfxElement.prototype.getRotation = function() {
+SL.GfxElementSet.prototype.getUnAdjustedRotation = function() { return this._rotation; };
+SL.GfxElementSet.prototype.getBaseRotation = function() { return this._baseRotation; };
+SL.GfxElementSet.prototype.getRotation = function() {
   if (this._rotation || this._baseRotation)
   return (this._rotation || 0) + (this._baseRotation || 0);
   return null;
 };
-SL.GfxElement.prototype.getDiagonalSize = function() { return this._diagonalSize; };
+SL.GfxElementSet.prototype.getDiagonalSize = function() { return this._diagonalSize; };
 
-SL.GfxElement.prototype.setRotation = function(rotation) {
+SL.GfxElementSet.prototype.setRotation = function(rotation) {
   this._rotation = rotation;
   if (this._rotation === null) {
     if (this.wasRotated()) this.setDirty(true);
@@ -340,7 +246,7 @@ SL.GfxElement.prototype.setRotation = function(rotation) {
   this._recalculateRotatedCollisionBox();
   this.setDirty(true);
 };
-SL.GfxElement.prototype.setBaseRotation = function(rotation) {
+SL.GfxElementSet.prototype.setBaseRotation = function(rotation) {
   this._baseRotation = rotation;
   if (this._baseRotation === null) {
     if (this.wasRotated()) this.setDirty(true);
@@ -351,51 +257,51 @@ SL.GfxElement.prototype.setBaseRotation = function(rotation) {
   this.setDirty(true);
 };
 
-SL.GfxElement.prototype.wasRotated = function() {return this._wasRotated;};
-SL.GfxElement.prototype.setWasRotated = function(wasRotated) {
+SL.GfxElementSet.prototype.wasRotated = function() {return this._wasRotated;};
+SL.GfxElementSet.prototype.setWasRotated = function(wasRotated) {
   this._wasRotated = wasRotated;
 };
-SL.GfxElement.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
+SL.GfxElementSet.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
 
-SL.GfxElement.prototype.getRotatedX = function() {return this._rotatedX;};
-SL.GfxElement.prototype.getRotatedY = function() {return this._rotatedY;};
-SL.GfxElement.prototype.getRotatedLastX = function() {return this._rotatedLastX;};
-SL.GfxElement.prototype.getRotatedLastY = function() {return this._rotatedLastY;};
-SL.GfxElement.prototype.getLastDiagonalSize = function() {return this._lastDiagonalSize;};
-SL.GfxElement.prototype.getRotatedScaledX = function() {return this.getRotatedX() * this.getScreenScaleX();};
-SL.GfxElement.prototype.getRotatedScaledY = function() {return this.getRotatedY() * this.getScreenScaleY();};
-SL.GfxElement.prototype.getScaledDiagonalSize = function() {
+SL.GfxElementSet.prototype.getRotatedX = function() {return this._rotatedX;};
+SL.GfxElementSet.prototype.getRotatedY = function() {return this._rotatedY;};
+SL.GfxElementSet.prototype.getRotatedLastX = function() {return this._rotatedLastX;};
+SL.GfxElementSet.prototype.getRotatedLastY = function() {return this._rotatedLastY;};
+SL.GfxElementSet.prototype.getLastDiagonalSize = function() {return this._lastDiagonalSize;};
+SL.GfxElementSet.prototype.getRotatedScaledX = function() {return this.getRotatedX() * this.getScreenScaleX();};
+SL.GfxElementSet.prototype.getRotatedScaledY = function() {return this.getRotatedY() * this.getScreenScaleY();};
+SL.GfxElementSet.prototype.getScaledDiagonalSize = function() {
   return this.getDiagonalSize() * (this.getTotalScaleX() + this.getTotalScaleY()) / 2;
 };
 
 /** @private */
-SL.GfxElement.prototype.setRotatedLastX = function(x) {this._rotatedLastX = x;};
+SL.GfxElementSet.prototype.setRotatedLastX = function(x) {this._rotatedLastX = x;};
 /** @private */
-SL.GfxElement.prototype.setRotatedLastY = function(y) {this._rotatedLastY = y;};
+SL.GfxElementSet.prototype.setRotatedLastY = function(y) {this._rotatedLastY = y;};
 /** @private */
-SL.GfxElement.prototype.setLastDiagonalSize = function(size) {this._lastDiagonalSize = size;};
+SL.GfxElementSet.prototype.setLastDiagonalSize = function(size) {this._lastDiagonalSize = size;};
 
-SL.GfxElement.prototype._recalculateDiagonalSize = function() {
+SL.GfxElementSet.prototype._recalculateDiagonalSize = function() {
   if (this.getRotation() === null) return;
   // calculate diagonal
   // Note that for any amount of rotation, an expanded bounding box is used
   this._diagonalSize = Math.ceil(Math.sqrt( Math.pow(this.getWidth(), 2) + Math.pow(this.getHeight(), 2)));
 };
 
-SL.GfxElement.prototype._recalculateRotatedCollisionBox = function() {
+SL.GfxElementSet.prototype._recalculateRotatedCollisionBox = function() {
   if (this.getRotation() === null) return;
   this._rotatedX = Math.floor(this.getX() - (this.getScaledDiagonalSize() - this.getScaledWidth()) / 2);
   this._rotatedY = Math.floor(this.getY() - (this.getScaledDiagonalSize() - this.getScaledHeight()) / 2);
 };
 
-SL.GfxElement.prototype.isHorizontallyFlipped = function() {return this._horizontalFlip;};
-SL.GfxElement.prototype.isVerticallyFlipped = function() {return this._verticalFlip;};
+SL.GfxElementSet.prototype.isHorizontallyFlipped = function() {return this._horizontalFlip;};
+SL.GfxElementSet.prototype.isVerticallyFlipped = function() {return this._verticalFlip;};
 
-SL.GfxElement.prototype.setHorizontallyFlipped = function(flipped) {
+SL.GfxElementSet.prototype.setHorizontallyFlipped = function(flipped) {
   if (this._horizontalFlip !== flipped) this.setDirty(true);
   this._horizontalFlip = flipped;
 };
-SL.GfxElement.prototype.setVerticallyFlipped = function(flipped) {
+SL.GfxElementSet.prototype.setVerticallyFlipped = function(flipped) {
   if (this._verticalFlip !== flipped) this.setDirty(true);
   this._verticalFlip = flipped;
 };
@@ -403,7 +309,7 @@ SL.GfxElement.prototype.setVerticallyFlipped = function(flipped) {
 /*
 If duration is -1, will flash until turned off.
 */
-SL.GfxElement.prototype.flash = function(interval, duration, callback) {
+SL.GfxElementSet.prototype.flash = function(interval, duration, callback) {
   this._flashInterval = interval;
   this._flashDuration = duration;
   this._isFlashing = true;
@@ -413,13 +319,13 @@ SL.GfxElement.prototype.flash = function(interval, duration, callback) {
   this._flashDoneCallback = callback;
 };
 
-SL.GfxElement.prototype.isFlashing = function() { return this._isFlashing; };
+SL.GfxElementSet.prototype.isFlashing = function() { return this._isFlashing; };
 
-SL.GfxElement.prototype.turnFlashOff = function() {
+SL.GfxElementSet.prototype.turnFlashOff = function() {
   this._endFlash();
 };
 
-SL.GfxElement.prototype._endFlash = function() {
+SL.GfxElementSet.prototype._endFlash = function() {
   this._isFlashing = false;
   this._flashStartTime = -1;
   this._flashElapsed = 0;
@@ -427,7 +333,7 @@ SL.GfxElement.prototype._endFlash = function() {
   if (SL.isFunction(this._flashDoneCallback)) this._flashDoneCallback();
 };
 
-SL.GfxElement.prototype._updateFlash = function(time,diff) {
+SL.GfxElementSet.prototype._updateFlash = function(time,diff) {
   if (this._flashStartTime === -1) this._flashStartTime = time;
   if (time - this._flashStartTime >= this._flashDuration && this._flashDuration > -1) {
     this._endFlash();
@@ -442,7 +348,7 @@ SL.GfxElement.prototype._updateFlash = function(time,diff) {
   }
 };
 
-SL.GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, intervalDecay, callback) {
+SL.GfxElementSet.prototype.nudge = function(offsetX, offsetY, decay, interval, intervalDecay, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
   this._nudgeDoneCallback = callback;
   var tx,ty;
@@ -463,12 +369,12 @@ SL.GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, inte
     offsetY = offsetY !== 0 ? ydir * (Math.abs(offsetY) - decay) : 0;
 
     count++;
-    if (count > 1000) throw new Error("GfxElement.nudge() looped too many times.");
+    if (count > 1000) throw new Error("GfxElementSet.nudge() looped too many times.");
   }
   this.moveTo(this.getX(), this.getY(), interval < 0 ? 0 : interval);
 };
 
-SL.GfxElement.prototype.shake = function(intensity, intensityDecay, interval, intervalDecay, notToExceedTime, callback) {
+SL.GfxElementSet.prototype.shake = function(intensity, intensityDecay, interval, intervalDecay, notToExceedTime, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
   if (intervalDecay === 0 && !notToExceedTime) throw new Error("must specify either intervalDecay or notToExceedTime");
   this._shakeDoneCallback = callback;
@@ -491,7 +397,7 @@ SL.GfxElement.prototype.shake = function(intensity, intensityDecay, interval, in
     offsetY = intensity - Math.floor(Math.random() * intensity * 2);
 
     count++;
-    if (count > 1000) throw new Error("GfxElement.shake() looped too many times.");
+    if (count > 1000) throw new Error("GfxElementSet.shake() looped too many times.");
   }
   this.moveTo(this.getX(), this.getY(), interval < 0 ? 0 : interval);
 };
@@ -506,7 +412,7 @@ SL.GfxElement.prototype.shake = function(intensity, intensityDecay, interval, in
 * @param {number} xMoveRate Horizontal movement rate
 * @param {number} yMoveRate Vertical movement rate
 */
-SL.GfxElement.prototype.setMoveRates = function(xMoveRate, yMoveRate) {
+SL.GfxElementSet.prototype.setMoveRates = function(xMoveRate, yMoveRate) {
   if (xMoveRate === 0 && yMoveRate === 0 && this._currentMove === null && (this._xMoveRate !== 0 || this._yMoveRate !== 0)) {
     this.notify(
       new SL.Event(SL.EventType.ELEMENT_STOPPED_MOVING, {element:this})
@@ -525,13 +431,13 @@ SL.GfxElement.prototype.setMoveRates = function(xMoveRate, yMoveRate) {
 * Return the current x movement rate.
 * @return {number}
 */
-SL.GfxElement.prototype.getMoveRateX = function() {return this._xMoveRate;};
+SL.GfxElementSet.prototype.getMoveRateX = function() {return this._xMoveRate;};
 
 /**
 * Return the current y movement rate.
 * @return {number}
 */
-SL.GfxElement.prototype.getMoveRateY = function() {return this._yMoveRate;};
+SL.GfxElementSet.prototype.getMoveRateY = function() {return this._yMoveRate;};
 
 /**
 * Move the element to the specified coordinate over the course of specified duration.
@@ -542,7 +448,7 @@ SL.GfxElement.prototype.getMoveRateY = function() {return this._yMoveRate;};
 * @param {number} duration Optional. How long it should take the element to move from its current position to the target position, in milliseconds. Defaults to 16ms.
 * @param {function} callback Optional.  The function to call when the move is complete.
 */
-SL.GfxElement.prototype.moveTo = function(x,y,duration, callback) {
+SL.GfxElementSet.prototype.moveTo = function(x,y,duration, callback) {
   duration = duration || 16;
   var moveOrder = new SL.MoveOrder(this, x, y, duration, this.moveOrderCallback.bind(this), callback);
   this._moveQueue.push(moveOrder);
@@ -558,7 +464,7 @@ SL.GfxElement.prototype.moveTo = function(x,y,duration, callback) {
 };
 
 /** @private */
-SL.GfxElement.prototype._runMove = function() {
+SL.GfxElementSet.prototype._runMove = function() {
   if (this._moveQueue.size() > 0) {
     this._currentMove = this._moveQueue.pop();
     this._currentMove.start();
@@ -575,7 +481,7 @@ SL.GfxElement.prototype._runMove = function() {
 };
 
 /** @private */
-SL.GfxElement.prototype.moveOrderCallback = function() {
+SL.GfxElementSet.prototype.moveOrderCallback = function() {
   this._currentMove = null;
   if (! this._runMove()){
     if (this._isProcessingNudge) {
@@ -593,7 +499,7 @@ SL.GfxElement.prototype.moveOrderCallback = function() {
 * Clear any queued moveTo instructions.
 * Does not effect a currently running moveTo, or any movement rates.
 */
-SL.GfxElement.prototype.clearMoveQueue = function() {
+SL.GfxElementSet.prototype.clearMoveQueue = function() {
   this._moveQueue.clear();
 };
 
@@ -601,7 +507,7 @@ SL.GfxElement.prototype.clearMoveQueue = function() {
 * Turn the element "off".
 * All movement will cease and element will be hidden.
 */
-SL.GfxElement.prototype.turnOff = function() {
+SL.GfxElementSet.prototype.turnOff = function() {
   this._moveQueue.clear();
   this._currentMove = null;
   this._xMoveRate = 0;
@@ -612,13 +518,13 @@ SL.GfxElement.prototype.turnOff = function() {
 };
 
 /** Show the element. */
-SL.GfxElement.prototype.show = function() {
+SL.GfxElementSet.prototype.show = function() {
   this._hidden = false;
   this.setDirty(true);
 };
 
 /** Hide the element */
-SL.GfxElement.prototype.hide = function() {
+SL.GfxElementSet.prototype.hide = function() {
   this._hidden = true;
   this.setDirty(true);
 };
@@ -626,9 +532,9 @@ SL.GfxElement.prototype.hide = function() {
 /** Update the element.  Will update location based on current time/diff.
 * @param {number} time The current time.  Not specifically used, but provided for extension.
 * @param {number} diff The difference between the previous time and the current time. Use to calculate element's position if it is moving.
-* @return {SL.GfxElement} Returns this element if it needs to be redrawn, null otherwise.
+* @return {SL.GfxElementSet} Returns this element if it needs to be redrawn, null otherwise.
 */
-SL.GfxElement.prototype.update = function(time,diff) {
+SL.GfxElementSet.prototype.update = function(time,diff) {
   this._updateLocationFromMoveRates(time,diff);
   // Will take precedence over move rate
   this._updateMoveOrder(time,diff);
@@ -658,7 +564,7 @@ SL.GfxElement.prototype.update = function(time,diff) {
 * @param {number} time
 * @param {number} diff
 */
-SL.GfxElement.prototype._updateLocationFromMoveRates = function(time, diff) {
+SL.GfxElementSet.prototype._updateLocationFromMoveRates = function(time, diff) {
   var amount,sign,intAmount;
 
   if (this._xMoveRate !== 0) {
@@ -688,7 +594,7 @@ SL.GfxElement.prototype._updateLocationFromMoveRates = function(time, diff) {
 * @param {number} time
 * @param {number} diff
 */
-SL.GfxElement.prototype._updateMoveOrder = function(time,diff) {
+SL.GfxElementSet.prototype._updateMoveOrder = function(time,diff) {
   if (this._currentMove !== null) {
     this._currentMove.update(time,diff);
     this.setDirty(true);
@@ -699,7 +605,7 @@ SL.GfxElement.prototype._updateMoveOrder = function(time,diff) {
 * @param {number} time
 * @param {number} diff
 */
-SL.GfxElement.prototype.clear = function(time, diff) {
+SL.GfxElementSet.prototype.clear = function(time, diff) {
   if (this.wasRotated()) {
     this.getCanvasContext().clearRect(
       this.getRotatedLastX() * this.getScreenScaleX() - 1,
@@ -717,7 +623,7 @@ SL.GfxElement.prototype.clear = function(time, diff) {
 
 /** Perform any preRendering steps, return whether the element needs to be rendered.
 */
-SL.GfxElement.prototype.preRender = function(time, diff) {
+SL.GfxElementSet.prototype.preRender = function(time, diff) {
   if (!this.isHidden() && !this._flashHidden && this.isDirty()) return true;
   return false;
 };
@@ -726,7 +632,7 @@ SL.GfxElement.prototype.preRender = function(time, diff) {
 * The render method should be implemented in subclasses.
 * Time parameters provided for extension.
 */
-SL.GfxElement.prototype.render = function(time, diff) {
+SL.GfxElementSet.prototype.render = function(time, diff) {
   throw new Error("Not Implemented.");
 };
 
@@ -737,7 +643,7 @@ SL.GfxElement.prototype.render = function(time, diff) {
 * @param {number} time
 * @param {number} diff
 */
-SL.GfxElement.prototype.postRender = function(time, diff) {
+SL.GfxElementSet.prototype.postRender = function(time, diff) {
   this.setLastX( this.getX() );
   this.setLastY( this.getY() );
 
@@ -756,10 +662,10 @@ SL.GfxElement.prototype.postRender = function(time, diff) {
 
 /** Check whether this element collidesWith another element.
 * Compares the boundaries of this element and the other to check for overlap; if so return true, else return false.
-* @param {SL.GfxElement} element
+* @param {SL.GfxElementSet} element
 * @return {boolean}
 */
-SL.GfxElement.prototype.collidesWith = function(element) {
+SL.GfxElementSet.prototype.collidesWith = function(element) {
   var thisX = this.getCollisionBoxX();
   var thatX = element.getCollisionBoxX();
   var thisWidth = this.getCollisionBoxWidth();
@@ -798,7 +704,7 @@ SL.GfxElement.prototype.collidesWith = function(element) {
 * @param {number} y
 * @return {boolean}
 */
-SL.GfxElement.prototype.collidesWithCoordinates = function(x, y) {
+SL.GfxElementSet.prototype.collidesWithCoordinates = function(x, y) {
   var result = x >= this.getCollisionBoxX() &&
     x <= this.getCollisionBoxX() + this.getCollisionBoxWidth() &&
     y >= this.getCollisionBoxY() &&
@@ -810,7 +716,7 @@ SL.GfxElement.prototype.collidesWithCoordinates = function(x, y) {
 * @param {number} x
 * @return {boolean}
 */
-SL.GfxElement.prototype.collidesWithX = function(x) {
+SL.GfxElementSet.prototype.collidesWithX = function(x) {
   var result = x >= this.getCollisionBoxX() &&
     x <= this.getCollisionBoxX() + this.getCollisionBoxWidth();
   return result;
@@ -820,7 +726,7 @@ SL.GfxElement.prototype.collidesWithX = function(x) {
 * @param {number} x
 * @return {boolean}
 */
-SL.GfxElement.prototype.collidesWithY = function(y) {
+SL.GfxElementSet.prototype.collidesWithY = function(y) {
   var result = y >= this.getCollisionBoxY() &&
       y <= this.getCollisionBoxY() + this.getCollisionBoxHeight();
   return result;
@@ -829,7 +735,7 @@ SL.GfxElement.prototype.collidesWithY = function(y) {
 /** Returns the x value of the collision box.  Incorporates screen scale.
 * @return {number}
 */
-SL.GfxElement.prototype.getCollisionBoxX = function() {
+SL.GfxElementSet.prototype.getCollisionBoxX = function() {
   if (this.hasRotation()) return this.getRotatedScaledX() - 1;
   return this.getScaledX() - 1;
 };
@@ -837,7 +743,7 @@ SL.GfxElement.prototype.getCollisionBoxX = function() {
 /** Returns the y value of the collision box.  Incorporates screen scale.
 * @return {number}
 */
-SL.GfxElement.prototype.getCollisionBoxY = function() {
+SL.GfxElementSet.prototype.getCollisionBoxY = function() {
   if (this.hasRotation()) return this.getRotatedScaledY() - 1;
   return this.getScaledY() - 1;
 };
@@ -845,7 +751,7 @@ SL.GfxElement.prototype.getCollisionBoxY = function() {
 /** Returns the width value of the collision box.  Incorporates total scale.
 * @return {number}
 */
-SL.GfxElement.prototype.getCollisionBoxWidth = function() {
+SL.GfxElementSet.prototype.getCollisionBoxWidth = function() {
   if (this.hasRotation()) return this.getScaledDiagonalSize() + 2;
   return this.getScaledWidth() + 2;
 };
@@ -853,7 +759,7 @@ SL.GfxElement.prototype.getCollisionBoxWidth = function() {
 /** Returns the height value of the collision box.  Incorporates total scale.
 * @return {number}
 */
-SL.GfxElement.prototype.getCollisionBoxHeight = function() {
+SL.GfxElementSet.prototype.getCollisionBoxHeight = function() {
   if (this.hasRotation()) return this.getScaledDiagonalSize() + 2;
   return this.getScaledHeight() + 2;
 };
@@ -877,7 +783,7 @@ SL.GfxElement.prototype.getCollisionBoxHeight = function() {
 *   </ul>
 * @param {SL.Event}
 */
-SL.GfxElement.prototype.handleMouseEvent = function(event) {
+SL.GfxElementSet.prototype.handleMouseEvent = function(event) {
   var eventData = {
       x : event.data.x,
       y : event.data.y,
