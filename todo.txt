@@ -2,6 +2,8 @@ LpcElementSet
   base element set?
   finish LpcElementSet_GfxElementWrapper
   check namespaces
+  what about elements in motion?
+
 
 Tests
   ImageLoader

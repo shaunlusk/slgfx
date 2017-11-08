@@ -4,19 +4,23 @@ var SL = SL || {};
 * @return {boolean}
 */
 SL.GfxElementSet.prototype.isDirty = function() {
-  return this._dirty || this._hasCollision || this._hadCollisionPreviousFrame;
+  return this._activeElement.isDirty();
 };
 
 /**
 * Set whether element is dirty.  If dirty, the element will be cleared and redrawn during the next render phase.
 * @param {boolean} dirty
 */
-SL.GfxElementSet.prototype.setDirty = function(dirty) {this._dirty = dirty;};
+SL.GfxElementSet.prototype.setDirty = function(dirty) {
+  this._activeElement.setDirty(dirty);
+};
 
 /** Return whether this element is hidden.
 * @return {boolean}
 */
-SL.GfxElementSet.prototype.isHidden = function() {return this._hidden;};
+SL.GfxElementSet.prototype.isHidden = function() {
+  return this._activeElement.isDirty();
+};
 
 /**
 * Set whether element is hidden.
