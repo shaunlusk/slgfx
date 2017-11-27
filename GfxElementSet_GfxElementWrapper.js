@@ -26,18 +26,24 @@ SL.GfxElementSet.prototype.isHidden = function() {
 * Set whether element is hidden.
 * @param {boolean} hidden
 */
-SL.GfxElementSet.prototype.setHidden = function(hidden) {this._hidden = hidden;};
+SL.GfxElementSet.prototype.setHidden = function(hidden) {
+  this._activeElement.setHidden(hidden);
+};
 
 /** Return whether this element had a collision during the most recent update phase.
 * @return {boolean}
 */
-SL.GfxElementSet.prototype.hasCollision = function() {return this._hasCollision;};
+SL.GfxElementSet.prototype.hasCollision = function() {
+  return this._activeElement.hasCollision();
+};
 
 /**
 * Set whether the element has a collision. If a collision has occurred the element will be cleared and redrawn during the next render phase.
 * @param {boolean} hidden
 */
-SL.GfxElementSet.prototype.setHasCollision = function(hasCollision) {this._hasCollision = hasCollision;};
+SL.GfxElementSet.prototype.setHasCollision = function(hasCollision) {
+  return this._activeElement.setHasCollision(hasCollision);
+};
 
 /**
 * Return this element's zIndex.
