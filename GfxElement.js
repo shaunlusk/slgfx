@@ -879,32 +879,32 @@ SL.GfxElement.prototype.collidesWithY = function(y) {
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxX = function() {
-  if (this.hasRotation()) return this.getRotatedScaledX() - 1;
-  return this.getScaledX() - 1;
+  if (this.hasRotation()) return this.getRotatedScaledX();
+  return this.getScaledX();
 };
 
 /** Returns the y value of the collision box.  Incorporates screen scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxY = function() {
-  if (this.hasRotation()) return this.getRotatedScaledY() - 1;
-  return this.getScaledY() - 1;
+  if (this.hasRotation()) return this.getRotatedScaledY();
+  return this.getScaledY();
 };
 
 /** Returns the width value of the collision box.  Incorporates total scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxWidth = function() {
-  if (this.hasRotation()) return this.getScaledDiagonalSize() + 2;
-  return this.getScaledWidth() + 2;
+  if (this.hasRotation()) return this.getScaledDiagonalSize();
+  return this.getScaledWidth();
 };
 
 /** Returns the height value of the collision box.  Incorporates total scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxHeight = function() {
-  if (this.hasRotation()) return this.getScaledDiagonalSize() + 2;
-  return this.getScaledHeight() + 2;
+  if (this.hasRotation()) return this.getScaledDiagonalSize();
+  return this.getScaledHeight();
 };
 
 /** Fires events if the mouse event is on this element.<br />
