@@ -130,6 +130,11 @@ SL.GfxElement = function(screenContext, parentLayer, props) {
 SL.EventNotifierMixin.call(SL.GfxElement.prototype);
 SL.GfxElement.prototype._baseNotify = SL.GfxElement.prototype.notify;
 
+SL.GfxElement.AntiAliasCorrection = {
+  coordinateOffset: -0.5,
+  sizeAdjustment: 1
+};
+
 SL.GfxElement.prototype.notify = function(event) {
   this._baseNotify(event);
   this.getScreenContext().notify(event);
@@ -751,16 +756,16 @@ SL.GfxElement.prototype._updateMoveOrder = function(time,diff) {
 SL.GfxElement.prototype.clear = function(time, diff) {
   if (this.wasRotated()) {
     this.getCanvasContext().clearRect(
-      this.getRotatedLastX() * this.getScreenScaleX() - 1,
-      this.getRotatedLastY() * this.getScreenScaleY() - 1,
-      this.getLastDiagonalSize() * this.getTotalScaleX() + 2,
-      this.getLastDiagonalSize() * this.getTotalScaleY() + 2 );
+      this.getRotatedLastX() * this.getScreenScaleX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
+      this.getRotatedLastY() * this.getScreenScaleY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
+      this.getLastDiagonalSize() * this.getTotalScaleX() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment,
+      this.getLastDiagonalSize() * this.getTotalScaleY() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment);
   } else {
     this.getCanvasContext().clearRect(
-      this.getLastX() * this.getScreenScaleX() - 1,
-      this.getLastY() * this.getScreenScaleY() - 1,
-      this.getLastWidth() * this.getTotalScaleX() + 2,
-      this.getLastHeight() * this.getTotalScaleY() + 2 );
+      this.getLastX() * this.getScreenScaleX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
+      this.getLastY() * this.getScreenScaleY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
+      this.getLastWidth() * this.getTotalScaleX() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment,
+      this.getLastHeight() * this.getTotalScaleY() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment );
   }
 };
 
@@ -879,32 +884,32 @@ SL.GfxElement.prototype.collidesWithY = function(y) {
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxX = function() {
-  if (this.hasRotation()) return this.getRotatedScaledX();
-  return this.getScaledX();
+  if (this.hasRotation()) return this.getRotatedScaledX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset;
+  return this.getScaledX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset;
 };
 
 /** Returns the y value of the collision box.  Incorporates screen scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxY = function() {
-  if (this.hasRotation()) return this.getRotatedScaledY();
-  return this.getScaledY();
+  if (this.hasRotation()) return this.getRotatedScaledY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset;
+  return this.getScaledY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset;
 };
 
 /** Returns the width value of the collision box.  Incorporates total scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxWidth = function() {
-  if (this.hasRotation()) return this.getScaledDiagonalSize();
-  return this.getScaledWidth();
+  if (this.hasRotation()) return this.getScaledDiagonalSize() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment;
+  return this.getScaledWidth() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment;
 };
 
 /** Returns the height value of the collision box.  Incorporates total scale.
 * @return {number}
 */
 SL.GfxElement.prototype.getCollisionBoxHeight = function() {
-  if (this.hasRotation()) return this.getScaledDiagonalSize();
-  return this.getScaledHeight();
+  if (this.hasRotation()) return this.getScaledDiagonalSize() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment;
+  return this.getScaledHeight() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment;
 };
 
 /** Fires events if the mouse event is on this element.<br />
