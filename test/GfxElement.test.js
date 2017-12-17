@@ -574,7 +574,7 @@ describe("GfxElement", function() {
       var other = getGfxElement();
       other.getWidth = function() {return 5;};
       other.getHeight = function() {return 6;};
-      other.setX(6);  //
+      other.setX(5);  //
       element.getWidth = function() {return 5;};
       element.getHeight = function() {return 6;};
 

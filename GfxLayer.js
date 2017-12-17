@@ -22,6 +22,8 @@ SL.GfxLayer = function(screenContext, canvasContextWrapper, props) {
   this._dirtyElements.setInvertPriority(false);
   this._removedElements = {};
   this._zIndexCounter = 0;
+  // If "removeAllElements()" was called, this flag allows cleanup to do so more efficiently.
+  this._allElementsRemoved = false;
 };
 
 SL.GfxLayer.prototype = new SL.Layer();
@@ -42,26 +44,44 @@ SL.GfxLayer.prototype.addElement = function(element) {
 
 /** Remove an element from the layer.
 * @param {integer} id The id of the element to remove
+* @return {SL.GfxElement} The removed element, if found.
 */
 SL.GfxLayer.prototype.removeElementById = function(id) {
   var idx = SL.linSearch(this._elements, id, function(element,value){return element.getId() === value;});
   if (idx > -1) {
-    this._removedElements[this._elements[idx].getId()] = this._elements[idx];
-    var elem = this._elements[idx];
-    // ensure it gets cleared
-    elem.setDirty(true);
-    elem.setHidden(true);
-    this._dirtyElements.push(elem.getZIndexComparable());
-    return elem;
+    return this._removeElementByIndex(idx);
   }
   return null;
 };
 
 /** Remove an element from the layer.
 * @param {SL.GfxElement} element The element to remove
+* @return {SL.GfxElement} The removed element, if found.
 */
 SL.GfxLayer.prototype.removeElement = function(element) {
   return this.removeElementById(element.getId());
+};
+
+/** @private
+* Does not bounds check.
+*/
+SL.GfxLayer.prototype._removeElementByIndex = function(idx) {
+  this._removedElements[this._elements[idx].getId()] = this._elements[idx];
+  var elem = this._elements[idx];
+  // ensure it gets cleared
+  elem.setDirty(true);
+  elem.setHidden(true);
+  this._dirtyElements.push(elem.getZIndexComparable());
+  return elem;
+};
+
+/** Remove all elements from the layer.
+*/
+SL.GfxLayer.prototype.removeAllElements = function() {
+  for (var i = 0; i < this._elements.length; i++) {
+    this._removeElementByIndex(i);
+  }
+  this._allElementsRemoved = true;
 };
 
 /** Update the layer.
@@ -171,11 +191,17 @@ SL.GfxLayer.prototype.render = function(time,diff) {
 
 /** @private */
 SL.GfxLayer.prototype._cleanUp = function() {
-  Object.keys(this._removedElements).forEach(function(elementId) {
-    elementId = parseInt(elementId);
-    var idx = SL.linSearch(this._elements, elementId, function(element,value){return element.getId() === value;});
-    this._elements.splice(idx,1);
-  }.bind(this));
+  if (this._allElementsRemoved) {
+    this._elements = [];
+    this._allElementsRemoved = false;
+  } else {
+    Object.keys(this._removedElements).forEach(function(elementId) {
+      elementId = parseInt(elementId);
+      var idx = SL.linSearch(this._elements, elementId, function(element,value){return element.getId() === value;});
+      this._elements.splice(idx,1);
+    }.bind(this));
+  }
+
   this._removedElements = {};
   this._dirtyElements.clear();
 };
