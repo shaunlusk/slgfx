@@ -19,6 +19,9 @@ SL.LayerFactory.prototype.getLayer = function(parentScreen, type, canvasContextW
     case "GfxLayer":
       layer = new SL.GfxLayer(parentScreen, canvasContextWrapper, props);
       break;
+    case "BackgroundLayer":
+      layer = new SL.BackgroundLayer(parentScreen, canvasContextWrapper, props);
+      break;
     default:
       throw new Error("Unsupported Layer Type: " + type);
   }
