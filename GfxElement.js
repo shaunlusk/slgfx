@@ -130,9 +130,16 @@ SL.GfxElement = function(screenContext, parentLayer, props) {
 SL.EventNotifierMixin.call(SL.GfxElement.prototype);
 SL.GfxElement.prototype._baseNotify = SL.GfxElement.prototype.notify;
 
+/*
+* Canvas AntiAliasing tends to draw beyond the actual pixel bounds of an image, or
+* shape.  This helps slgfx correct for this behavior.
+* ALSO IMPORTANT - using fractions here tends to reduce performance (!?!)
+* on some basic benchmarks... so avoid them if possible.
+* (Benchmark on Firefox 57.0.2)
+*/
 SL.GfxElement.AntiAliasCorrection = {
-  coordinateOffset: -0.5,
-  sizeAdjustment: 1
+  coordinateOffset: -1,
+  sizeAdjustment: 2
 };
 
 SL.GfxElement.prototype.notify = function(event) {
