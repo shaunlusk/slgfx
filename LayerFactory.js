@@ -10,20 +10,31 @@ SL.ILayerFactory.prototype.getLayer = function(parentScreen, type, canvasContext
   throw new Error("getLayer() Not Implemented.");
 };
 
-
-SL.LayerFactory = function() {};
+SL.LayerFactory = function(registeredTypes) {
+  registeredTypes = registeredTypes || {};
+  this._registeredTypes = {};
+  Object.keys(SL.LayerFactory.DefaultTypes).forEach(function(key) {
+    this._registeredTypes[key] = SL.LayerFactory.DefaultTypes[key];
+  }.bind(this));
+  Object.keys(registeredTypes).forEach(function(key) {
+    this._registeredTypes[key] = registeredTypes[key];
+  }.bind(this));
+};
 
 SL.LayerFactory.prototype.getLayer = function(parentScreen, type, canvasContextWrapper, props) {
   var layer = null;
-  switch (type) {
-    case "GfxLayer":
-      layer = new SL.GfxLayer(parentScreen, canvasContextWrapper, props);
-      break;
-    case "BackgroundLayer":
-      layer = new SL.BackgroundLayer(parentScreen, canvasContextWrapper, props);
-      break;
-    default:
-      throw new Error("Unsupported Layer Type: " + type);
+  var ctor = this._registeredTypes[type];
+  if (ctor && SL.isFunction(ctor)) {
+    layer = ctor(parentScreen, canvasContextWrapper, props);
   }
   return layer;
+};
+
+SL.LayerFactory.DefaultTypes = {
+  "GfxLayer" : function(parentScreen, canvasContextWrapper, props) {
+    return new SL.GfxLayer(parentScreen, canvasContextWrapper, props);
+  },
+  "BackgroundLayer" : function(parentScreen, canvasContextWrapper, props) {
+    return new SL.BackgroundLayer(parentScreen, canvasContextWrapper, props);
+  }
 };
