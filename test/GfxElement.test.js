@@ -887,7 +887,6 @@ describe("GfxElement", function() {
 
       element.handleMouseEvent(event);
 
-      var result = SL.linSearch(results, expected, typeEqualityFn);
       assert(event.endEventPropagation === true, "should set endEventPropagation = true");
       done();
     });
