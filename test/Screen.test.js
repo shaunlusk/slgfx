@@ -709,4 +709,52 @@ describe("Screen", function() {
       done();
     });
   });
+  describe("_updateViewOrigins()", function() {
+    it("should update viewOriginX if there is a _pendingViewOriginX", function(done) {
+      var expected = 10;
+      scrn.setViewOriginX(expected);
+
+      scrn._updateViewOrigins();
+
+      assert(scrn.getViewOriginX() === expected, "should have updated viewOriginX");
+      done();
+    });
+    it("should not update viewOriginX if there is not a _pendingViewOriginX", function(done) {
+      scrn._updateViewOrigins();
+
+      assert(scrn.getViewOriginX() === 0, "should have updated viewOriginX");
+      done();
+    });
+    it("should update viewOriginY if there is a _pendingViewOriginY", function(done) {
+      var expected = 10;
+      scrn.setViewOriginY(expected);
+
+      scrn._updateViewOrigins();
+
+      assert(scrn.getViewOriginY() === expected, "should have updated viewOriginY");
+      done();
+    });
+    it("should not update viewOriginY if there is not a _pendingViewOriginY", function(done) {
+      scrn._updateViewOrigins();
+
+      assert(scrn.getViewOriginY() === 0, "should have updated viewOriginY");
+      done();
+    });
+    it("should set _pendingViewOriginX to null if there is a _pendingViewOriginX", function(done) {
+      scrn.setViewOriginX(10);
+
+      scrn._updateViewOrigins();
+
+      assert(scrn.getPendingViewOriginX() === null, "should have set _pendingViewOriginX to null");
+      done();
+    });
+    it("should set _pendingViewOriginY to null if there is a _pendingViewOriginY", function(done) {
+      scrn.setViewOriginY(10);
+
+      scrn._updateViewOrigins();
+
+      assert(scrn.getPendingViewOriginY() === null, "should have set _pendingViewOriginY to null");
+      done();
+    });
+  });
 });
