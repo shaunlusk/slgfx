@@ -614,6 +614,46 @@ describe("Screen", function() {
       assert(calledLayer2 === true, "should have propagated to layer2");
       done();
     });
+    it("should call handleMouseEvent layers in order from top to bottom", function(done) {
+      var calledLayer = "";
+      var layer1 = {
+        handleMouseEvent : function() {calledLayer += "1";}
+      };
+      var layer2 = {
+        handleMouseEvent : function() {calledLayer += "2";}
+      };
+      var layer3 = {
+        handleMouseEvent : function() {calledLayer += "3";}
+      };
+      scrn.addLayer(layer1);
+      scrn.addLayer(layer2);
+      scrn.addLayer(layer3);
+      var expected = "321";
+
+      scrn.propagateMouseEventThroughLayers({});
+
+      assert(calledLayer === expected,
+        "should have propagated to layers from top to bottom (expected order: " + expected +", actual: " + calledLayer + ")");
+      done();
+    });
+    it("should not call handleMouseEvent on lower layer after event propagation has been ended", function(done) {
+      var calledLayer1 = false;
+      var layer1 = {
+        handleMouseEvent : function(e) {calledLayer1 = true;}
+      };
+      var calledLayer2 = false;
+      var layer2 = {
+        handleMouseEvent : function(e) {calledLayer2 = true; e.endEventPropagation = true;}
+      };
+      scrn.addLayer(layer1);
+      scrn.addLayer(layer2);
+
+      scrn.propagateMouseEventThroughLayers({});
+
+      assert(calledLayer2 === true, "should have propagated to layer2");
+      assert(calledLayer1 === false, "should NOT have propagated to layer1");
+      done();
+    });
   });
   describe("#getXFromMouseEvent()", function() {
     it("should return y value", function(done) {

@@ -793,10 +793,11 @@ describe("GfxElement", function() {
     });
   });
   describe("#handleMouseEvent()", function() {
-    var result = null;
+    var results = [];
+    var typeEqualityFn = function(a,b) {return a === b;};
     beforeEach(function() {
       element.notify = function(event) {
-        result = event.type;
+        results.push(event.type);
       };
       element.collidesWithCoordinates = function() {
         return true;
@@ -807,10 +808,13 @@ describe("GfxElement", function() {
         type : SL.EventType.MOUSE_MOVE,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
+      element.isMouseOver = function() {return true;};
+      var expected = SL.EventType.MOUSE_MOVE_OVER_ELEMENT;
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_MOVE_OVER_ELEMENT, "should have notified with MOUSE_MOVE_OVER_ELEMENT");
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(result > -1, "should have notified with " + expected);
       done();
     });
     it("should notify MOUSE_DOWN_ON_ELEMENT", function(done) {
@@ -818,10 +822,12 @@ describe("GfxElement", function() {
         type : SL.EventType.MOUSE_DOWN,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
+      var expected = SL.EventType.MOUSE_DOWN_ON_ELEMENT;
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_DOWN_ON_ELEMENT, "should have notified with MOUSE_DOWN_ON_ELEMENT");
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(result > -1, "should have notified with " + expected);
       done();
     });
     it("should notify MOUSE_UP_ON_ELEMENT", function(done) {
@@ -829,10 +835,60 @@ describe("GfxElement", function() {
         type : SL.EventType.MOUSE_UP,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
+      var expected = SL.EventType.MOUSE_UP_ON_ELEMENT;
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_UP_ON_ELEMENT, "should have notified with MOUSE_UP_ON_ELEMENT");
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(result > -1, "should have notified with " + expected);
+      done();
+    });
+    it("should notify MOUSE_ENTER_ELEMENT", function(done) {
+      var event = {
+        type : SL.EventType.MOUSE_MOVE,
+        data : {x:0, y:0, row:0, col:0, time:0}
+      };
+      element.isMouseOver = function() {return false;};
+      var expected = SL.EventType.MOUSE_ENTER_ELEMENT;
+
+      element.handleMouseEvent(event);
+
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(result > -1, "should have notified with " + expected);
+      done();
+    });
+    it("should notify MOUSE_EXIT_ELEMENT", function(done) {
+      var event = {
+        type : SL.EventType.MOUSE_MOVE,
+        data : {x:0, y:0, row:0, col:0, time:0}
+      };
+      element.isMouseOver = function() {return true;};
+      element.collidesWithCoordinates = function() {return false;};
+      var expected = SL.EventType.MOUSE_EXIT_ELEMENT;
+
+      element.handleMouseEvent(event);
+
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(result > -1, "should have notified with " + expected);
+      done();
+    });
+    it("should endEventPropagation", function(done) {
+      var event = {
+        type : SL.EventType.MOUSE_MOVE,
+        data : {x:0, y:0, row:0, col:0, time:0}
+      };
+      element.isMouseOver = function() {return true;};
+      element.collidesWithCoordinates = function() {return false;};
+      element.notify = function(event) {
+        results.push(event.type);
+        event.endEventPropagation = true;
+      };
+      var expected = SL.EventType.MOUSE_EXIT_ELEMENT;
+
+      element.handleMouseEvent(event);
+
+      var result = SL.linSearch(results, expected, typeEqualityFn);
+      assert(event.endEventPropagation === true, "should set endEventPropagation = true");
       done();
     });
   });
