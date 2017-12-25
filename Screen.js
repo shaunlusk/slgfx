@@ -333,7 +333,7 @@ SL.Screen.prototype.render = function(time) {
 
 /** @private */
 SL.Screen.prototype._handleMouseMoveEvent = function(time) {
-  var event = new SL.Event(
+  var event = new SL.MouseEvent(
     SL.EventType.MOUSE_MOVE,
     {
       x : this.getUnScaledX(this._mouseX),
@@ -422,7 +422,7 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
   var y = this.getUnScaledY(scaledY);
 
   var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
-  var event = new SL.Event(
+  var event = new SL.MouseEvent(
     type,
     {
       x : x,
@@ -441,7 +441,9 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
 
 /** @private */
 SL.Screen.prototype.propagateMouseEventThroughLayers = function(event) {
-  for (var i = 0; i < this._layers.length; i++) {
+  // handle top-down
+  for (var i = this._layers.length - 1; i >= 0; i--) {
+    if (event.endEventPropagation) return;
     this._layers[i].handleMouseEvent(event);
   }
 };

@@ -866,14 +866,6 @@ describe("GfxElement", function() {
     });
   });
   describe("#notify()", function() {
-    it("should throw error", function(done) {
-      var event = {type:"blerg"};
-
-      var result = throwsError(element.notify.bind(element,event));
-
-      assert(result === true, "should have thrown error");
-      done();
-    });
     it("should notify listeners", function(done) {
       var event = {type:"blerg"};
       element.getScreenContext = function() {

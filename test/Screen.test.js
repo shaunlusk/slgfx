@@ -185,14 +185,6 @@ describe("Screen", function() {
     });
   });
   describe("#notify()", function() {
-    it("should throw error", function(done) {
-      var event = {type:"blerg"};
-
-      var result = throwsError(scrn.notify.bind(scrn,event));
-
-      assert(result === true, "should have thrown error");
-      done();
-    });
     it("should notify listeners", function(done) {
       var event = {type:"blerg"};
       scrn.getScreenContext = function() {
@@ -616,7 +608,7 @@ describe("Screen", function() {
       scrn.addLayer(layer1);
       scrn.addLayer(layer2);
 
-      scrn.propagateMouseEventThroughLayers();
+      scrn.propagateMouseEventThroughLayers({});
 
       assert(calledLayer1 === true, "should have propagated to layer1");
       assert(calledLayer2 === true, "should have propagated to layer2");
