@@ -637,4 +637,76 @@ describe("Screen", function() {
       done();
     });
   });
+  describe("#setViewOriginX()", function() {
+    it("should set _pendingViewOriginX", function(done) {
+      var expected = 10;
+
+      scrn.setViewOriginX(expected);
+
+      assert(expected === scrn.getPendingViewOriginX(), "should have set _pendingViewOriginX");
+      done();
+    });
+    it("should not set viewOriginX", function(done) {
+      var expected = 10;
+
+      scrn.setViewOriginX(expected);
+
+      assert(expected !== scrn.getViewOriginX(), "should not have set ViewOriginX");
+      done();
+    });
+    it("should call setViewOriginX for each layer", function(done) {
+      var expected = 10;
+      calledLayer1 = false;
+      calledLayer2 = false;
+      scrn.getLayers = function() {
+        var layers = [
+          {setViewOriginX:function(val) {if (val === expected) calledLayer1 = true;}},
+          {setViewOriginX:function(val) {if (val === expected) calledLayer2 = true;}}
+        ];
+        return layers;
+      };
+
+      scrn.setViewOriginX(expected);
+
+      assert(calledLayer1 === true, "should have called setViewOriginX on layer 1");
+      assert(calledLayer2 === true, "should have called setViewOriginX on layer 2");
+      done();
+    });
+  });
+  describe("#setViewOriginY()", function() {
+    it("should set _pendingViewOriginY", function(done) {
+      var expected = 10;
+
+      scrn.setViewOriginY(expected);
+
+      assert(expected === scrn.getPendingViewOriginY(), "should have set _pendingViewOriginY");
+      done();
+    });
+    it("should not set viewOriginY", function(done) {
+      var expected = 10;
+
+      scrn.setViewOriginY(expected);
+
+      assert(expected !== scrn.getViewOriginY(), "should not have set ViewOriginY");
+      done();
+    });
+    it("should call setViewOriginY for each layer", function(done) {
+      var expected = 10;
+      calledLayer1 = false;
+      calledLayer2 = false;
+      scrn.getLayers = function() {
+        var layers = [
+          {setViewOriginY:function(val) {if (val === expected) calledLayer1 = true;}},
+          {setViewOriginY:function(val) {if (val === expected) calledLayer2 = true;}}
+        ];
+        return layers;
+      };
+
+      scrn.setViewOriginY(expected);
+
+      assert(calledLayer1 === true, "should have called setViewOriginY on layer 1");
+      assert(calledLayer2 === true, "should have called setViewOriginY on layer 2");
+      done();
+    });
+  });
 });

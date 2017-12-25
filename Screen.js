@@ -92,7 +92,7 @@ SL.Screen.prototype.initialize = function() {
 SL.Screen.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) {
-    this._layers.forEach(function(layer) {
+    this.getLayers().forEach(function(layer) {
       layer.setViewOriginX(viewOriginX);
     });
   }
@@ -100,7 +100,7 @@ SL.Screen.prototype.setViewOriginX = function(viewOriginX) {
 SL.Screen.prototype.setViewOriginY = function(viewOriginY) {
   this._pendingViewOriginY = viewOriginY;
   if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) {
-    this._layers.forEach(function(layer) {
+    this.getLayers().forEach(function(layer) {
       layer.setViewOriginY(viewOriginY);
     });
   }
