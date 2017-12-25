@@ -37,7 +37,6 @@ SL.Layer.prototype.isDirty = function() {return this._dirty;};
 */
 SL.Layer.prototype.setDirty = function(dirty) {this._dirty = dirty;};
 
-
 SL.Layer.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) this.setDirty(true);

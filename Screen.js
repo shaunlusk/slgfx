@@ -43,6 +43,10 @@ SL.Screen = function(targetDiv, layerFactory, config) {
   this._fpsMonitorArray = [];
   this._fpsMonitorIndex = 0;
 
+  this._viewOriginX = 0;
+  this._viewOriginY = 0;
+  this._pendingViewOriginX = null;
+  this._pendingViewOriginY = null;
   this._layers = [];
 
   this.EventNotifierMixinInitializer({
@@ -84,6 +88,30 @@ SL.Screen.prototype.initialize = function() {
   this._prepareDiv();
   this._setupEventListeners();
 };
+
+SL.Screen.prototype.setViewOriginX = function(viewOriginX) {
+  this._pendingViewOriginX = viewOriginX;
+  if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) {
+    this._layers.forEach(function(layer) {
+      layer.setViewOriginX(viewOriginX);
+    });
+  }
+};
+SL.Screen.prototype.setViewOriginY = function(viewOriginY) {
+  this._pendingViewOriginY = viewOriginY;
+  if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) {
+    this._layers.forEach(function(layer) {
+      layer.setViewOriginY(viewOriginY);
+    });
+  }
+};
+
+SL.Screen.prototype.getViewOriginX = function() {return this._viewOriginX;};
+SL.Screen.prototype.getViewOriginY = function() {return this._viewOriginY;};
+
+SL.Screen.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
+SL.Screen.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
+
 
 /** @private */
 SL.Screen.prototype._prepareDiv = function() {
@@ -322,6 +350,7 @@ SL.Screen.prototype.render = function(time) {
   this._update(time,diff);
   this._render(time,diff);
 
+  this._updateViewOrigins();
   this._doAfterRenderEvents(time, diff);
 
   elapsed = Date.now() - elapsed;
@@ -331,17 +360,30 @@ SL.Screen.prototype.render = function(time) {
   requestAnimationFrame(this.render.bind(this));
 };
 
+SL.Screen.prototype._updateViewOrigins = function() {
+  if (!SL.isNullOrUndefined(this.getPendingViewOriginX())) {
+    this._viewOriginX = this.getPendingViewOriginX();
+    this._pendingViewOriginX = null;
+  }
+  if (!SL.isNullOrUndefined(this.getPendingViewOriginY())) {
+    this._viewOriginY = this.getPendingViewOriginY();
+    this._pendingViewOriginY = null;
+  }
+};
+
 /** @private */
 SL.Screen.prototype._handleMouseMoveEvent = function(time) {
+  var unscaledX = this.getUnScaledX(this._mouseX);
+  var unscaledY = this.getUnScaledX(this._mouseY);
   var event = new SL.Event(
     SL.EventType.MOUSE_MOVE,
     {
-      x : this.getUnScaledX(this._mouseX),
-      y : this.getUnScaledX(this._mouseY),
-      row : this._mouseRow,
-      col : this._mouseCol,
-      scaledX : this._mouseX,
-      scaledY : this._mouseY,
+      x : this.getViewOriginAdjustedX(unscaledX),
+      y : this.getViewOriginAdjustedX(unscaledY),
+      unscaledX : unscaledX,
+      unscaledY : unscaledY,
+      rawX : this._mouseX,
+      rawY : this._mouseY,
     },
     time
   );
@@ -418,8 +460,11 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
   if (scaledX < 0 || scaledX >= this._width || scaledY < 0 || scaledY >= this._height) {
     return false;
   }
-  var x = this.getUnScaledX(scaledX);
-  var y = this.getUnScaledY(scaledY);
+  var unscaledX = this.getUnScaledX(scaledX);
+  var unscaledY = this.getUnScaledY(scaledY);
+
+  var x = this.getViewOriginAdjustedX(unscaledX);
+  var y = this.getViewOriginAdjustedY(unscaledY);
 
   var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
   var event = new SL.Event(
@@ -427,9 +472,11 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
     {
       x : x,
       y : y,
+      unscaledX : unscaledX,
+      unscaledY : unscaledY,
       baseEvent : e,
-      scaledX : scaledX,
-      scaledY : scaledY
+      rawX : scaledX,
+      rawY : scaledY
     });
   this.notify(event);
 
@@ -461,15 +508,33 @@ SL.Screen.prototype.getYFromMouseEvent = function(e) {
 };
 
 /** Return an x value with scale removed.
-* @param {Event} e Mouse Event
+* @param {int} x The x coordinate.
+* @return {int} The unscaled x.
 */
 SL.Screen.prototype.getUnScaledX = function(x) {
   return Math.floor(x / this._scaleX);
 };
 
-/** Return an x value with scale removed.
-* @param {Event} e Mouse Event
+/** Return a y value with scale removed.
+* @param {int} y The y coordinate.
+* @return {int} The unscaled y.
 */
 SL.Screen.prototype.getUnScaledY = function(y) {
   return Math.floor(y / this._scaleY);
+};
+
+/** Return an x value adjusted for view origin.
+* @param {int} x The x coordinate.
+* @return {int} The view origin adjusted x.
+*/
+SL.Screen.prototype.getViewOriginAdjustedX = function(x) {
+  return x - this.getViewOriginX();
+};
+
+/** Return a y value adjusted for view origin.
+* @param {int} y The y coordinate.
+* @return {int} The view origin adjusted y.
+*/
+SL.Screen.prototype.getViewOriginAdjustedY = function(y) {
+  return y - this.getViewOriginY();
 };

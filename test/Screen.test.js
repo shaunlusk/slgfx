@@ -185,14 +185,6 @@ describe("Screen", function() {
     });
   });
   describe("#notify()", function() {
-    it("should throw error", function(done) {
-      var event = {type:"blerg"};
-
-      var result = throwsError(scrn.notify.bind(scrn,event));
-
-      assert(result === true, "should have thrown error");
-      done();
-    });
     it("should notify listeners", function(done) {
       var event = {type:"blerg"};
       scrn.getScreenContext = function() {
