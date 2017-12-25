@@ -547,7 +547,7 @@ describe("Screen", function() {
       assert(eventType === SL.EventType.MOUSE_UP, "should have notified mouseup event");
       done();
     });
-    it("should notify mouseup", function(done) {
+    it("should notify mousedown", function(done) {
       var e = {
         type:"mousedown",
         button:1
@@ -592,6 +592,40 @@ describe("Screen", function() {
       var result = scrn.handleMouseEvent(e);
 
       assert(result === false, "should have returned false");
+      done();
+    });
+    it("should return proper coordinate data", function(done) {
+      var x = 64;
+      var y = 73;
+      var e = {
+        type:"mousedown",
+        button:1,
+        pageX:x,
+        pageY:y
+      };
+      var result;
+      scrn.notify = function(e) {result = e;};
+      scrn._scaleX = 2;
+      scrn._scaleY = 3;
+      scrn._viewOriginX = 15;
+      scrn._viewOriginY = 13;
+      var expected = {
+        x : 23 - scrn._viewOriginX,  // 23 - 15 = 8
+        y : 18 - scrn._viewOriginY, // 18 - 13 = 5
+        unscaledX : Math.floor(47 / scrn._scaleX),  // 47 * 2 = 23
+        unscaledY : Math.floor(56 / scrn._scaleY), // 56 / 3 = 18
+        rawX : x - (targetDiv.offsetLeft + scrn._borderSize), // 64 - 17 = 47
+        rawY : y - (targetDiv.offsetTop + scrn._borderSize) // 73 - 17 = 56
+      };
+
+      scrn.handleMouseEvent(e);
+
+      assert(result.data.x === expected.x, "expected " + expected.x + ", actual " + result.data.x);
+      assert(result.data.y === expected.y, "expected " + expected.y + ", actual " + result.data.y);
+      assert(result.data.unscaledX === expected.unscaledX, "expected " + expected.unscaledX + ", actual " + result.data.unscaledX);
+      assert(result.data.unscaledY === expected.unscaledY, "expected " + expected.unscaledY + ", actual " + result.data.unscaledY);
+      assert(result.data.rawX === expected.rawX, "expected " + expected.rawX + ", actual " + result.data.rawX);
+      assert(result.data.rawY === expected.rawY, "expected " + expected.rawY + ", actual " + result.data.rawY);
       done();
     });
   });
