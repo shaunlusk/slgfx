@@ -512,7 +512,7 @@ SL.Screen.prototype.getYFromMouseEvent = function(e) {
 * @return {int} The unscaled x.
 */
 SL.Screen.prototype.getUnScaledX = function(x) {
-  return Math.floor(x / this._scaleX);
+  return Math.floor(x / this.getScaleX());
 };
 
 /** Return a y value with scale removed.
@@ -520,7 +520,7 @@ SL.Screen.prototype.getUnScaledX = function(x) {
 * @return {int} The unscaled y.
 */
 SL.Screen.prototype.getUnScaledY = function(y) {
-  return Math.floor(y / this._scaleY);
+  return Math.floor(y / this.getScaleY());
 };
 
 /** Return an x value adjusted for view origin.
