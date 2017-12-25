@@ -373,18 +373,11 @@ SL.Screen.prototype._updateViewOrigins = function() {
 
 /** @private */
 SL.Screen.prototype._handleMouseMoveEvent = function(time) {
-  var unscaledX = this.getUnScaledX(this._mouseX);
-  var unscaledY = this.getUnScaledY(this._mouseY);
+  var coordinateData = this._getCoordinateDataForMouseEvent(this._mouseX, this._mouseY);
+
   var event = new SL.Event(
     SL.EventType.MOUSE_MOVE,
-    {
-      x : this.getViewOriginAdjustedX(unscaledX),
-      y : this.getViewOriginAdjustedY(unscaledY),
-      unscaledX : unscaledX,
-      unscaledY : unscaledY,
-      rawX : this._mouseX,
-      rawY : this._mouseY,
-    },
+    coordinateData,
     time
   );
   this.notify(event);
@@ -449,6 +442,24 @@ SL.Screen.prototype.handleMouseMoveEvent = function(e) {
   this._mouseY = y;
 };
 
+/** @private */
+SL.Screen.prototype._getCoordinateDataForMouseEvent = function(scaledX, scaledY) {
+  var viewOriginAdjustedX = this.getViewOriginAdjustedX(scaledX);
+  var viewOriginAdjustedY = this.getViewOriginAdjustedY(scaledY);
+
+  var x = this.getUnScaledX(viewOriginAdjustedX);
+  var y = this.getUnScaledY(viewOriginAdjustedY);
+  var data = {
+    x : x,
+    y : y,
+    viewOriginAdjustedX : viewOriginAdjustedX,
+    viewOriginAdjustedY : viewOriginAdjustedY,
+    rawX : scaledX,
+    rawY : scaledY
+  };
+  return data;
+};
+
 /** Handles mouse up and mouse down events; notifies any local handlers and propagates the event to all layers.
 * @param {Event} e The mouse event
 */
@@ -460,24 +471,11 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
   if (scaledX < 0 || scaledX >= this._width || scaledY < 0 || scaledY >= this._height) {
     return false;
   }
-  var unscaledX = this.getUnScaledX(scaledX);
-  var unscaledY = this.getUnScaledY(scaledY);
 
-  var x = this.getViewOriginAdjustedX(unscaledX);
-  var y = this.getViewOriginAdjustedY(unscaledY);
-
+  var data = this._getCoordinateDataForMouseEvent(scaledX, scaledY);
+  data.baseEvent = e;
   var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
-  var event = new SL.Event(
-    type,
-    {
-      x : x,
-      y : y,
-      unscaledX : unscaledX,
-      unscaledY : unscaledY,
-      baseEvent : e,
-      rawX : scaledX,
-      rawY : scaledY
-    });
+  var event = new SL.Event(type, data);
   this.notify(event);
 
   // propagate through layers

@@ -322,34 +322,25 @@ describe("Screen", function() {
       assert(scrn._mouseMoved === false, "should have reset mouseMoved.");
       done();
     });
-    it("should return proper coordinate data", function(done) {
+    it("should return coordinate data", function(done) {
       var x = 64;
       var y = 73;
+      var e = {
+        type:"mousedown",
+        button:1,
+        pageX:x,
+        pageY:y
+      };
       var result;
-      scrn._mouseX = x - (targetDiv.offsetLeft + scrn._borderSize);// 64 - 17 = 47
-      scrn._mouseY = y - (targetDiv.offsetTop + scrn._borderSize); // 73 - 17 = 56
       scrn.notify = function(e) {result = e;};
-      scrn._scaleX = 2;
-      scrn._scaleY = 3;
-      scrn._viewOriginX = 15;
-      scrn._viewOriginY = 13;
+      scrn._getCoordinateDataForMouseEvent = function() {return {check:true};};
       var expected = {
-        x : 23 - scrn._viewOriginX,  // 23 - 15 = 8
-        y : 18 - scrn._viewOriginY, // 18 - 13 = 5
-        unscaledX : Math.floor(47 / scrn._scaleX),  // 47 * 2 = 23
-        unscaledY : Math.floor(56 / scrn._scaleY), // 56 / 3 = 18
-        rawX : scrn._mouseX,
-        rawY : scrn._mouseY
+        check : true
       };
 
-      scrn._handleMouseMoveEvent(1);
+      scrn.handleMouseEvent(e);
 
-      assert(result.data.x === expected.x, "x : expected " + expected.x + ", actual " + result.data.x);
-      assert(result.data.y === expected.y, "y : expected " + expected.y + ", actual " + result.data.y);
-      assert(result.data.unscaledX === expected.unscaledX, "unscaledX : expected " + expected.unscaledX + ", actual " + result.data.unscaledX);
-      assert(result.data.unscaledY === expected.unscaledY, "unscaledY : expected " + expected.unscaledY + ", actual " + result.data.unscaledY);
-      assert(result.data.rawX === expected.rawX, "rawX : expected " + expected.rawX + ", actual " + result.data.rawX);
-      assert(result.data.rawY === expected.rawY, "rawY : expected " + expected.rawY + ", actual " + result.data.rawY);
+      assert(result.data.check === expected.check, "should have set event data");
       done();
     });
   });
@@ -428,6 +419,34 @@ describe("Screen", function() {
       done();
     });
   });
+  describe("#_getCoordinateDataForMouseEvent", function() {
+    it("should calculate coordinate data", function(done) {
+      var x = 47;
+      var y = 56;
+      scrn._scaleX = 2;
+      scrn._scaleY = 3;
+      scrn._viewOriginX = 15;
+      scrn._viewOriginY = 13;
+      var expected = {
+        x : Math.floor(32 / scrn._scaleX),  // 32 / 2 = 16
+        y : Math.floor(43 / scrn._scaleY), // 43 / 3 = 14
+        viewOriginAdjustedX : 47 - scrn._viewOriginX, // 47 - 15 = 32
+        viewOriginAdjustedY : 56 - scrn._viewOriginY, // 56 - 13 = 43
+        rawX : x,
+        rawY : y
+      };
+
+      var result = scrn._getCoordinateDataForMouseEvent(x, y);
+
+      assert(result.x === expected.x, "expected " + expected.x + ", actual " + result.x);
+      assert(result.y === expected.y, "expected " + expected.y + ", actual " + result.y);
+      assert(result.unscaledX === expected.unscaledX, "expected " + expected.unscaledX + ", actual " + result.unscaledX);
+      assert(result.unscaledY === expected.unscaledY, "expected " + expected.unscaledY + ", actual " + result.unscaledY);
+      assert(result.rawX === expected.rawX, "expected " + expected.rawX + ", actual " + result.rawX);
+      assert(result.rawY === expected.rawY, "expected " + expected.rawY + ", actual " + result.rawY);
+      done();
+    });
+  });
   describe("#handleMouseMoveEvent()", function() {
     it("should not update _mouseMoved if paused", function(done) {
       var e = {};
@@ -501,7 +520,7 @@ describe("Screen", function() {
     });
   });
   describe("#handleMouseEvent()", function() {
-    it("should not update _mouseMoved if paused", function(done) {
+    it("should not propagate if paused", function(done) {
       var e = {};
       var calledPropagate = false;
       scrn.setPaused(true);
@@ -624,7 +643,7 @@ describe("Screen", function() {
       assert(result === false, "should have returned false");
       done();
     });
-    it("should return proper coordinate data", function(done) {
+    it("should include coordinate data", function(done) {
       var x = 64;
       var y = 73;
       var e = {
@@ -635,27 +654,14 @@ describe("Screen", function() {
       };
       var result;
       scrn.notify = function(e) {result = e;};
-      scrn._scaleX = 2;
-      scrn._scaleY = 3;
-      scrn._viewOriginX = 15;
-      scrn._viewOriginY = 13;
+      scrn._getCoordinateDataForMouseEvent = function() {return {check:true};};
       var expected = {
-        x : 23 - scrn._viewOriginX,  // 23 - 15 = 8
-        y : 18 - scrn._viewOriginY, // 18 - 13 = 5
-        unscaledX : Math.floor(47 / scrn._scaleX),  // 47 * 2 = 23
-        unscaledY : Math.floor(56 / scrn._scaleY), // 56 / 3 = 18
-        rawX : x - (targetDiv.offsetLeft + scrn._borderSize), // 64 - 17 = 47
-        rawY : y - (targetDiv.offsetTop + scrn._borderSize) // 73 - 17 = 56
+        check : true
       };
 
       scrn.handleMouseEvent(e);
 
-      assert(result.data.x === expected.x, "expected " + expected.x + ", actual " + result.data.x);
-      assert(result.data.y === expected.y, "expected " + expected.y + ", actual " + result.data.y);
-      assert(result.data.unscaledX === expected.unscaledX, "expected " + expected.unscaledX + ", actual " + result.data.unscaledX);
-      assert(result.data.unscaledY === expected.unscaledY, "expected " + expected.unscaledY + ", actual " + result.data.unscaledY);
-      assert(result.data.rawX === expected.rawX, "expected " + expected.rawX + ", actual " + result.data.rawX);
-      assert(result.data.rawY === expected.rawY, "expected " + expected.rawY + ", actual " + result.data.rawY);
+      assert(result.data.check === expected.check, "should have set event data");
       done();
     });
   });
