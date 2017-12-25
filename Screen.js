@@ -374,12 +374,12 @@ SL.Screen.prototype._updateViewOrigins = function() {
 /** @private */
 SL.Screen.prototype._handleMouseMoveEvent = function(time) {
   var unscaledX = this.getUnScaledX(this._mouseX);
-  var unscaledY = this.getUnScaledX(this._mouseY);
+  var unscaledY = this.getUnScaledY(this._mouseY);
   var event = new SL.Event(
     SL.EventType.MOUSE_MOVE,
     {
       x : this.getViewOriginAdjustedX(unscaledX),
-      y : this.getViewOriginAdjustedX(unscaledY),
+      y : this.getViewOriginAdjustedY(unscaledY),
       unscaledX : unscaledX,
       unscaledY : unscaledY,
       rawX : this._mouseX,

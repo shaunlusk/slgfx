@@ -322,6 +322,36 @@ describe("Screen", function() {
       assert(scrn._mouseMoved === false, "should have reset mouseMoved.");
       done();
     });
+    it("should return proper coordinate data", function(done) {
+      var x = 64;
+      var y = 73;
+      var result;
+      scrn._mouseX = x - (targetDiv.offsetLeft + scrn._borderSize);// 64 - 17 = 47
+      scrn._mouseY = y - (targetDiv.offsetTop + scrn._borderSize); // 73 - 17 = 56
+      scrn.notify = function(e) {result = e;};
+      scrn._scaleX = 2;
+      scrn._scaleY = 3;
+      scrn._viewOriginX = 15;
+      scrn._viewOriginY = 13;
+      var expected = {
+        x : 23 - scrn._viewOriginX,  // 23 - 15 = 8
+        y : 18 - scrn._viewOriginY, // 18 - 13 = 5
+        unscaledX : Math.floor(47 / scrn._scaleX),  // 47 * 2 = 23
+        unscaledY : Math.floor(56 / scrn._scaleY), // 56 / 3 = 18
+        rawX : scrn._mouseX,
+        rawY : scrn._mouseY
+      };
+
+      scrn._handleMouseMoveEvent(1);
+
+      assert(result.data.x === expected.x, "x : expected " + expected.x + ", actual " + result.data.x);
+      assert(result.data.y === expected.y, "y : expected " + expected.y + ", actual " + result.data.y);
+      assert(result.data.unscaledX === expected.unscaledX, "unscaledX : expected " + expected.unscaledX + ", actual " + result.data.unscaledX);
+      assert(result.data.unscaledY === expected.unscaledY, "unscaledY : expected " + expected.unscaledY + ", actual " + result.data.unscaledY);
+      assert(result.data.rawX === expected.rawX, "rawX : expected " + expected.rawX + ", actual " + result.data.rawX);
+      assert(result.data.rawY === expected.rawY, "rawY : expected " + expected.rawY + ", actual " + result.data.rawY);
+      done();
+    });
   });
   describe("#_updateFps()", function() {
     it("should add fps to _fpsMonitorArray", function(done) {
