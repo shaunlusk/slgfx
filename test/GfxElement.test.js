@@ -835,6 +835,18 @@ describe("GfxElement", function() {
       assert(result === SL.EventType.MOUSE_UP_ON_ELEMENT, "should have notified with MOUSE_UP_ON_ELEMENT");
       done();
     });
+    it("should endEventPropagation of originating event", function(done) {
+      var event = {
+        type : SL.EventType.MOUSE_UP,
+        data : {x:0, y:0, row:0, col:0, time:0}
+      };
+      element.notify = function(e) {e.endEventPropagation = true;};
+
+      element.handleMouseEvent(event);
+
+      assert(event.endEventPropagation === true, "should have ended event propagation");
+      done();
+    });
   });
   describe("#on()", function(){
     it("should add callback to list", function(done) {

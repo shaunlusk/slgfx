@@ -948,9 +948,10 @@ SL.GfxElement.prototype.handleMouseEvent = function(event) {
       scaledY : event.data.scaledY,
       element : this
   };
+  var secondaryEvents = [];
   if (this.collidesWithCoordinates(event.data.scaledX, event.data.scaledY)) {
     if (!this.isMouseOver()) {
-      this.notify(new SL.Event(
+      secondaryEvents.push(new SL.MouseEvent(
         SL.EventType.MOUSE_ENTER_ELEMENT,
         eventData,
         event.data.time
@@ -970,20 +971,25 @@ SL.GfxElement.prototype.handleMouseEvent = function(event) {
         type = SL.EventType.MOUSE_UP_ON_ELEMENT;
         break;
     }
-    var thisevent = new SL.Event(
+    secondaryEvents.push(new SL.MouseEvent(
       type,
       eventData,
       event.data.time
-    );
-    this.notify(thisevent);
+    ));
   } else {
     if (this.isMouseOver()) {
-      this.notify(new SL.Event(
+      secondaryEvents.push(new SL.MouseEvent(
         SL.EventType.MOUSE_EXIT_ELEMENT,
         eventData,
         event.data.time
       ));
       this._mouseIsOver = false;
     }
+  }
+  for (var i = 0; i < secondaryEvents.length; i++) {
+    var secondaryEvent = secondaryEvents[i];
+    this.notify(secondaryEvent);
+    if (secondaryEvent.endEventPropagation)
+      event.endEventPropagation = true;
   }
 };
