@@ -325,12 +325,6 @@ describe("Screen", function() {
     it("should return coordinate data", function(done) {
       var x = 64;
       var y = 73;
-      var e = {
-        type:"mousedown",
-        button:1,
-        pageX:x,
-        pageY:y
-      };
       var result;
       scrn.notify = function(e) {result = e;};
       scrn._getCoordinateDataForMouseEvent = function() {return {check:true};};
@@ -338,9 +332,20 @@ describe("Screen", function() {
         check : true
       };
 
-      scrn.handleMouseEvent(e);
+      scrn._handleMouseMoveEvent(1);
 
       assert(result.data.check === expected.check, "should have set event data");
+      done();
+    });
+    it("should not notify if endEventPropagation becomes set", function(done) {
+      var calledIt = false;
+      scrn.propagateMouseEventThroughLayers = function(e) {e.endEventPropagation = true;};
+      var eventType = null;
+      scrn.notify = function(event) {calledIt = true;};
+
+      scrn._handleMouseMoveEvent(1);
+
+      assert(calledIt === false, "should not have notified");
       done();
     });
   });
@@ -611,6 +616,23 @@ describe("Screen", function() {
       scrn.handleMouseEvent(e);
 
       assert(eventType === SL.EventType.MOUSE_DOWN, "should have notified mousedown event");
+      done();
+    });
+    it("should not notify if endEventPropagation becomes set", function(done) {
+      var e = {
+        type:"mousedown",
+        button:1
+      };
+      var calledIt = false;
+      scrn.getXFromMouseEvent = function() {return 1;};
+      scrn.getYFromMouseEvent = function() {return 1;};
+      scrn.propagateMouseEventThroughLayers = function(e) {e.endEventPropagation = true;};
+      var eventType = null;
+      scrn.notify = function(event) {calledIt = true;};
+
+      scrn.handleMouseEvent(e);
+
+      assert(calledIt === false, "should not have notified");
       done();
     });
     it("should propagate", function(done) {
