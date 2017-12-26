@@ -375,13 +375,13 @@ SL.Screen.prototype._updateViewOrigins = function() {
 SL.Screen.prototype._handleMouseMoveEvent = function(time) {
   var coordinateData = this._getCoordinateDataForMouseEvent(this._mouseX, this._mouseY);
 
-  var event = new SL.Event(
+  var event = new SL.MouseEvent(
     SL.EventType.MOUSE_MOVE,
     coordinateData,
     time
   );
-  this.notify(event);
   this.propagateMouseEventThroughLayers(event);
+  if (!event.endEventPropagation) this.notify(event);
   this._mouseMoved = false;
 };
 
@@ -475,18 +475,19 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
   var data = this._getCoordinateDataForMouseEvent(scaledX, scaledY);
   data.baseEvent = e;
   var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
-  var event = new SL.Event(type, data);
-  this.notify(event);
+  var event = new SL.MouseEvent(type, data);
 
   // propagate through layers
   this.propagateMouseEventThroughLayers(event);
+  if (!event.endEventPropagation) this.notify(event);
 
   if (e.button === 1) return false;
 };
 
 /** @private */
 SL.Screen.prototype.propagateMouseEventThroughLayers = function(event) {
-  for (var i = 0; i < this._layers.length; i++) {
+  for (var i = this._layers.length - 1; i >= 0; i--) {
+    if (event.endEventPropagation) return;
     this._layers[i].handleMouseEvent(event);
   }
 };

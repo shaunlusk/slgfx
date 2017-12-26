@@ -677,10 +677,33 @@ describe("Screen", function() {
       };
       scrn.addLayer(layer1);
       scrn.addLayer(layer2);
+      e = {};
 
-      scrn.propagateMouseEventThroughLayers();
+      scrn.propagateMouseEventThroughLayers(e);
 
       assert(calledLayer1 === true, "should have propagated to layer1");
+      assert(calledLayer2 === true, "should have propagated to layer2");
+      done();
+    });
+    it("should call stop propagation if event handled", function(done) {
+      var calledLayer1 = false;
+      var layer1 = {
+        handleMouseEvent : function(e) {calledLayer1 = true;}
+      };
+      var calledLayer2 = false;
+      var layer2 = {
+        handleMouseEvent : function(e) {
+          calledLayer2 = true;
+          e.endEventPropagation = true;
+        }
+      };
+      scrn.addLayer(layer1);
+      scrn.addLayer(layer2);
+      e = {};
+
+      scrn.propagateMouseEventThroughLayers(e);
+
+      assert(calledLayer1 === false, "should not have propagated to layer1");
       assert(calledLayer2 === true, "should have propagated to layer2");
       done();
     });
