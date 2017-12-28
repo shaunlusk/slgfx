@@ -939,17 +939,12 @@ SL.GfxElement.prototype.getCollisionBoxHeight = function() {
 * @param {SL.Event}
 */
 SL.GfxElement.prototype.handleMouseEvent = function(event) {
-  var eventData = {
-      x : event.data.x,
-      y : event.data.y,
-      row : event.data.row,
-      col : event.data.col,
-      scaledX : event.data.scaledX,
-      scaledY : event.data.scaledY,
-      element : this
-  };
+  var eventData = this._setupSecondaryEventData(event);
   var secondaryEvents = [];
-  if (this.collidesWithCoordinates(event.data.scaledX, event.data.scaledY)) {
+  // GfxElement will use screen scaled coordinates for comparison;
+  // so, don't use final x & y from event, but rather use scaled values
+  // TODO: name things better to make them less confusing?
+  if (this.collidesWithCoordinates(event.data.viewOriginAdjustedX, event.data.viewOriginAdjustedY)) {
     if (!this.isMouseOver()) {
       secondaryEvents.push(new SL.MouseEvent(
         SL.EventType.MOUSE_ENTER_ELEMENT,
@@ -992,4 +987,17 @@ SL.GfxElement.prototype.handleMouseEvent = function(event) {
     if (secondaryEvent.endEventPropagation)
       event.endEventPropagation = true;
   }
+};
+
+SL.GfxElement.prototype._setupSecondaryEventData = function(event) {
+  var eventData = {
+      x : event.data.x,
+      y : event.data.y,
+      viewOriginAdjustedX : event.data.viewOriginAdjustedX,
+      viewOriginAdjustedY : event.data.viewOriginAdjustedY,
+      rawX : event.data.rawX,
+      rawY : event.data.rawY,
+      element : this
+  };
+  return eventData;
 };

@@ -35,6 +35,7 @@ SL.Screen = function(targetDiv, layerFactory, config) {
   this._mouseMoved = false;
   this._paused = false;
   this._unpaused = false;
+  this._useMouseMoveEvents = SL.isNullOrUndefined(this._config.useMouseMoveEvents) ? true : this._config.useMouseMoveEvents;
 
   this._backgroundColor = this._config.backgroundColor || "black";
   this._borderColor = this._config.borderColor || "grey";
@@ -125,7 +126,7 @@ SL.Screen.prototype._prepareDiv = function() {
 SL.Screen.prototype._setupEventListeners = function() {
   this._targetDiv.addEventListener("mouseup",this.handleMouseEvent.bind(this), true);
   this._targetDiv.addEventListener("mousedown",this.handleMouseEvent.bind(this), true);
-  this._targetDiv.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
+  if (this._useMouseMoveEvents) this._targetDiv.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
   SL.Screen.document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this), false);
 };
 
@@ -443,9 +444,9 @@ SL.Screen.prototype.handleMouseMoveEvent = function(e) {
 };
 
 /** @private */
-SL.Screen.prototype._getCoordinateDataForMouseEvent = function(scaledX, scaledY) {
-  var viewOriginAdjustedX = this.getViewOriginAdjustedX(scaledX);
-  var viewOriginAdjustedY = this.getViewOriginAdjustedY(scaledY);
+SL.Screen.prototype._getCoordinateDataForMouseEvent = function(canvasX, canvasY) {
+  var viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
+  var viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
 
   var x = this.getUnScaledX(viewOriginAdjustedX);
   var y = this.getUnScaledY(viewOriginAdjustedY);
@@ -454,8 +455,8 @@ SL.Screen.prototype._getCoordinateDataForMouseEvent = function(scaledX, scaledY)
     y : y,
     viewOriginAdjustedX : viewOriginAdjustedX,
     viewOriginAdjustedY : viewOriginAdjustedY,
-    rawX : scaledX,
-    rawY : scaledY
+    rawX : canvasX,
+    rawY : canvasY
   };
   return data;
 };
@@ -465,14 +466,14 @@ SL.Screen.prototype._getCoordinateDataForMouseEvent = function(scaledX, scaledY)
 */
 SL.Screen.prototype.handleMouseEvent = function(e) {
   if (this._paused) return false;
-  var scaledX = this.getXFromMouseEvent(e);
-  var scaledY = this.getYFromMouseEvent(e);
+  var canvasX = this.getXFromMouseEvent(e);
+  var canvasY = this.getYFromMouseEvent(e);
 
-  if (scaledX < 0 || scaledX >= this._width || scaledY < 0 || scaledY >= this._height) {
+  if (canvasX < 0 || canvasX >= this._width || canvasY < 0 || canvasY >= this._height) {
     return false;
   }
 
-  var data = this._getCoordinateDataForMouseEvent(scaledX, scaledY);
+  var data = this._getCoordinateDataForMouseEvent(canvasX, canvasY);
   data.baseEvent = e;
   var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
   var event = new SL.MouseEvent(type, data);
