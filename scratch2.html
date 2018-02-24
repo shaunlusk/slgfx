@@ -51,10 +51,46 @@ body {
     element = null;
   var config = {
     "backgroundColor":"grey",
-    "scaleX" : 1,
-    "scaleY" : 1,
+    "scaleX" : 2,
+    "scaleY" : 2,
     "fpsElem" : document.getElementById('info')
   };
+
+
+  SL.ImageSprite.prototype.renderFrame = function(time, diff, frame) {
+    this._imageRenderer.renderImage(
+      this.getCanvasContext(),
+      this.getImage(),
+      frame.getSourceX(),
+      frame.getSourceY(),
+      frame.getSourceWidth(),
+      frame.getSourceHeight(),
+      this.getX(),
+      this.getY(),
+      this.getWidth(),
+      this.getHeight(),
+      this.getElementScaleX(),
+      this.getElementScaleY(),
+      this.isHorizontallyFlipped(),
+      this.isVerticallyFlipped(),
+      this.getRotation()
+    );
+
+    var context = this.getCanvasContext();
+    context.beginPath();
+    context.setStrokeStyle("white");
+    context.setLineWidth("0.5");
+    context.rect(
+      this.getCollisionBoxX(),
+      this.getCollisionBoxY(),
+      this.getCollisionBoxWidth(),
+      this.getCollisionBoxHeight()
+    );
+    context.stroke();
+    context.closePath();
+  };
+
+
 
   function initialize(targetDiv, config) {
     screen = new SL.Screen(targetDiv, null, config);
@@ -84,19 +120,26 @@ body {
       width:24,
       height:32,
       scaleX:2,
-      scaleY:2,
-      verticalFlip:Math.random() > 0.5 ? true : false,
-      horizontalFlip:Math.random() > 0.5 ? true : false,
-      rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
+      scaleY:1,
+      // verticalFlip:Math.random() > 0.5 ? true : false,
+      // horizontalFlip:Math.random() > 0.5 ? true : false,
+      // rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
       // rotation:SL.degreesToRadians(30)
     });
     // element2.setRotation(SL.degreesToRadians(1));
-    element2.addFrame(frame1);
-    element2.addFrame(frame2);
+    var frame3 = new SL.ImageSpriteFrame({
+      duration : 20000,
+      sourceX : 4,
+      sourceY : 0,
+      sourceWidth : 24,
+      sourceHeight : 32
+    });
+    element2.addFrame(frame3);
+    // element2.addFrame(frame2);
     gfxLayer.addElement(element2);
 
     var el = null;
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < 10; i++) {
       el = new SL.ImageSprite(screen, gfxLayer, {
         image:images.gnome.image,
         x:Math.floor(Math.random() * 640),
