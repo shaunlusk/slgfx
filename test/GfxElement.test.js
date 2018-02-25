@@ -517,10 +517,12 @@ describe("GfxElement", function() {
     });
   });
   describe("#clear()", function () {
-    it("should clear rectangle", function(done) {
-      element.getWidth = function() {return 5;};
-      element.getHeight = function() {return 6;};
-      element.clear(1,1);
+    it("should clear last frame collision box", function(done) {
+      element._lastCollisionBoxX = -1;
+      element._lastCollisionBoxY = -1;
+      element._lastCollisionBoxWidth = 7;
+      element._lastCollisionBoxHeight = 8;
+      element.clear();
       var mockContext = element.getCanvasContext();
       assert(mockContext.clearedX === -1, "cleared x, expected " + (-1) + ", actual " + mockContext.clearedX);
       assert(mockContext.clearedY === -1, "cleared y, expected " + (-1) + ", actual " + mockContext.clearedX);

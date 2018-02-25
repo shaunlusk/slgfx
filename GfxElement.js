@@ -39,15 +39,13 @@ var SL = SL || {};
 * @constructor
 * @param {SL.Screen} screenContext The target screen.
 * @param {SL.GfxLayer} parentLayer The parent layer that will draw this element.
-* @param {Object} props Properties for this GfxElement.  Supports:
-*   <ul>
-*     <li>scaleX - integer - Horizontal scale of this element.  Independent of screen scale.</li>
-*     <li>scaleY - integer - Vertical scale of this element.  Independent of screen scale.</li>
-*     <li>hidden - boolean - Whether to hide this element.</li>
-*     <li>x - number - The X coordinate for this element.</li>
-*     <li>y - number - The Y coordinate for this element.</li>
-*     <li>zIndex - number - The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).</li>
-*   </ul>
+* @param {Object} props Properties for this GfxElement.
+* @param {integer} props.scaleX Horizontal scale of this element.  Independent of screen scale.
+* @param {integer} props.scaleY Vertical scale of this element.  Independent of screen scale.
+* @param {boolean} props.hidden Whether to hide this element.
+* @param {intnumbereger} props.x The X coordinate for this element.
+* @param {number} props.y The Y coordinate for this element.
+* @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
 */
 SL.GfxElement = function(screenContext, parentLayer, props) {
   props = props || {};
@@ -81,17 +79,9 @@ SL.GfxElement = function(screenContext, parentLayer, props) {
   this._baseRotation = props.baseRotation || null;
   this._wasRotated = props.rotation ? true: false ;
 
-  // this._diagonalSize = 0; // only needed for determining collision box when rotated
-  this._scaledDiagonalSize = 0;
-  // this._rotatedX = 0;
-  // this._rotatedY = 0;
-  // this._rotatedLastX = 0;
-  // this._rotatedLastY = 0;
+  this._scaledDiagonalSize = 0; // only needed for determining collision box when rotated
   this._rotatedScaledX = 0;
   this._rotatedScaledY = 0;
-  // this._rotatedScaledLastX = 0;
-  // this._rotatedScaledLastY = 0;
-  // this._lastDiagonalSize = 0;
 
   this._lastCollisionBoxX = this._x;
   this._lastCollisionBoxY = this._y;
@@ -133,7 +123,7 @@ SL.GfxElement = function(screenContext, parentLayer, props) {
     ]
   });
 
-  this._recalculatedDiagonalSizeAndRotatedCollisionBox();
+  this._recalculateRotatedCollisionBox();
 };
 
 SL.EventNotifierMixin.call(SL.GfxElement.prototype);
@@ -398,7 +388,6 @@ SL.GfxElement.prototype.getRotation = function() {
   return (this._rotation || 0) + (this._baseRotation || 0);
   return null;
 };
-// SL.GfxElement.prototype.getDiagonalSize = function() { return this._diagonalSize; };
 
 SL.GfxElement.prototype.setRotation = function(rotation) {
   this._rotation = rotation;
@@ -406,7 +395,7 @@ SL.GfxElement.prototype.setRotation = function(rotation) {
     if (this.wasRotated()) this.setDirty(true);
     return;
   }
-  this._recalculatedDiagonalSizeAndRotatedCollisionBox();
+  this._recalculateRotatedCollisionBox();
   this.setDirty(true);
 };
 SL.GfxElement.prototype.setBaseRotation = function(rotation) {
@@ -415,15 +404,9 @@ SL.GfxElement.prototype.setBaseRotation = function(rotation) {
     if (this.wasRotated()) this.setDirty(true);
     return;
   }
-  this._recalculatedDiagonalSizeAndRotatedCollisionBox();
+  this._recalculateRotatedCollisionBox();
   this.setDirty(true);
 };
-
-SL.GfxElement.prototype._recalculatedDiagonalSizeAndRotatedCollisionBox = function() {
-  this._recalculateDiagonalSize();
-  this._recalculateRotatedCollisionBox();
-};
-
 
 SL.GfxElement.prototype.wasRotated = function() {return this._wasRotated;};
 SL.GfxElement.prototype.setWasRotated = function(wasRotated) {
@@ -431,46 +414,17 @@ SL.GfxElement.prototype.setWasRotated = function(wasRotated) {
 };
 SL.GfxElement.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
 
-// SL.GfxElement.prototype.getRotatedX = function() {return this._rotatedX;};
-// // SL.GfxElement.prototype.getRotatedY = function() {return this._rotatedY;};
-// SL.GfxElement.prototype.getRotatedLastX = function() {return this._rotatedLastX;};
-// SL.GfxElement.prototype.getRotatedLastY = function() {return this._rotatedLastY;};
-// SL.GfxElement.prototype.getLastDiagonalSize = function() {return this._lastDiagonalSize;};
 SL.GfxElement.prototype.getRotatedScaledX = function() {return this._rotatedScaledX; };
 SL.GfxElement.prototype.getRotatedScaledY = function() {return this._rotatedScaledY; };
-// SL.GfxElement.prototype.getRotatedScaledLastX = function() {return this._rotatedScaledLastX; };
-// SL.GfxElement.prototype.getRotatedScaledLastY = function() {return this._rotatedScaledLastY; };
-// TODO fix me
 SL.GfxElement.prototype.getScaledDiagonalSize = function() {
-  return this._scaledDiagonalSize; //this.getDiagonalSize() * (this.getTotalScaleX() + this.getTotalScaleY()) / 2;
-};
-
-// /** @private */
-// SL.GfxElement.prototype.setRotatedLastX = function(x) {this._rotatedLastX = x;};
-// /** @private */
-// SL.GfxElement.prototype.setRotatedLastY = function(y) {this._rotatedLastY = y;};
-// /** @private */
-// SL.GfxElement.prototype.setRotatedScaledLastX = function(x) {this._rotatedScaledLastX = x;};
-// /** @private */
-// SL.GfxElement.prototype.setRotatedScaledLastY = function(y) {this._rotatedScaledLastY = y;};
-// /** @private */
-// SL.GfxElement.prototype.setLastDiagonalSize = function(size) {this._lastDiagonalSize = size;};
-
-SL.GfxElement.prototype._recalculateDiagonalSize = function() {
-  if (this.getRotation() === null) return;
-  // calculate diagonal
-  // Note that for any amount of rotation, an expanded bounding box is used
-  // var max = Math.max(this.getScaledWidth(), this.getScaledHeight());
-  // this._diagonalSize = Math.ceil(Math.sqrt( 2 * Math.pow(max, 2) ));
-  this._scaledDiagonalSize = Math.ceil(Math.sqrt( Math.pow(this.getScaledWidth(), 2) + Math.pow(this.getScaledHeight(), 2) ));
+  return this._scaledDiagonalSize;
 };
 
 SL.GfxElement.prototype._recalculateRotatedCollisionBox = function() {
   if (this.getRotation() === null) return;
-  // this._rotatedX = Math.floor(this.getX() - (this.getDiagonalSize() - this.getWidth()) / 2);
-  // this._rotatedY = Math.floor(this.getY() - (this.getDiagonalSize() - this.getHeight()) / 2);
-  this._rotatedScaledX = Math.floor(this.getScaledX() - (this.getScaledDiagonalSize() - this.getScaledWidth()) / 2);
-  this._rotatedScaledY = Math.floor(this.getScaledY() - (this.getScaledDiagonalSize() - this.getScaledHeight()) / 2);
+  this._scaledDiagonalSize = Math.ceil(Math.sqrt( Math.pow(this.getScaledWidth(), 2) + Math.pow(this.getScaledHeight(), 2) ));
+  this._rotatedScaledX = Math.floor(this.getScaledX() - (this._scaledDiagonalSize - this.getScaledWidth()) / 2);
+  this._rotatedScaledY = Math.floor(this.getScaledY() - (this._scaledDiagonalSize - this.getScaledHeight()) / 2);
 };
 
 SL.GfxElement.prototype.isHorizontallyFlipped = function() {return this._horizontalFlip;};
@@ -785,19 +739,6 @@ SL.GfxElement.prototype._updateMoveOrder = function(time,diff) {
 * @param {number} diff
 */
 SL.GfxElement.prototype.clear = function(time, diff) {
-  // if (this.wasRotated()) {
-  //   this.getCanvasContext().clearRect(
-  //     this.getRotatedScaledLastX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
-  //     this.getRotatedScaledLastY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
-  //     this.getLastDiagonalSize() * this.getTotalScaleX() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment,
-  //     this.getLastDiagonalSize() * this.getTotalScaleY() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment);
-  // } else {
-  //   this.getCanvasContext().clearRect(
-  //     this.getLastX() * this.getScreenScaleX() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
-  //     this.getLastY() * this.getScreenScaleY() + SL.GfxElement.AntiAliasCorrection.coordinateOffset,
-  //     this.getLastWidth() * this.getTotalScaleX() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment,
-  //     this.getLastHeight() * this.getTotalScaleY() + SL.GfxElement.AntiAliasCorrection.sizeAdjustment );
-  // }
   this.getCanvasContext().clearRect(
     this._lastCollisionBoxX,
     this._lastCollisionBoxY,
@@ -834,11 +775,6 @@ SL.GfxElement.prototype.postRender = function(time, diff) {
 
   if (this.hasRotation()) {
     this.setWasRotated(true);
-    // this.setRotatedLastX( this.getRotatedX() );
-    // this.setRotatedLastY( this.getRotatedY() );
-    // this.setRotatedScaledLastX( this.getRotatedScaledX() );
-    // this.setRotatedScaledLastY( this.getRotatedScaledY() );
-    // this.setLastDiagonalSize( this.getDiagonalSize() );
   }
   else this.setWasRotated(false);
 
