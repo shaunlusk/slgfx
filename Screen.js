@@ -538,3 +538,15 @@ SL.Screen.prototype.getViewOriginAdjustedX = function(x) {
 SL.Screen.prototype.getViewOriginAdjustedY = function(y) {
   return y - this.getViewOriginY();
 };
+
+/** Directly set the border style.
+* NOTE: subsequent changes using the setBorderColor or setBorderSize methods will overwrite any changes made in this method.
+* @param {string} width Any valid CSS Border width string.
+* @param {string} style Any valid CSS Border style string.
+* @param {string} color Any valid CSS Border color string.
+*/
+SL.Screen.prototype.setBorder = function(width, style, color) {
+  this._targetDiv.style.borderWidth = width;
+  this._targetDiv.style.borderStyle = style;
+  this._targetDiv.style.borderColor = color;
+};
