@@ -1,20 +1,22 @@
-var SL = SL || {};
+var SL = {};
+SL.GfxLayer = require("./GfxLayer");
+
 
 /** Background Graphics layer.<br />
 * Intended for backgrounds that don't change much.
 * Extends {@link SL.Layer}<br />
 * Generally, the use of SL.Screen.createLayer("BackgroundLayer") is preferred over creating layer by hand.
 * @constructor
-* @param {SL.Screen} screenContext The parent screen for this layer.
-* @param {CanvasContextWrapper} canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {Object} props The properties to create this layer with. <br />
+* @param {Screen} screenContext The parent screen for this layer.
+* @param {CanvasContextWrapper} canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * (Inherited from {@link SL.Layer Layer}:)
 * @param {int} props.width The width of the layer.  Should match Screen. <br />
 * @param {int} props.height The height of the layer.  Should match Screen. <br />
 */
-SL.BackgroundLayer = function(screenContext, canvasContextWrapper, props) {
+SL.BackgroundLayer = function(props) {
   props = props || {};
-  SL.GfxLayer.call(this, screenContext, canvasContextWrapper, props);
+  SL.GfxLayer.call(this, props);
 };
 
 SL.BackgroundLayer.prototype = new SL.GfxLayer();
@@ -39,3 +41,5 @@ SL.BackgroundLayer.prototype.update = function(time,diff) {
       }
   }
 };
+
+module.exports = SL.BackgroundLayer;

@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Comparable for a GfxElement.  Used by GfxLayer to determine rendering order.
 * @constructor

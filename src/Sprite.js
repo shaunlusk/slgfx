@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Base element for displaying animations.<br />
 * <b>Extends</b> {@link SL.GfxElement} <br />

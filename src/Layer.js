@@ -1,26 +1,22 @@
-var SL = SL || {};
+var Utils = require('slcommon/src/Utils');
 
 /**
-* Abstract class for graphical layers on a SL.Screen.<br />
-* Existing implementations: {@link SL.TextLayer}, {@link SL.GfxLayer}
+* Abstract class for graphical layers on a Screen.<br />
+* Existing implementations: {@link TextLayer}, {@link GfxLayer}
 * @constructor
-* @param {SL.Screen} screenContext The parent screen
-* @param {CanvasContextWrapper} canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {Object} props The properties for this layer:
-* <ul>
-*   <li>width - number - The width of the layer.  Should match Screen.</li>
-*   <li>height - number - The height of the layer.  Should match Screen.</li>
-* </ul>
-* @see SL.TextLayer
-* @see SL.GfxLayer
+* @param {Object} props Configuration properties.
+* @param {Screen} props.screenContext The parent screen.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @see TextLayer
+* @see GfxLayer
 */
-SL.Layer = function(screenContext, canvasContextWrapper, props) {
+function Layer(props) {
   props = props || {};
-  this._width = props.width || 320;
-  this._height = props.height || 200;
-  this._screenContext = screenContext;
-  this._canvas = canvasContextWrapper ? canvasContextWrapper.getCanvas() : null;
-  this._canvasContext = canvasContextWrapper;
+  this._screenContext = props.screenContext;
+  this._width = props.screenContext ? props.screenContext.width : 320;
+  this._height = props.screenContext ? props.screenContext.height : 200;
+  this._canvas = props.canvasContextWrapper ? props.canvasContextWrapper.getCanvas() : null;
+  this._canvasContext = props.canvasContextWrapper;
   this._dirty = true;
   this._pendingViewOriginX = null;
   this._pendingViewOriginY = null;
@@ -29,57 +25,80 @@ SL.Layer = function(screenContext, canvasContextWrapper, props) {
 /** Return whether this layer is dirty.  A dirty layer needs to be completely redrawn.
 * @return {boolean}
 */
-SL.Layer.prototype.isDirty = function() {return this._dirty;};
+Layer.prototype.isDirty = function() {return this._dirty;};
 
 /**
 * Set whether layer is dirty.  If dirty, the layer will be cleared and redrawn during the next render phase.
 * @param {boolean} dirty
 */
-SL.Layer.prototype.setDirty = function(dirty) {this._dirty = dirty;};
+Layer.prototype.setDirty = function(dirty) {this._dirty = dirty;};
 
-SL.Layer.prototype.setViewOriginX = function(viewOriginX) {
+/** Move the viewport to the specified X coordinate
+* @param {number} viewOriginX The X coordinate.
+*/
+Layer.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) this.setDirty(true);
 };
-SL.Layer.prototype.setViewOriginY = function(viewOriginY) {
+
+/** Move the viewport to the specified Y coordinate
+* @param {number} viewOriginY The Y coordinate.
+*/
+Layer.prototype.setViewOriginY = function(viewOriginY) {
   this._pendingViewOriginY = viewOriginY;
   if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) this.setDirty(true);
 };
 
-SL.Layer.prototype.getViewOriginX = function() {return this._canvasContext.getViewOriginX();};
-SL.Layer.prototype.getViewOriginY = function() {return this._canvasContext.getViewOriginY();};
+/** Return the current x coordinate of the viewport.
+* @return {number} The x coordinate.
+*/
+Layer.prototype.getViewOriginX = function() {return this._canvasContext.getViewOriginX();};
 
-SL.Layer.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
-SL.Layer.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
+/** Return the current y coordinate of the viewport.
+* @return {number} The y coordinate.
+*/
+Layer.prototype.getViewOriginY = function() {return this._canvasContext.getViewOriginY();};
+
+/** @private */
+Layer.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
+/** @private */
+Layer.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
 
 /** Returns the width of the Layer
 * @returns {number}
 */
-SL.Layer.prototype.getWidth = function() {return this._width;};
+Layer.prototype.getWidth = function() {return this._width;};
 
 /** Returns the height of the Layer
 * @returns {number}
 */
-SL.Layer.prototype.getHeight = function() {return this._height;};
+Layer.prototype.getHeight = function() {return this._height;};
 
-/** Returns the parent SL.Screen
-* @returns {SL.Screen}
+/** Returns the parent Screen
+* @returns {Screen}
 */
-SL.Layer.prototype.getScreenContext = function() {return this._screenContext;};
+Layer.prototype.getScreenContext = function() {return this._screenContext;};
 
 /** Returns the Canvas for this layer.
 * <b>Note</b>: this does not return the drawable CanvasContext, rather it returns the reference to the DOM element.
 * @returns {HTMLElement}
 */
-SL.Layer.prototype.getCanvas = function() {return this._canvas;};
+Layer.prototype.getCanvas = function() {return this._canvas;};
 
 /** Returns the CanvasContext for this layer.
 * @returns {CanvasContext}
 */
-SL.Layer.prototype.getCanvasContext = function() {return this._canvasContext;};
+Layer.prototype.getCanvasContext = function() {return this._canvasContext;};
 
-SL.Layer.prototype.isImageSmoothingEnabled = function() {return this._canvasContext.isImageSmoothingEnabled();};
-SL.Layer.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {
+/** Check if image smoothing is enabled for this layer.
+* @return {bool}
+*/
+Layer.prototype.isImageSmoothingEnabled = function() {return this._canvasContext.isImageSmoothingEnabled();};
+
+/** Turn image smoothing on or off for this layer.
+* @param {bool} imageSmoothingEnabled
+*/
+Layer.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {
   this._canvasContext.setImageSmoothingEnabled(imageSmoothingEnabled);
   this.setDirty(true);
 };
@@ -89,47 +108,63 @@ SL.Layer.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-SL.Layer.prototype.update = function(time,diff) {};
+Layer.prototype.update = function(time,diff) {};
 
 /** Render this Layer. <b>Sub-classes MUST implement this method</b>
 * @abstract
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-SL.Layer.prototype.render = function(time,diff) {};
-SL.Layer.prototype.prerender = function(time,diff) {
+Layer.prototype.render = function(time,diff) {};
+
+/** Execute prerendering activities.  Sub-classes may override this, but should still call the base method.
+* @param {number} time The current time (milliseconds)
+* @param {number} diff The difference between the last time and the current time  (milliseconds)
+*/
+Layer.prototype.prerender = function(time,diff) {
   if (this.isDirty()) this.getCanvasContext().clear();
-  if (!SL.isNullOrUndefined(this.getPendingViewOriginX())) {
+  if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
     this.getCanvasContext().setViewOriginX(this.getPendingViewOriginX());
     this._pendingViewOriginX = null;
   }
-  if (!SL.isNullOrUndefined(this.getPendingViewOriginY())) {
+  if (!Utils.isNullOrUndefined(this.getPendingViewOriginY())) {
     this.getCanvasContext().setViewOriginY(this.getPendingViewOriginY());
     this._pendingViewOriginY = null;
   }
 };
-SL.Layer.prototype.postrender = function(time,diff) {
+
+/** Execute postrendering activities.  Sub-classes may override this, but should still call the base method.
+* @param {number} time The current time (milliseconds)
+* @param {number} diff The difference between the last time and the current time  (milliseconds)
+*/
+Layer.prototype.postrender = function(time,diff) {
   this.setDirty(false);
 };
 
 /** Propagate a mouse event to this Layer. <b>Sub-classes MUST implement this method</b>
 * @abstract
-* @param {SL.Event} event The mouse event
+* @param {Event} event The mouse event
 */
-SL.Layer.prototype.handleMouseEvent = function(event) {};
+Layer.prototype.handleMouseEvent = function(event) {};
 
 /** Clears all contents of this Layer.
 */
-SL.Layer.prototype.clearLayer = function() {
+Layer.prototype.clearLayer = function() {
   this._canvasContext.clearRect(0, 0, this.getWidth(), this.getHeight());
 };
 
-SL.Layer.prototype.dimLayer = function(amount, steps, interval) {
+/** Progressively fade the layer to black.
+* @param {number} amount The percentage to dim the layer; 1 = completely black; 0 = no dim.
+* @param {int} steps The number of stesp to take to reach the fade amount.  More steps = finer progression.
+* @param {int} interval The number of milliseconds to wait between steps.
+*/
+Layer.prototype.dimLayer = function(amount, steps, interval) {
   var stepAmount = amount / steps;
   setTimeout(this._dimStep.bind(this, stepAmount, stepAmount, steps, interval), interval);
-
 };
-SL.Layer.prototype._dimStep = function(amount, stepAmount, steps, interval) {
+
+/** @private */
+Layer.prototype._dimStep = function(amount, stepAmount, steps, interval) {
   var canvasContext = this.getCanvasContext();
   canvasContext.clearRect(0, 0, this.getWidth(), this.getHeight());
   canvasContext.fillStyle = "rgba(0,0,0," + amount + ")";
@@ -138,3 +173,5 @@ SL.Layer.prototype._dimStep = function(amount, stepAmount, steps, interval) {
     setTimeout(this._dimStep.bind(this, amount + stepAmount, stepAmount, steps - 1, interval), interval);
   }
 };
+
+module.exports = Layer;

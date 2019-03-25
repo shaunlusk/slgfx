@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Graphics element that uses part or all of an Image.<br />
 * <b>Extends</b> {@link SL.GfxElement}<br />

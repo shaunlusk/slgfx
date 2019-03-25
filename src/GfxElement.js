@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /**
 * <p>Graphics element base class.</p>
@@ -412,7 +412,7 @@ SL.GfxElement.prototype.wasRotated = function() {return this._wasRotated;};
 SL.GfxElement.prototype.setWasRotated = function(wasRotated) {
   this._wasRotated = wasRotated;
 };
-SL.GfxElement.prototype.hasRotation = function() {return !(SL.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
+SL.GfxElement.prototype.hasRotation = function() {return !(SL.Utils.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
 
 SL.GfxElement.prototype.getRotatedScaledX = function() {return this._rotatedScaledX; };
 SL.GfxElement.prototype.getRotatedScaledY = function() {return this._rotatedScaledY; };
@@ -463,7 +463,7 @@ SL.GfxElement.prototype._endFlash = function() {
   this._flashStartTime = -1;
   this._flashElapsed = 0;
   this._flashHidden = false;
-  if (SL.isFunction(this._flashDoneCallback)) this._flashDoneCallback();
+  if (SL.Utils.isFunction(this._flashDoneCallback)) this._flashDoneCallback();
 };
 
 SL.GfxElement.prototype._updateFlash = function(time,diff) {
@@ -618,11 +618,11 @@ SL.GfxElement.prototype.moveOrderCallback = function() {
   this._currentMove = null;
   if (! this._runMove()){
     if (this._isProcessingNudge) {
-      if (SL.isFunction(this._nudgeDoneCallback)) this._nudgeDoneCallback();
+      if (SL.Utils.isFunction(this._nudgeDoneCallback)) this._nudgeDoneCallback();
       this._isProcessingNudge = false;
     }
     if (this._isProcessingShake) {
-      if (SL.isFunction(this._shakeDoneCallback)) this._shakeDoneCallback();
+      if (SL.Utils.isFunction(this._shakeDoneCallback)) this._shakeDoneCallback();
       this._isProcessingShake = false;
     }
   }

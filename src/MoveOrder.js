@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Directs movement of {@link SL.GfxElements} when moveTo() is called.
 * These are created and handled internally in GfxElements.
@@ -55,8 +55,8 @@ SL.MoveOrder.prototype.end = function () {
   this._end = true;
   this._element.setX(this._tx);
   this._element.setY(this._ty);
-  if (SL.isFunction(this._elementCallback)) this._elementCallback();
-  if (SL.isFunction(this._callback)) this._callback(this._element);
+  if (SL.Utils.isFunction(this._elementCallback)) this._elementCallback();
+  if (SL.Utils.isFunction(this._callback)) this._callback(this._element);
 };
 
 /** @private */

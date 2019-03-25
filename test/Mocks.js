@@ -1,24 +1,23 @@
-var SL = SL || {};
-SL.Mocks = {};
+var Mocks = {};
 
-SL.Mocks.getMockLayerFactory = function(props) {
+Mocks.getMockLayerFactory = function(props) {
   props = props || {};
   var factory = {
-    layer : SL.Mocks.getMockLayer(props),
+    layer : Mocks.getMockLayer(props),
     getLayer : function() {return this.layer;}
   };
 
   return factory;
 };
 
-SL.Mocks.getMockLayer = function(props) {
+Mocks.getMockLayer = function(props) {
   props = props || {};
   var layer = {
     getWidth : function() {return 0;},
     getHeight : function() {return 0;},
     getScreenContext : function() {return props.screenContext || null;},
     getCanvas : function() {return null;},
-    getCanvasContext : function() {return SL.Mocks.getMockCanvasContext();},
+    getCanvasContext : function() {return Mocks.getMockCanvasContext();},
     update : function() {},
     render : function() {},
     handleMouseEvent : function() {},
@@ -28,7 +27,7 @@ SL.Mocks.getMockLayer = function(props) {
   return layer;
 };
 
-SL.Mocks.getMockGfxElement = function(props) {
+Mocks.getMockGfxElement = function(props) {
   props = props || {};
   var element = {};
   element.id = props.id || 1;
@@ -70,7 +69,7 @@ SL.Mocks.getMockGfxElement = function(props) {
   return element;
 };
 
-SL.Mocks.getMockScreen = function(props) {
+Mocks.getMockScreen = function(props) {
   props = props || {};
   var screen = {};
   screen.scaleX = props.scaleX || 1;
@@ -82,7 +81,7 @@ SL.Mocks.getMockScreen = function(props) {
   return screen;
 };
 
-SL.Mocks.getMockCanvasContext = function(props) {
+Mocks.getMockCanvasContext = function(props) {
   props = props || {};
   var context = {};
   context.clearRect = function(x, y, width, height) {
@@ -99,3 +98,5 @@ SL.Mocks.getMockCanvasContext = function(props) {
   };
   return context;
 };
+
+module.exports = Mocks;

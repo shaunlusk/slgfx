@@ -41,7 +41,7 @@ body {
   <div id="info"></div>
 
   <script type="text/javascript">
-  var SL = SL || {};
+  var SL = {};
   SL.debug = true;
   var screen = null,
   canvas,
@@ -87,10 +87,10 @@ body {
       scaleY:2,
       verticalFlip:Math.random() > 0.5 ? true : false,
       horizontalFlip:Math.random() > 0.5 ? true : false,
-      rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
-      // rotation:SL.degreesToRadians(30)
+      rotation:SL.Utils.degreesToRadians(Math.floor(Math.random() * 180))
+      // rotation:SL.Utils.degreesToRadians(30)
     });
-    // element2.setRotation(SL.degreesToRadians(1));
+    // element2.setRotation(SL.Utils.degreesToRadians(1));
     element2.addFrame(frame1);
     element2.addFrame(frame2);
     gfxLayer.addElement(element2);
@@ -107,7 +107,7 @@ body {
         scaleY:Math.random() > 0.5 ? 2 : 1,
         verticalFlip:Math.random() > 0.5 ? true : false,
         horizontalFlip:Math.random() > 0.5 ? true : false,
-        rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
+        rotation:SL.Utils.degreesToRadians(Math.floor(Math.random() * 180))
       });
       el.addFrame(frame1);
       el.addFrame(frame2);

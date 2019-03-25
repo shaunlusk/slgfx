@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 SL.renderWithTranslation = function (context, x, y, flipHorizontally, flipVertically, rotation, renderCallback) {
   context.save();

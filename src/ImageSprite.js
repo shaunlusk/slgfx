@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Animated element that displays images frames in succession.<br />
 * <b>Extends</b> {@link SL.Sprite}, extends {@link SL.GfxElement}<br />

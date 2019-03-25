@@ -4,8 +4,8 @@ describe("LayerFactory", function() {
       var lf = new SL.LayerFactory();
 
       assert(lf._registeredTypes !== null, "_registeredTypes was not created");
-      assert(SL.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
-      assert(SL.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
+      assert(SL.Utils.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
+      assert(SL.Utils.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
       done();
     });
     it("should setup default layer type creator functions and those passed in", function(done) {
@@ -14,9 +14,9 @@ describe("LayerFactory", function() {
       });
 
       assert(lf._registeredTypes !== null, "_registeredTypes was not created");
-      assert(SL.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
-      assert(SL.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
-      assert(SL.isFunction(lf._registeredTypes.BogusLayer), "_registeredTypes does not contain function for BogusLayer");
+      assert(SL.Utils.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
+      assert(SL.Utils.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
+      assert(SL.Utils.isFunction(lf._registeredTypes.BogusLayer), "_registeredTypes does not contain function for BogusLayer");
       done();
     });
   });

@@ -1,24 +1,24 @@
-var SL = SL || {};
+var UniquePriorityQueue = require("slcommon/src/UniquePriorityQueue");
+var Utils = require("slcommon/src/Utils");
+var Event = require("slcommon/src/Event");
+var EventType = require("../src/EventType");
+var Layer = require("./Layer");
 
-/** Graphics layer.<br />
-* Extends {@link SL.Layer}<br />
-* Generally, the use of SL.Screen.createLayer("GfxLayer") is preferred over creating layer by hand.
+/** Graphics layer.
+* Generally, the use of Screen.createLayer("GfxLayer") is preferred over creating layer by hand.
 * @constructor
-* @param {SL.Screen} screenContext The parent screen for this layer.
-* @param {CanvasContextWrapper} canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @augments Layer
 * @param {Object} props The properties to create this layer with. <br />
-* From SL.Layer:
-* <ul>
-*   <li>width - number - The width of the layer.  Should match Screen.</li>
-*   <li>height - number - The height of the layer.  Should match Screen.</li>
-* </ul>
-* GfxLayer doesn't require/support any properties beyond those used by SL.Layer.
+* @param {Screen} props.screenContext The parent screen for this layer.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @param {int} props.width The width of the layer.  Should match Screen.
+* @param {int} props.height The height of the layer.  Should match Screen.
 */
-SL.GfxLayer = function(screenContext, canvasContextWrapper, props) {
+GfxLayer = function(props) {
   props = props || {};
-  SL.Layer.call(this, screenContext, canvasContextWrapper, props);
+  Layer.call(this, props);
   this._elements = [];
-  this._dirtyElements = new SL.UniquePriorityQueue();
+  this._dirtyElements = new UniquePriorityQueue();
   this._dirtyElements.setInvertPriority(false);
   this._removedElements = {};
   this._zIndexCounter = 0;
@@ -26,13 +26,13 @@ SL.GfxLayer = function(screenContext, canvasContextWrapper, props) {
   this._allElementsRemoved = false;
 };
 
-SL.GfxLayer.prototype = new SL.Layer();
-SL.GfxLayer.prototype.constructor = SL.GfxLayer;
+GfxLayer.prototype = new Layer();
+GfxLayer.prototype.constructor = GfxLayer;
 
-/** Add a SL.GfxElement to this layer.
-* @param {SL.GfxElement} element
+/** Add a GfxElement to this layer.
+* @param {GfxElement} element
 */
-SL.GfxLayer.prototype.addElement = function(element) {
+GfxLayer.prototype.addElement = function(element) {
   this._elements.push(element);
 
   // give a natural ordering to elements added with no specific zIndex
@@ -44,10 +44,10 @@ SL.GfxLayer.prototype.addElement = function(element) {
 
 /** Remove an element from the layer.
 * @param {integer} id The id of the element to remove
-* @return {SL.GfxElement} The removed element, if found.
+* @return {GfxElement} The removed element, if found.
 */
-SL.GfxLayer.prototype.removeElementById = function(id) {
-  var idx = SL.linSearch(this._elements, id, function(element,value){return element.getId() === value;});
+GfxLayer.prototype.removeElementById = function(id) {
+  var idx = Utils.linSearch(this._elements, id, function(element,value){return element.getId() === value;});
   if (idx > -1) {
     return this._removeElementByIndex(idx);
   }
@@ -55,17 +55,17 @@ SL.GfxLayer.prototype.removeElementById = function(id) {
 };
 
 /** Remove an element from the layer.
-* @param {SL.GfxElement} element The element to remove
-* @return {SL.GfxElement} The removed element, if found.
+* @param {GfxElement} element The element to remove
+* @return {GfxElement} The removed element, if found.
 */
-SL.GfxLayer.prototype.removeElement = function(element) {
+GfxLayer.prototype.removeElement = function(element) {
   return this.removeElementById(element.getId());
 };
 
 /** @private
 * Does not bounds check.
 */
-SL.GfxLayer.prototype._removeElementByIndex = function(idx) {
+GfxLayer.prototype._removeElementByIndex = function(idx) {
   this._removedElements[this._elements[idx].getId()] = this._elements[idx];
   var elem = this._elements[idx];
   // ensure it gets cleared
@@ -77,7 +77,7 @@ SL.GfxLayer.prototype._removeElementByIndex = function(idx) {
 
 /** Remove all elements from the layer.
 */
-SL.GfxLayer.prototype.removeAllElements = function() {
+GfxLayer.prototype.removeAllElements = function() {
   for (var i = 0; i < this._elements.length; i++) {
     this._removeElementByIndex(i);
   }
@@ -88,10 +88,10 @@ SL.GfxLayer.prototype.removeAllElements = function() {
 * Calls update on each element.
 * Checks for elements colliding with the layer boundary and emits events accordingly (event emitted from the elements themselves):
 * <ul>
-* <li>SL.EventType.ELEMENT_HIT_LEFT_EDGE</li>
-* <li>SL.EventType.ELEMENT_HIT_RIGHT_EDGE</li>
-* <li>SL.EventType.ELEMENT_HIT_TOP_EDGE</li>
-* <li>SL.EventType.ELEMENT_HIT_BOTTOM_EDGE</li>
+* <li>EventType.ELEMENT_HIT_LEFT_EDGE</li>
+* <li>EventType.ELEMENT_HIT_RIGHT_EDGE</li>
+* <li>EventType.ELEMENT_HIT_TOP_EDGE</li>
+* <li>EventType.ELEMENT_HIT_BOTTOM_EDGE</li>
 * </ul>
 * The data for these events consists of:
 * <ul>
@@ -101,7 +101,7 @@ SL.GfxLayer.prototype.removeAllElements = function() {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-SL.GfxLayer.prototype.update = function(time,diff) {
+GfxLayer.prototype.update = function(time,diff) {
   var dirtyElement;
   var i;
   for (i = 0; i < this._elements.length; i++) {
@@ -118,23 +118,23 @@ SL.GfxLayer.prototype.update = function(time,diff) {
 };
 
 /** @private */
-SL.GfxLayer.prototype._checkBorderCollision = function(element,time) {
+GfxLayer.prototype._checkBorderCollision = function(element,time) {
   if (element.getCollisionBoxX() <= 0) {
-    element.notify(new SL.Event(SL.EventType.ELEMENT_HIT_LEFT_EDGE, {layer:this, element:element}, time));
+    element.notify(new Event(EventType.ELEMENT_HIT_LEFT_EDGE, {layer:this, element:element}, time));
   }
   if (element.getCollisionBoxX() + element.getCollisionBoxWidth() > this.getCanvas().width) {
-    element.notify(new SL.Event(SL.EventType.ELEMENT_HIT_RIGHT_EDGE, {layer:this, element:element}, time));
+    element.notify(new Event(EventType.ELEMENT_HIT_RIGHT_EDGE, {layer:this, element:element}, time));
   }
   if (element.getCollisionBoxY() <= 0) {
-    element.notify(new SL.Event(SL.EventType.ELEMENT_HIT_TOP_EDGE, {layer:this, element:element}, time));
+    element.notify(new Event(EventType.ELEMENT_HIT_TOP_EDGE, {layer:this, element:element}, time));
   }
   if (element.getCollisionBoxY() + element.getCollisionBoxHeight() > this.getCanvas().height) {
-    element.notify(new SL.Event(SL.EventType.ELEMENT_HIT_BOTTOM_EDGE, {layer:this, element:element}, time));
+    element.notify(new Event(EventType.ELEMENT_HIT_BOTTOM_EDGE, {layer:this, element:element}, time));
   }
 };
 
 /** @private */
-SL.GfxLayer.prototype._handleCollisions = function() {
+GfxLayer.prototype._handleCollisions = function() {
   var element1, element2, j;
   for (i = 0; i < this._elements.length - 1; i++) {
     element1 = this._elements[i];
@@ -147,7 +147,7 @@ SL.GfxLayer.prototype._handleCollisions = function() {
 };
 
 /** @private */
-SL.GfxLayer.prototype._collisionCheckElementsIfNeeded = function(element1, element2) {
+GfxLayer.prototype._collisionCheckElementsIfNeeded = function(element1, element2) {
   if (element1.collidesWith(element2)) {
     this._updateElementOnCollision(element1);
     this._updateElementOnCollision(element2);
@@ -155,15 +155,15 @@ SL.GfxLayer.prototype._collisionCheckElementsIfNeeded = function(element1, eleme
 };
 
 /** @private */
-SL.GfxLayer.prototype._updateElementOnCollision = function(element) {
+GfxLayer.prototype._updateElementOnCollision = function(element) {
   element.setHasCollision(true);
   element.setDirty(true);
   this._dirtyElements.push(element.getZIndexComparable());
 };
 
-SL.GfxLayer.prototype.prerender = function(time,diff) {
+GfxLayer.prototype.prerender = function(time,diff) {
   var i;
-  SL.Layer.prototype.prerender.call(this,time,diff);
+  Layer.prototype.prerender.call(this,time,diff);
   // layer will have been completely cleared if dirty, so no need to clear individual elements
   if (!this.isDirty()) {
     for (i = 0; i < this._dirtyElements.size(); i++) {
@@ -178,7 +178,7 @@ SL.GfxLayer.prototype.prerender = function(time,diff) {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-SL.GfxLayer.prototype.render = function(time,diff) {
+GfxLayer.prototype.render = function(time,diff) {
   while (this._dirtyElements.peek()) {
     var element = this._dirtyElements.pop().getElement();
     var doRender = element.preRender(time,diff);
@@ -190,14 +190,14 @@ SL.GfxLayer.prototype.render = function(time,diff) {
 };
 
 /** @private */
-SL.GfxLayer.prototype._cleanUp = function() {
+GfxLayer.prototype._cleanUp = function() {
   if (this._allElementsRemoved) {
     this._elements = [];
     this._allElementsRemoved = false;
   } else {
     Object.keys(this._removedElements).forEach(function(elementId) {
       elementId = parseInt(elementId);
-      var idx = SL.linSearch(this._elements, elementId, function(element,value){return element.getId() === value;});
+      var idx = Utils.linSearch(this._elements, elementId, function(element,value){return element.getId() === value;});
       this._elements.splice(idx,1);
     }.bind(this));
   }
@@ -207,10 +207,12 @@ SL.GfxLayer.prototype._cleanUp = function() {
 };
 
 /** Propagate a mouse event to each of this layers elements.
-* @param {SL.Event} event
+* @param {Event} event
 */
-SL.GfxLayer.prototype.handleMouseEvent = function(event) {
+GfxLayer.prototype.handleMouseEvent = function(event) {
   for (var i = 0; i < this._elements.length; i++) {
     this._elements[i].handleMouseEvent(event);
   }
 };
+
+module.exports = GfxLayer;

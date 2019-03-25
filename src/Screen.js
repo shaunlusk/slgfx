@@ -1,5 +1,5 @@
 /** @namespace */
-var SL = SL || {};
+var SL = {};
 
 /** The Screen is the overriding container for Graphics components.
 * The Screen orchestrates updating and rendering its layers, propagates
@@ -35,7 +35,7 @@ SL.Screen = function(targetDiv, layerFactory, config) {
   this._mouseMoved = false;
   this._paused = false;
   this._unpaused = false;
-  this._useMouseMoveEvents = SL.isNullOrUndefined(this._config.useMouseMoveEvents) ? true : this._config.useMouseMoveEvents;
+  this._useMouseMoveEvents = SL.Utils.isNullOrUndefined(this._config.useMouseMoveEvents) ? true : this._config.useMouseMoveEvents;
 
   this._backgroundColor = this._config.backgroundColor || "black";
   this._borderColor = this._config.borderColor || "grey";
@@ -362,11 +362,11 @@ SL.Screen.prototype.render = function(time) {
 };
 
 SL.Screen.prototype._updateViewOrigins = function() {
-  if (!SL.isNullOrUndefined(this.getPendingViewOriginX())) {
+  if (!SL.Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
     this._viewOriginX = this.getPendingViewOriginX();
     this._pendingViewOriginX = null;
   }
-  if (!SL.isNullOrUndefined(this.getPendingViewOriginY())) {
+  if (!SL.Utils.isNullOrUndefined(this.getPendingViewOriginY())) {
     this._viewOriginY = this.getPendingViewOriginY();
     this._pendingViewOriginY = null;
   }

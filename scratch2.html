@@ -44,7 +44,7 @@ body {
   <div id="info"></div>
 
   <script type="text/javascript">
-  var SL = SL || {};
+  var SL = {};
   SL.debug = true;
   var screen = null,
   canvas,
@@ -126,10 +126,10 @@ body {
       scaleY:1,
       // verticalFlip:Math.random() > 0.5 ? true : false,
       // horizontalFlip:Math.random() > 0.5 ? true : false,
-      // rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
-      // rotation:SL.degreesToRadians(30)
+      // rotation:SL.Utils.degreesToRadians(Math.floor(Math.random() * 180))
+      // rotation:SL.Utils.degreesToRadians(30)
     });
-    // element2.setRotation(SL.degreesToRadians(1));
+    // element2.setRotation(SL.Utils.degreesToRadians(1));
     var frame3 = new SL.ImageSpriteFrame({
       duration : 20000,
       sourceX : 4,
@@ -153,7 +153,7 @@ body {
         scaleY:Math.random() > 0.5 ? 2 : 1,
         verticalFlip:Math.random() > 0.5 ? true : false,
         horizontalFlip:Math.random() > 0.5 ? true : false,
-        rotation:SL.degreesToRadians(Math.floor(Math.random() * 180))
+        rotation:SL.Utils.degreesToRadians(Math.floor(Math.random() * 180))
       });
       el.addFrame(frame1);
       el.addFrame(frame2);

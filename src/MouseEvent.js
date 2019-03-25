@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /**
 * MouseEvent - mouseup, mousedown, mousemove

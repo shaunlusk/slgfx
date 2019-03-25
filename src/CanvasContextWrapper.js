@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 SL.CanvasContextWrapper = function(canvas, viewOriginX, viewOriginY, imageSmoothingEnabled) {
   this._canvas = canvas;
@@ -155,3 +155,5 @@ SL.CanvasContextWrapper.prototype.setTextBaseline = function(val) {
 SL.CanvasContextWrapper.prototype.setTextDirection = function(val) {
   this._canvasContext.direction = val;
 };
+
+module.exports = SL.CanvasContextWrapper;

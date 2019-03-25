@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /**
 * @interface
@@ -24,7 +24,7 @@ SL.LayerFactory = function(registeredTypes) {
 SL.LayerFactory.prototype.getLayer = function(parentScreen, type, canvasContextWrapper, props) {
   var layer = null;
   var ctor = this._registeredTypes[type];
-  if (ctor && SL.isFunction(ctor)) {
+  if (ctor && SL.Utils.isFunction(ctor)) {
     layer = ctor(parentScreen, canvasContextWrapper, props);
   }
   return layer;

@@ -1,3 +1,11 @@
+Proposed changes:
+Modernize
+Update to use latest version of slcommon
+Don't mix 'props' and other types of parameters; have only 1 or the other.
+Improve test coverage - necessary with these level of changes.
+Merge slcommon Utils and these Utils on bundle export?
+
+---------------------------------------------
 Sprite Frames
   variable size
   offset from base

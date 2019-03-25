@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** ImageSprite implementation of AnimationFrame.
 * @extends {SL.AnimationFrame}

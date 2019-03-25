@@ -1,4 +1,4 @@
-var SL = SL || {};
+var SL = {};
 
 /** Draws images to a canvas.<br />
 * Can be used to draw all or portions of images to a canvas.
