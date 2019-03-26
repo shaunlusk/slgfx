@@ -1,5 +1,19 @@
 var SL = {};
 
+
+
+/**
+ * anonymous function - description
+ *
+ * @param  {type} context          description
+ * @param  {type} x                description
+ * @param  {type} y                description
+ * @param  {type} flipHorizontally description 
+ * @param  {type} flipVertically   description
+ * @param  {type} rotation         description
+ * @param  {type} renderCallback   description
+ * @return {type}                  description
+ */
 SL.renderWithTranslation = function (context, x, y, flipHorizontally, flipVertically, rotation, renderCallback) {
   context.save();
   SL.translateCanvasContext(context, x, y, flipHorizontally, flipVertically, rotation);

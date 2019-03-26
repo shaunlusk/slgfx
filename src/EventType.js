@@ -1,3 +1,6 @@
+/** Event types.
+* @enum {string}
+*/
 var EventType = {};
 
 EventType.SCREEN_PAUSED = "SCREEN_PAUSED";

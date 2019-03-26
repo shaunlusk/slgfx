@@ -1,26 +1,23 @@
-var SL = {};
-SL.GfxLayer = require("./GfxLayer");
-
+var GfxLayer = require("./GfxLayer");
 
 /** Background Graphics layer.<br />
 * Intended for backgrounds that don't change much.
-* Extends {@link SL.Layer}<br />
-* Generally, the use of SL.Screen.createLayer("BackgroundLayer") is preferred over creating layer by hand.
+* Generally, the use of Screen.createLayer("BackgroundLayer") is preferred over creating layer by hand.
 * @constructor
-* @param {Object} props The properties to create this layer with. <br />
-* @param {Screen} screenContext The parent screen for this layer.
-* @param {CanvasContextWrapper} canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* (Inherited from {@link SL.Layer Layer}:)
-* @param {int} props.width The width of the layer.  Should match Screen. <br />
-* @param {int} props.height The height of the layer.  Should match Screen. <br />
+* @augments GfxLayer
+* @param {Object} props The properties to create this layer with.
+* @param {Screen} props.screenContext The parent screen for this layer.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @param {int} props.width The width of the layer.  Should match Screen.
+* @param {int} props.height The height of the layer.  Should match Screen.
 */
-SL.BackgroundLayer = function(props) {
+BackgroundLayer = function(props) {
   props = props || {};
-  SL.GfxLayer.call(this, props);
+  GfxLayer.call(this, props);
 };
 
-SL.BackgroundLayer.prototype = new SL.GfxLayer();
-SL.BackgroundLayer.prototype.constructor = SL.BackgroundLayer;
+BackgroundLayer.prototype = new GfxLayer();
+BackgroundLayer.prototype.constructor = BackgroundLayer;
 
 /** Update the layer.
 * Calls update on each element.
@@ -29,7 +26,7 @@ SL.BackgroundLayer.prototype.constructor = SL.BackgroundLayer;
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 * @override
 */
-SL.BackgroundLayer.prototype.update = function(time,diff) {
+BackgroundLayer.prototype.update = function(time,diff) {
   var dirtyElement;
   var i;
   for (i = 0; i < this._elements.length; i++) {
@@ -42,4 +39,4 @@ SL.BackgroundLayer.prototype.update = function(time,diff) {
   }
 };
 
-module.exports = SL.BackgroundLayer;
+module.exports = BackgroundLayer;
