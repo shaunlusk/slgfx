@@ -1,4 +1,3 @@
-var testUtil = require('slcommon/test/testUtil');
 var EventType = require('../src/EventType');
 var GfxLayer = require('../src/GfxLayer');
 var Mocks = require('./Mocks');
@@ -17,7 +16,7 @@ describe("GfxLayer", function() {
 
       gfxLayer.addElement(mockElement);
 
-      testUtil.assert(gfxLayer._elements.length === 1, "should have added element");
+      expect(gfxLayer._elements.length).toBe(1);
       done();
     });
   });
@@ -25,31 +24,31 @@ describe("GfxLayer", function() {
     it("should return the element if it is in the list", function(done) {
       var removed = gfxLayer.removeElementById("mockElement");
 
-      testUtil.assert(removed.id === mockElement.id, "removed element should have been the mockElement");
+      expect(removed.id).toBe(mockElement.id);
       done();
     });
     it("should not immediately modify the element list", function(done) {
       var removed = gfxLayer.removeElementById("mockElement");
 
-      testUtil.assert(gfxLayer._elements.length === 1, "elements list should have been 1");
+      expect(gfxLayer._elements.length).toBe(1);
       done();
     });
     it("should mark element dirty", function(done) {
       var removed = gfxLayer.removeElementById("mockElement");
 
-      testUtil.assert(removed.isDirty(), "element should have been marked dirty");
+      expect(removed.isDirty()).toBeTruthy();
       done();
     });
     it("should mark element hidden", function(done) {
       var removed = gfxLayer.removeElementById("mockElement");
 
-      testUtil.assert(removed.isHidden(), "element should have been marked dirty");
+      expect(removed.isHidden()).toBeTruthy();
       done();
     });
     it("should return null if element not present", function(done) {
       var removed = gfxLayer.removeElementById("mockElement2");
 
-      testUtil.assert(removed === null, "should have returned null");
+      expect(removed).toBeNull();
       done();
     });
   });
@@ -59,7 +58,7 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.removeElement(mockElement);
 
-      testUtil.assert(gfxLayer.calledItWith === "mockElement", "elements list should have been 1");
+      expect(gfxLayer.calledItWith).toBe("mockElement");
       done();
     });
   });
@@ -74,8 +73,8 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.update();
 
-      testUtil.assert(mockElement.calledIt === true, "should have called update");
-      testUtil.assert(mockElement2.calledIt === true, "should have called update");
+      expect(mockElement.calledIt).toBeTruthy();
+      expect(mockElement2.calledIt).toBeTruthy();
       done();
     });
     it("should call _checkBorderCollision on each element", function(done) {
@@ -90,7 +89,7 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.update();
 
-      testUtil.assert(calledItCount === 2, "should have called _checkBorderCollision on each element");
+      expect(calledItCount).toBe(2);
       done();
     });
     it("should add dirty elements to dirty elements list", function(done) {
@@ -100,7 +99,7 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.update();
 
-      testUtil.assert(gfxLayer._dirtyElements.size() === 1, "should have added element to dirtyElements");
+      expect(gfxLayer._dirtyElements.size()).toBe(1);
       done();
     });
     it("should not add non-dirty elements to dirty elements list", function(done) {
@@ -110,7 +109,7 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.update();
 
-      testUtil.assert(gfxLayer._dirtyElements.size() === 0, "should not have added element to dirtyElements");
+      expect(gfxLayer._dirtyElements.size()).toBe(0);
       done();
     });
     it("should call _handleCollisions", function(done) {
@@ -120,7 +119,8 @@ describe("GfxLayer", function() {
 
       var removed = gfxLayer.update();
 
-      testUtil.assert(gfxLayer.calledIt === true, "should have called _handleCollisions");
+      expect(gfxLayer.calledIt).toBeTruthy();
+      expect(gfxLayer.calledIt).toBeTruthy();
       done();
     });
   });
@@ -132,7 +132,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._collisionCheckElementsIfNeeded(mockElement1,mockElement2);
 
-      testUtil.assert(mockElement1.calledIt === true, "should have called _collisionCheck");
+      expect(mockElement1.calledIt).toBeTruthy();
       done();
     });
     it("should not call update on collision if collisionCheck is false", function(done) {
@@ -143,7 +143,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._collisionCheckElementsIfNeeded(mockElement1,mockElement2);
 
-      testUtil.assert(gfxLayer.calledIt === undefined, "should not have called _updateElementOnCollision");
+      expect(gfxLayer.calledIt).toBeUndefined();
       done();
     });
     it("should call updateOnCollision for each element if collisionCheck is true", function(done) {
@@ -155,7 +155,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._collisionCheckElementsIfNeeded(mockElement1,mockElement2);
 
-      testUtil.assert(gfxLayer.calledItCount === 2, "should have called _updateElementOnCollision");
+      expect(gfxLayer.calledItCount).toBe(2);
       done();
     });
   });
@@ -165,7 +165,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._updateElementOnCollision(mockElement1);
 
-      testUtil.assert(mockElement1.collision === true, "should have called setHasCollision");
+      expect(mockElement1.collision).toBeTruthy();
       done();
     });
     it("should set element dirty", function(done) {
@@ -173,7 +173,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._updateElementOnCollision(mockElement1);
 
-      testUtil.assert(mockElement1.dirty === true, "should have set dirty");
+      expect(mockElement1.dirty).toBeTruthy();
       done();
     });
     it("should add element to dirty elements list, if wasn't dirty", function(done) {
@@ -181,7 +181,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._updateElementOnCollision(mockElement1);
 
-      testUtil.assert(gfxLayer._dirtyElements.size() === 1, "should have added to dirty list");
+      expect(gfxLayer._dirtyElements.size()).toBe(1);
       done();
     });
     it("should add element to dirty elements list, even if was dirty", function(done) {
@@ -189,7 +189,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._updateElementOnCollision(mockElement1);
 
-      testUtil.assert(gfxLayer._dirtyElements.size() === 1, "should not have added to dirty list");
+      expect(gfxLayer._dirtyElements.size()).toBe(1);
       done();
     });
   });
@@ -201,7 +201,7 @@ describe("GfxLayer", function() {
 
       gfxLayer.render();
 
-      testUtil.assert(mockElement1.calledIt === true, "should have called preRender");
+      expect(mockElement1.calledIt).toBeTruthy();
       done();
     });
     it("should call render on dirtyElements", function(done) {
@@ -212,7 +212,7 @@ describe("GfxLayer", function() {
 
       gfxLayer.render();
 
-      testUtil.assert(mockElement1.calledIt === true, "should have called render");
+      expect(mockElement1.calledIt).toBeTruthy();
       done();
     });
   });
@@ -222,7 +222,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._cleanUp();
 
-      testUtil.assert(gfxLayer._elements.length === 0, "should have removed element from list");
+      expect(gfxLayer._elements.length).toBe(0);
       done();
     });
     it("should clear removed elements.", function(done) {
@@ -230,7 +230,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._cleanUp();
 
-      testUtil.assert(gfxLayer._removedElements.mockElement === undefined, "should have cleared removed elements");
+      expect(gfxLayer._removedElements.mockElement).toBeUndefined();
       done();
     });
     it("should clear dirty elements.", function(done) {
@@ -238,7 +238,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._cleanUp();
 
-      testUtil.assert(gfxLayer._dirtyElements.size() === 0, "should have cleared dirty elements");
+      expect(gfxLayer._dirtyElements.size()).toBe(0);
       done();
     });
   });
@@ -257,7 +257,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._checkBorderCollision(mockElement,time);
 
-      testUtil.assert(notifiedWith === EventType.ELEMENT_HIT_LEFT_EDGE);
+      expect(notifiedWith).toBe(EventType.ELEMENT_HIT_LEFT_EDGE);
       done();
     });
     it("should notify screen when ELEMENT_HIT_RIGHT_EDGE", function(done) {
@@ -266,7 +266,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._checkBorderCollision(mockElement,time);
 
-      testUtil.assert(notifiedWith === EventType.ELEMENT_HIT_RIGHT_EDGE);
+      expect(notifiedWith).toBe(EventType.ELEMENT_HIT_RIGHT_EDGE);
       done();
     });
     it("should notify screen when ELEMENT_HIT_TOP_EDGE", function(done) {
@@ -275,7 +275,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._checkBorderCollision(mockElement,time);
 
-      testUtil.assert(notifiedWith === EventType.ELEMENT_HIT_TOP_EDGE);
+      expect(notifiedWith).toBe(EventType.ELEMENT_HIT_TOP_EDGE);
       done();
     });
     it("should notify screen when ELEMENT_HIT_BOTTOM_EDGE", function(done) {
@@ -284,7 +284,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._checkBorderCollision(mockElement,time);
 
-      testUtil.assert(notifiedWith === EventType.ELEMENT_HIT_BOTTOM_EDGE);
+      expect(notifiedWith).toBe(EventType.ELEMENT_HIT_BOTTOM_EDGE);
       done();
     });
   });
@@ -300,7 +300,7 @@ describe("GfxLayer", function() {
 
       gfxLayer._handleCollisions();
 
-      testUtil.assert(calledIt === true, "should have called _collisionCheckElementsIfNeeded");
+      expect(calledIt).toBeTruthy();
       done();
     });
   });
@@ -310,7 +310,7 @@ describe("GfxLayer", function() {
 
       gfxLayer.handleMouseEvent({});
 
-      testUtil.assert(mockElement.calledIt === true, "should have called handleMouseEvent on element");
+      expect(mockElement.calledIt).toBeTruthy();
       done();
     });
   });

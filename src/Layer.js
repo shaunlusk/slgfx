@@ -12,10 +12,9 @@ var Utils = require('slcommon/src/Utils');
 */
 function Layer(props) {
   props = props || {};
-  this._screenContext = props.screenContext;
-  this._width = props.screenContext ? props.screenContext.width : 320;
-  this._height = props.screenContext ? props.screenContext.height : 200;
-  this._canvas = props.canvasContextWrapper ? props.canvasContextWrapper.getCanvas() : null;
+  this._width = props.width || 320;
+  this._height = props.height || 200;
+  this._canvas = props.canvas;
   this._canvasContext = props.canvasContextWrapper;
   this._dirty = true;
   this._pendingViewOriginX = null;
@@ -73,11 +72,6 @@ Layer.prototype.getWidth = function() {return this._width;};
 * @returns {number}
 */
 Layer.prototype.getHeight = function() {return this._height;};
-
-/** Returns the parent Screen
-* @returns {Screen}
-*/
-Layer.prototype.getScreenContext = function() {return this._screenContext;};
 
 /** Returns the Canvas for this layer.
 * <b>Note</b>: this does not return the drawable CanvasContext, rather it returns the reference to the DOM element.

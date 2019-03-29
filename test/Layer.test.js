@@ -1,4 +1,3 @@
-var testUtil = require('slcommon/test/testUtil');
 var Layer = require('../src/Layer');
 
 describe('Layer', function() {
@@ -17,12 +16,12 @@ describe('Layer', function() {
     it('should be dirty', function() {
       layer.setDirty(true);
 
-      testUtil.assert(layer.isDirty());
+      expect(layer.isDirty()).toBeTruthy();
     });
     it('should not be dirty', function() {
       layer.setDirty(false);
 
-      testUtil.assert(!layer.isDirty());
+      expect(layer.isDirty()).toBeFalsy();
     });
   });
   describe('ImageSmoothing', function() {
@@ -32,14 +31,14 @@ describe('Layer', function() {
 
       layer.setImageSmoothingEnabled(true);
 
-      testUtil.assert(layer.isDirty());
+      expect(layer.isDirty()).toBeTruthy();
     });
     it('should set image smoothing', function() {
       layer.setDirty(false);
 
       layer.setImageSmoothingEnabled(true);
 
-      testUtil.assert(layer.isImageSmoothingEnabled());
+      expect(layer.isImageSmoothingEnabled()).toBeTruthy();
     });
   });
   describe('#prerender', function() {
@@ -49,7 +48,7 @@ describe('Layer', function() {
 
       layer.prerender(0,0);
 
-      testUtil.assert(canvasContextWrapper.cleared);
+      expect(canvasContextWrapper.cleared).toBeTruthy();
     });
     it('should set view origin x on canvas context', function() {
       var xval = 10;
@@ -57,7 +56,7 @@ describe('Layer', function() {
 
       layer.prerender(0,0);
 
-      testUtil.assert(canvasContextWrapper.viewOriginX === xval);
+      expect(canvasContextWrapper.viewOriginX).toBe(xval);
     });
     it('should set view origin y on canvas context', function() {
       var yval = 10;
@@ -65,7 +64,7 @@ describe('Layer', function() {
 
       layer.prerender(0,0);
 
-      testUtil.assert(canvasContextWrapper.viewOriginY === yval);
+      expect(canvasContextWrapper.viewOriginY).toBe(yval);
     });
   });
 });
