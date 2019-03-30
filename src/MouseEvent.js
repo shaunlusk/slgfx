@@ -1,16 +1,18 @@
-var SL = {};
+var Event = require('slcommon/src/Event');
 
 /**
 * MouseEvent - mouseup, mousedown, mousemove
 * @constructor
-* @param {SL.EventType} type The type of the event. Refer to SL.EventType (in slcommon).
+* @param {EventType} type The type of the event. Refer to EventType (in slcommon).
 * @param {Object} data Data for the event.  Determined by event emitter.
 * @param {time} time Optional.  The time the event occurred. If not specified, uses performance.now()
 */
-SL.MouseEvent = function(type, data, time) {
-  SL.Event.call(this, type, data, time);
+function MouseEvent(type, data, time) {
+  Event.call(this, type, data, time);
   this.endEventPropagation = false;
 };
 
-SL.MouseEvent.prototype = new SL.Event();
-SL.MouseEvent.prototype.constructor = SL.MouseEvent;
+MouseEvent.prototype = new Event();
+MouseEvent.prototype.constructor = MouseEvent;
+
+module.exports = MouseEvent;

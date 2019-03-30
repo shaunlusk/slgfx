@@ -1,4 +1,7 @@
-
+var GfxElement = require('../src/GfxElement');
+var GfxElementZIndexComparable = require('../src/GfxElementZIndexComparable');
+var Mocks = require('./Mocks');
+var EventType = require('../src/EventType');
 
 describe("GfxElement", function() {
   var element;
@@ -10,52 +13,52 @@ describe("GfxElement", function() {
   describe("#getId()", function() {
     it("should return element id", function() {
       var id = element.getId();
-      assert(id !== undefined && id !== null);
+      expect(id).toBe(0);
     });
   });
   describe("#isDirty()", function() {
     it("should true if dirty", function() {
       element.setDirty(true);
       var dirty = element.isDirty();
-      assert(dirty, "should have been dirty");
+      expect(dirty).toBeTruthy();
     });
     it("should true if hasCollision", function() {
       element.setHasCollision(true);
       var dirty = element.isDirty();
-      assert(dirty, "should have been dirty");
+      expect(dirty).toBeTruthy();
     });
     it("should true if hadCollisionPreviousFrame", function() {
       element._hadCollisionPreviousFrame = true;
       var dirty = element.isDirty();
-      assert(dirty, "should have been dirty");
+      expect(dirty).toBeTruthy();
     });
   });
   describe("#setDirty()", function() {
     it("should set dirty", function() {
       element.setDirty(true);
       var dirty = element._dirty;
-      assert(dirty, "should have been dirty");
+      expect(dirty).toBeTruthy();
     });
   });
   describe("#isHidden()", function() {
     it("should return isHidden", function() {
       element.setHidden(false);
       var hidden = element.isHidden();
-      assert(!hidden, "should not have been hidden");
+      expect(hidden).toBeFalsy();
     });
   });
   describe("#setHidden()", function() {
     it("should return isHidden", function() {
       element.setHidden(true);
       var hidden = element.isHidden();
-      assert(hidden, "should have been hidden");
+      expect(hidden).toBeTruthy();
     });
   });
   describe("#hasCollision()", function() {
     it("should return hasCollision", function() {
       element.setHasCollision(true);
       var hasCollision = element.hasCollision();
-      assert(hasCollision, "should have had collision");
+      expect(hasCollision).toBeTruthy();
     });
   });
   describe("#setHasCollision()", function() {
@@ -63,7 +66,7 @@ describe("GfxElement", function() {
       element.setHasCollision(true);
       element.setHasCollision(false);
       var hasCollision = element.hasCollision();
-      assert(!hasCollision, "should have had collision");
+      expect(hasCollision).toBeFalsy();
     });
   });
   describe("#getZIndex()", function() {
@@ -71,7 +74,7 @@ describe("GfxElement", function() {
       var expected = 50;
       element.setZIndex(expected);
       var zindex = element.getZIndex();
-      assert(zindex, "should have returned zindex");
+      expect(zindex).toBeTruthy();
     });
   });
   describe("#setZIndex()", function() {
@@ -80,63 +83,65 @@ describe("GfxElement", function() {
       element.setZIndex(50);
       element.setZIndex(expected);
       var zindex = element.getZIndex();
-      assert(zindex, "should have set zindex");
-    });
-  });
-  describe("#getParentLayer()", function() {
-    it("should return parentLayer", function() {
-      var layer = element.getParentLayer();
-      assert(layer);
+      expect(zindex).toBeTruthy();
     });
   });
   describe("#getCanvasContext()", function() {
     it("should return canvas context", function() {
       var context = element.getCanvasContext();
-      assert(context);
+      expect(context).toBeTruthy();
     });
   });
   describe("#getScreenContext()", function() {
     it("should return screen context", function() {
       var context = element.getScreenContext();
-      assert(context);
+      expect(context).toBeTruthy();
     });
   });
   describe("#getScreenScaleX()", function() {
     it("should return screen scalex", function() {
       var scaleX = element.getScreenScaleX();
-      assert(scaleX === 1);
+      expect(scaleX).toBe(1);
     });
   });
   describe("#getScreenScaleY()", function() {
     it("should return screen scaley", function() {
       var scaleY = element.getScreenScaleY();
-      assert(scaleY === 1);
+      expect(scaleY).toBe(1);
     });
   });
   describe("#getTotalScaleX()", function() {
     it("should return total scalex", function() {
-      element = new SL.GfxElement(SL.Mocks.getMockScreen({scaleX:2}), SL.Mocks.getMockLayer(), {scaleX:3});
+      element = new GfxElement({
+        screenContext:Mocks.getMockScreen({scaleX:2}),
+        canvasContextWrapper:Mocks.getMockCanvasContext(),
+        scaleX:3}
+      );
       var scaleX = element.getTotalScaleX();
-      assert(scaleX === element.getElementScaleX() * element.getScreenScaleX());
+      expect(scaleX).toBe(element.getElementScaleX() * element.getScreenScaleX());
     });
   });
   describe("#getTotalScaleY()", function() {
     it("should return total scaley", function() {
-      element = new SL.GfxElement(SL.Mocks.getMockScreen({scaleY:4}), SL.Mocks.getMockLayer(), {scaleY:7});
+      element = new GfxElement({
+        screenContext:Mocks.getMockScreen({scaleY:4}),
+        canvasContextWrapper:Mocks.getMockCanvasContext(),
+        scaleY:7
+      });
       var scaleY = element.getTotalScaleY();
-      assert(scaleY === element.getElementScaleY() * element.getScreenScaleY());
+      expect(scaleY).toBe(element.getElementScaleY() * element.getScreenScaleY());
     });
   });
   describe("#getElementScaleX()", function() {
     it("should return element scalex", function() {
       var scaleX = element.getElementScaleX();
-      assert(scaleX === 1);
+      expect(scaleX).toBe(1);
     });
   });
   describe("#getElementScaleY()", function() {
     it("should return element scaley", function() {
       var scaleY = element.getElementScaleY();
-      assert(scaleY === 1);
+      expect(scaleY).toBe(1);
     });
   });
   describe("#setElementScaleX()", function() {
@@ -144,7 +149,7 @@ describe("GfxElement", function() {
       var expected = 10;
       element.setElementScaleX(expected);
       var scaleX = element.getElementScaleX();
-      assert(scaleX === expected);
+      expect(scaleX).toBe(expected);
     });
   });
   describe("#setElementScaleY()", function() {
@@ -152,21 +157,21 @@ describe("GfxElement", function() {
       var expected = 10;
       element.setElementScaleY(expected);
       var scaleY = element.getElementScaleY();
-      assert(scaleY === expected);
+      expect(scaleY).toBe(expected);
     });
   });
   describe("#getX()", function() {
     it("should return x", function() {
       var expected = 0;
       var x = element.getX();
-      assert(x === expected);
+      expect(x).toBe(expected);
     });
   });
   describe("#getY()", function() {
     it("should return x", function() {
       var expected = 0;
       var y = element.getY();
-      assert(y === expected);
+      expect(y).toBe(expected);
     });
   });
   describe("#setX()", function() {
@@ -174,12 +179,12 @@ describe("GfxElement", function() {
       var expected = 50;
       element.setX(expected);
       var x = element.getX();
-      assert(x === expected);
+      expect(x).toBe(expected);
     });
     it("should mark dirty", function() {
       element.setX(50);
       var result = element.isDirty();
-      assert(result === true);
+      expect(result).toBeTruthy();
     });
   });
   describe("#getY()", function() {
@@ -187,26 +192,26 @@ describe("GfxElement", function() {
       var expected = 30;
       element.setY(expected);
       var y = element.getY();
-      assert(y === expected);
+      expect(y).toBe(expected);
     });
     it("should mark dirty", function() {
       element.setY(30);
       var result = element.isDirty();
-      assert(result === true);
+      expect(result).toBeTruthy();
     });
   });
   describe("#getLastX()", function() {
     it("should return last x", function() {
       element._lastX = 3;
       var result = element.getLastX();
-      assert(result === element._lastX);
+      expect(result).toBe(element._lastX);
     });
   });
   describe("#getLastY()", function() {
     it("should return last y", function() {
       element._lastY = 3;
       var result = element.getLastY();
-      assert(result === element._lastY);
+      expect(result).toBe(element._lastY);
     });
   });
   describe("#setLastX()", function() {
@@ -214,7 +219,7 @@ describe("GfxElement", function() {
       var expected = 7;
       element.setLastX(expected);
       var result = element.getLastX();
-      assert(result === expected);
+      expect(result).toBe(expected);
     });
   });
   describe("#setLastY()", function() {
@@ -222,7 +227,7 @@ describe("GfxElement", function() {
       var expected = 8;
       element.setLastY(expected);
       var result = element.getLastY();
-      assert(result === expected);
+      expect(result).toBe(expected);
     });
   });
   describe("#setMoveRates()", function() {
@@ -230,8 +235,8 @@ describe("GfxElement", function() {
       element.notify = function() {};
       var expectedX = 10, expectedY = 20;
       element.setMoveRates(expectedX, expectedY);
-      assert(element._xMoveRate === expectedX, "should have set x move rate");
-      assert(element._yMoveRate === expectedY, "should have set y move rate");
+      expect(element._xMoveRate).toBe(expectedX);
+      expect(element._yMoveRate).toBe(expectedY);
       done();
     });
     it("should notify element stopped moving", function(done) {
@@ -242,7 +247,7 @@ describe("GfxElement", function() {
       var expectedX = 0, expectedY = 0;
       element._xMoveRate = 10;
       element.setMoveRates(expectedX, expectedY);
-      assert(result === SL.EventType.ELEMENT_STOPPED_MOVING, "should have notified of element stopping");
+      expect(result).toBe(EventType.ELEMENT_STOPPED_MOVING);
       done();
     });
     it("should notify element started moving", function(done) {
@@ -252,7 +257,7 @@ describe("GfxElement", function() {
       };
       var expectedX = 10, expectedY = 2;
       element.setMoveRates(expectedX, expectedY);
-      assert(result === SL.EventType.ELEMENT_STARTED_MOVING, "should have notified of element starting");
+      expect(result).toBe(EventType.ELEMENT_STARTED_MOVING);
       done();
     });
   });
@@ -260,14 +265,14 @@ describe("GfxElement", function() {
     it("should return move rate", function() {
       element._xMoveRate = 3;
       var result = element.getMoveRateX();
-      assert(result === element._xMoveRate);
+      expect(result).toBe(element._xMoveRate);
     });
   });
   describe("#getMoveRateY()", function() {
     it("should return move rate", function() {
       element._yMoveRate = 3;
       var result = element.getMoveRateY();
-      assert(result === element._yMoveRate);
+      expect(result).toBe(element._yMoveRate);
     });
   });
   describe("#moveTo()", function() {
@@ -275,7 +280,7 @@ describe("GfxElement", function() {
       element._runMove = function() {};
       var x = 10, y = 10, duration = 200;
       element.moveTo(x, y, duration);
-      assert(element._moveQueue.size() > 0, "should have added move to queue");
+      expect(element._moveQueue.size()).toBeGreaterThan(0);
       done();
     });
     it("should call run move", function(done) {
@@ -285,7 +290,7 @@ describe("GfxElement", function() {
       };
       var x = 10, y = 10, duration = 200;
       element.moveTo(x, y, duration);
-      assert(result === true, "should have called run move");
+      expect(result).toBeTruthy();
       done();
     });
     it("should notify if element started moving", function(done) {
@@ -296,7 +301,7 @@ describe("GfxElement", function() {
       };
       var x = 10, y = 10, duration = 200;
       element.moveTo(x, y, duration);
-      assert(result === SL.EventType.ELEMENT_STARTED_MOVING, "should have notified");
+      expect(result).toBe(EventType.ELEMENT_STARTED_MOVING);
       done();
     });
   });
@@ -311,7 +316,7 @@ describe("GfxElement", function() {
 
       element._runMove();
 
-      assert(mockMove.calledIt === true, "should have called start on move");
+      expect(mockMove.calledIt).toBeTruthy();
       done();
     });
     it("should notify if element stopped", function(done) {
@@ -322,7 +327,7 @@ describe("GfxElement", function() {
 
       element._runMove();
 
-      assert(result === SL.EventType.ELEMENT_STOPPED_MOVING, "should have notified element stopped");
+      expect(result).toBe(EventType.ELEMENT_STOPPED_MOVING);
       done();
     });
   });
@@ -330,14 +335,14 @@ describe("GfxElement", function() {
     it("should set current moved null", function(done) {
       element._currentMove = {};
       element.moveOrderCallback();
-      assert(element._currentMove === null, "should have nulled current move");
+      expect(element._currentMove).toBe(null);
       done();
     });
     it("should set current moved null", function(done) {
       var result = false;
       element._runMove = function() {result = true;};
       element.moveOrderCallback();
-      assert(result === true, "should have called run move");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -346,7 +351,7 @@ describe("GfxElement", function() {
       var result = false;
       element._moveQueue.clear = function() {result = true;};
       element.clearMoveQueue();
-      assert(result === true, "should have cleared move queue");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -364,12 +369,12 @@ describe("GfxElement", function() {
 
       element.turnOff();
 
-      assert(clearedMoves === true, "should have cleared move queue");
-      assert(calledHide === true, "should have called hide");
-      assert(element._xMoveRate === 0, "should have zeroed move rates");
-      assert(element._yMoveRate === 0, "should have zeroed move rates");
-      assert(element._xMoveFractionalAccumulator === 0, "should have zeroed move rates");
-      assert(element._yMoveFractionalAccumulator === 0, "should have zeroed move rates");
+      expect(clearedMoves).toBeTruthy();
+      expect(calledHide).toBeTruthy();
+      expect(element._xMoveRate).toBe(0);
+      expect(element._yMoveRate).toBe(0);
+      expect(element._xMoveFractionalAccumulator).toBe(0);
+      expect(element._yMoveFractionalAccumulator).toBe(0);
       done();
     });
   });
@@ -377,13 +382,13 @@ describe("GfxElement", function() {
     it("should set hidden false;", function(done) {
       element._hidden = true;
       element.show();
-      assert(element.isHidden() === false, "should have set hidden false;");
+      expect(element.isHidden()).toBeFalsy();
       done();
     });
     it("should set dirty true;", function(done) {
       element._dirty = false;
       element.show();
-      assert(element.isDirty() === true, "should have set dirty true;");
+      expect(element.isDirty()).toBeTruthy();
       done();
     });
   });
@@ -391,13 +396,13 @@ describe("GfxElement", function() {
     it("should set hidden true;", function(done) {
       element._hidden = false;
       element.hide();
-      assert(element.isHidden() === true, "should have set hidden true;");
+      expect(element.isHidden()).toBeTruthy();
       done();
     });
     it("should set dirty true;", function(done) {
       element._dirty = false;
       element.hide();
-      assert(element.isDirty() === true, "should have set dirty true;");
+      expect(element.isDirty()).toBeTruthy();
       done();
     });
   });
@@ -408,7 +413,7 @@ describe("GfxElement", function() {
 
       element.update(1,1);
 
-      assert(result === true, "should have called updateLocationFromMoveRates");
+      expect(result).toBeTruthy();
       done();
     });
     it("should call _updateMoveOrder", function(done) {
@@ -418,7 +423,7 @@ describe("GfxElement", function() {
 
       element.update(1,1);
 
-      assert(result === true, "should have called updateLocationFromMoveRates");
+      expect(result).toBeTruthy();
       done();
     });
     it("should set dirty if element moved", function(done) {
@@ -428,7 +433,7 @@ describe("GfxElement", function() {
 
       element.update(1,1);
 
-      assert(element.isDirty(), "should have dirty true");
+      expect(element.isDirty()).toBeTruthy();
       done();
     });
     it("should notify if element moved", function(done) {
@@ -441,7 +446,7 @@ describe("GfxElement", function() {
 
       element.update(1,1);
 
-      assert(result === SL.EventType.ELEMENT_MOVED, "should have notified");
+      expect(result).toBe(EventType.ELEMENT_MOVED);
       done();
     });
     it("should return element", function(done) {
@@ -453,7 +458,7 @@ describe("GfxElement", function() {
 
       var result = element.update(1,1);
 
-      assert(result !== null, "should have returned element");
+      expect(result).toBeTruthy();
       done();
     });
     it("should return null", function(done) {
@@ -465,7 +470,7 @@ describe("GfxElement", function() {
 
       var result = element.update(1,1);
 
-      assert(result === null, "should have returned null");
+      expect(result).toBe(null);
       done();
     });
   });
@@ -475,9 +480,9 @@ describe("GfxElement", function() {
 
       element._updateLocationFromMoveRates(1000, 1000);
 
-      assert(element.getX() === 10, "should have changed x coordinate");
-      assert(element.getY() === 10, "should have changed y coordinate");
-      assert(element.isDirty() === true, "should have set dirty");
+      expect(element.getX()).toBe(10);
+      expect(element.getY()).toBe(10);
+      expect(element.isDirty()).toBeTruthy();
       done();
     });
     it("should increment accumulator", function(done){
@@ -486,9 +491,9 @@ describe("GfxElement", function() {
 
       element._updateLocationFromMoveRates(10, 10);
 
-      assert(element._xMoveFractionalAccumulator === 0.10, "should have updated x accumulator");
-      assert(element._yMoveFractionalAccumulator === 0.10, "should have updated y accumulator");
-      assert(element.isDirty() === false, "should not have set dirty");
+      expect(element._xMoveFractionalAccumulator).toBe(0.10);
+      expect(element._yMoveFractionalAccumulator).toBe(0.10);
+      expect(element.isDirty()).toBeFalsy();
       done();
     });
     it("should clear accumulator", function(done){
@@ -498,8 +503,8 @@ describe("GfxElement", function() {
 
       element._updateLocationFromMoveRates(10, 10);
 
-      assert(element._xMoveFractionalAccumulator === 0, "should have zeroed x accumulator");
-      assert(element._yMoveFractionalAccumulator === 0, "should have zeroed y accumulator");
+      expect(element._xMoveFractionalAccumulator).toBe(0);
+      expect(element._yMoveFractionalAccumulator).toBe(0);
       done();
     });
   });
@@ -513,8 +518,8 @@ describe("GfxElement", function() {
 
       element._updateMoveOrder(1,1);
 
-      assert(result === true, "should have updated move order");
-      assert(element.isDirty(), "should have marked element dirty");
+      expect(result).toBeTruthy();
+      expect(element.isDirty()).toBeTruthy();
       done();
     });
   });
@@ -526,10 +531,10 @@ describe("GfxElement", function() {
       element._lastCollisionBoxHeight = 8;
       element.clear();
       var mockContext = element.getCanvasContext();
-      assert(mockContext.clearedX === -1, "cleared x, expected " + (-1) + ", actual " + mockContext.clearedX);
-      assert(mockContext.clearedY === -1, "cleared y, expected " + (-1) + ", actual " + mockContext.clearedX);
-      assert(mockContext.clearedWidth === 7, "cleared width, expected " + 7 + ", actual " + mockContext.clearedX);
-      assert(mockContext.clearedHeight === 8, "cleared height, expected " + 8 + ", actual " + mockContext.clearedX);
+      expect(mockContext.clearedX).toBe(-1);
+      expect(mockContext.clearedY).toBe(-1);
+      expect(mockContext.clearedWidth).toBe(7);
+      expect(mockContext.clearedHeight).toBe(8);
       done();
     });
   });
@@ -540,11 +545,11 @@ describe("GfxElement", function() {
       element.setHasCollision(true);
       element.postRender(1,1);
 
-      assert(element.getLastX() === 10, "should have updated lastX");
-      assert(element.getLastY() === 10, "should have updated lastY");
-      assert(element._dirty === false, "should have cleared dirty flag");
-      assert(element._hadCollisionPreviousFrame === true, "should have set had collision");
-      assert(element.hasCollision() === false, "should have cleared has collision");
+      expect(element.getLastX()).toBe(10);
+      expect(element.getLastY()).toBe(10);
+      expect(element._dirty).toBeFalsy();
+      expect(element._hadCollisionPreviousFrame).toBeTruthy();
+      expect(element.hasCollision()).toBeFalsy();
       done();
     });
   });
@@ -558,7 +563,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWith(other);
 
-      assert(result, "should have returned true");
+      expect(result).toBeTruthy();
       done();
     });
     it("should return false if collision boxes dont overlap", function(done) {
@@ -571,7 +576,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWith(other);
 
-      assert(!result, "should have returned false");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return true if collision boxes touch", function(done) {
@@ -584,7 +589,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWith(other);
 
-      assert(result, "should have returned true");
+      expect(result).toBeTruthy();
       done();
     });
     it("should notify on collision", function(done) {
@@ -600,7 +605,7 @@ describe("GfxElement", function() {
 
       element.collidesWith(other);
 
-      assert(result === SL.EventType.ELEMENT_COLLISION, "should have notified");
+      expect(result).toBe(EventType.ELEMENT_COLLISION);
       done();
     });
   });
@@ -612,7 +617,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(-2,0);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return false if coord x > element x + element width", function(done) {
@@ -622,7 +627,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(12,0);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return false if coord y < element y", function(done) {
@@ -632,7 +637,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(0,-2);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return false if coord y > element y + element height", function(done) {
@@ -642,7 +647,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(0,12);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return true if coords inside element bounds", function(done) {
@@ -652,7 +657,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(3,3);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
     it("should return true if coords touch element bounds", function(done) {
@@ -662,7 +667,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithCoordinates(11,11);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -674,7 +679,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithX(-2);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return false if coord x > element x + element width", function(done) {
@@ -684,7 +689,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithX(12);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return true if coords x is inside element bounds", function(done) {
@@ -694,7 +699,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithX(3);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
     it("should return true if coord x touches element bounds", function(done) {
@@ -704,7 +709,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithX(11);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -716,7 +721,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithY(-2);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return false if coord y > element y + element height", function(done) {
@@ -726,7 +731,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithY(12);
 
-      assert(result === false, "should have returned false.");
+      expect(result).toBeFalsy();
       done();
     });
     it("should return true if coord is inside element bounds", function(done) {
@@ -736,7 +741,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithY(10);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
     it("should return true if coord y touches element bounds", function(done) {
@@ -746,7 +751,7 @@ describe("GfxElement", function() {
 
       var result = element.collidesWithY(11);
 
-      assert(result === true, "should have returned true.");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -757,7 +762,7 @@ describe("GfxElement", function() {
       var result = element.getCollisionBoxX();
 
       var expected = 5;
-      assert(result === expected, "should return collision box x. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "should return collision box x. expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -768,7 +773,7 @@ describe("GfxElement", function() {
       var result = element.getCollisionBoxY();
 
       var expected = 5;
-      assert(result === expected, "should return collision box y. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "should return collision box y. expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -780,7 +785,7 @@ describe("GfxElement", function() {
       var result = element.getCollisionBoxWidth();
 
       var expected = 34;
-      assert(result === expected, "should return collision box width. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "should return collision box width. expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -792,7 +797,7 @@ describe("GfxElement", function() {
       var result = element.getCollisionBoxHeight();
 
       var expected = 34;
-      assert(result === expected, "should return collision box width. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "should return collision box width. expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -808,47 +813,47 @@ describe("GfxElement", function() {
     });
     it("should notify MOUSE_MOVE_OVER_ELEMENT", function(done) {
       var event = {
-        type : SL.EventType.MOUSE_MOVE,
+        type : EventType.MOUSE_MOVE,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_MOVE_OVER_ELEMENT, "should have notified with MOUSE_MOVE_OVER_ELEMENT");
+      expect(result).toBe(EventType.MOUSE_MOVE_OVER_ELEMENT);
       done();
     });
     it("should notify MOUSE_DOWN_ON_ELEMENT", function(done) {
       var event = {
-        type : SL.EventType.MOUSE_DOWN,
+        type : EventType.MOUSE_DOWN,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_DOWN_ON_ELEMENT, "should have notified with MOUSE_DOWN_ON_ELEMENT");
+      expect(result).toBe(EventType.MOUSE_DOWN_ON_ELEMENT);
       done();
     });
     it("should notify MOUSE_UP_ON_ELEMENT", function(done) {
       var event = {
-        type : SL.EventType.MOUSE_UP,
+        type : EventType.MOUSE_UP,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
 
       element.handleMouseEvent(event);
 
-      assert(result === SL.EventType.MOUSE_UP_ON_ELEMENT, "should have notified with MOUSE_UP_ON_ELEMENT");
+      expect(result).toBe(EventType.MOUSE_UP_ON_ELEMENT);
       done();
     });
     it("should endEventPropagation of originating event", function(done) {
       var event = {
-        type : SL.EventType.MOUSE_UP,
+        type : EventType.MOUSE_UP,
         data : {x:0, y:0, row:0, col:0, time:0}
       };
       element.notify = function(e) {e.endEventPropagation = true;};
 
       element.handleMouseEvent(event);
 
-      assert(event.endEventPropagation === true, "should have ended event propagation");
+      expect(event.endEventPropagation).toBeTruthy();
       done();
     });
   });
@@ -856,7 +861,7 @@ describe("GfxElement", function() {
     it("should add callback to list", function(done) {
       var eventType = "newType";
       element.on(eventType, function() {
-        assert(true);
+        expect(true).toBeTruthy();
         done();
       }, "testHandler");
       element._eventListeners[eventType].testHandler();
@@ -869,15 +874,7 @@ describe("GfxElement", function() {
 
       element.clearEventHandlers(eventType);
 
-      assert(element._eventListeners[eventType].testHandler === undefined, "should have cleared handler list");
-      done();
-    });
-    it("should throw error", function(done) {
-      var eventType = "newType";
-
-      var result = throwsError(element.clearEventHandlers.bind(element, eventType));
-
-      assert(result === true, "should have thrown error");
+      expect(element._eventListeners[eventType].testHandler).toBeUndefined();
       done();
     });
   });
@@ -893,7 +890,7 @@ describe("GfxElement", function() {
       });
 
       element.notify(event);
-      assert(result, "should have notified listeners");
+      expect(result).toBeTruthy();
       done();
     });
     it("should notify screenContext", function(done) {
@@ -905,20 +902,24 @@ describe("GfxElement", function() {
       };
 
       element.notify(event);
-      assert(result, "should have notified screenContext");
+      expect(result).toBeTruthy();
       done();
     });
   });
   describe("#getZIndexComparable()", function() {
     it("should return zindex comparable", function(done) {
       var result = element.getZIndexComparable();
-      assert(result instanceof SL.GfxElementZIndexComparable, "should have returned zindexComparable");
+      expect(result).toBeInstanceOf(GfxElementZIndexComparable);
       done();
     });
   });
 });
 
 function getGfxElement(props) {
-  var element = new SL.GfxElement(SL.Mocks.getMockScreen(), SL.Mocks.getMockLayer(), props);
+  var element = new GfxElement({
+    ...props,
+    screenContext:Mocks.getMockScreen(),
+    canvasContextWrapper:Mocks.getMockCanvasContext()
+  });
   return element;
 }

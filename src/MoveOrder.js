@@ -1,16 +1,14 @@
-var SL = {};
-
-/** Directs movement of {@link SL.GfxElements} when moveTo() is called.
+/** Directs movement of {@link GfxElements} when moveTo() is called.
 * These are created and handled internally in GfxElements.
 * @constructor
-* @param {SL.GfxElements} element The element this MoveOrder will be bound to.
+* @param {GfxElements} element The element this MoveOrder will be bound to.
 * @param {number} tx The target x location for the element.
 * @param {number} ty The target y location for the element.
 * @param {number} duration The length of time (milliseconds) for the movement to the target location.
 * @param {function} elementCallback The callback of the parent element; called when movement is done.
 * @param {function} callback Optional callback to be called when movement is done.
 */
-SL.MoveOrder = function(element, tx, ty, duration, elementCallback, callback) {
+function MoveOrder(element, tx, ty, duration, elementCallback, callback) {
   this._element = element;
   this._tx = tx;
   this._ty = ty;
@@ -26,7 +24,7 @@ SL.MoveOrder = function(element, tx, ty, duration, elementCallback, callback) {
 
 /** Initialize movement conditions.
 */
-SL.MoveOrder.prototype.start = function() {
+MoveOrder.prototype.start = function() {
   this._startX = this._element.getX();
   this._startY = this._element.getY();
   this._started = true;
@@ -36,7 +34,7 @@ SL.MoveOrder.prototype.start = function() {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-SL.MoveOrder.prototype.update = function(time,diff) {
+MoveOrder.prototype.update = function(time,diff) {
   if (!this._started) return;
   if (this._end) return;
   if (this._startTime === -1) this._startTime = time;
@@ -51,15 +49,17 @@ SL.MoveOrder.prototype.update = function(time,diff) {
 
 /** Finish movement and notify the parent element.
 */
-SL.MoveOrder.prototype.end = function () {
+MoveOrder.prototype.end = function () {
   this._end = true;
   this._element.setX(this._tx);
   this._element.setY(this._ty);
-  if (SL.Utils.isFunction(this._elementCallback)) this._elementCallback();
-  if (SL.Utils.isFunction(this._callback)) this._callback(this._element);
+  if (Utils.isFunction(this._elementCallback)) this._elementCallback();
+  if (Utils.isFunction(this._callback)) this._callback(this._element);
 };
 
 /** @private */
-SL.MoveOrder.prototype._timePercent = function (time) {
+MoveOrder.prototype._timePercent = function (time) {
   return (time - this._startTime) / this._duration;
 };
+
+module.exports = MoveOrder;
