@@ -1,18 +1,22 @@
-var SL = {};
+// Mock for node testing.
+var Image = Image || function() {};
 
 /**
 * @class
 * Given an object containing of image paths, will load images and store them back in the object.
-* @param imagesHash : format imageId:{path:path}
-* e.g.,: warriorSpriteImage1:{path:"images/warrior1Sprite.png"}
+* @param {Object} imagesHash Has of image information. Format {imageId1:{path:path}, imageId1:{path:path}}
+* e.g.,: (warriorSpriteImage1:{path:"images/warrior1Sprite.png"}}
 */
-SL.ImageLoader = function(imagesHash) {
+function ImageLoader(imagesHash) {
   this.imagesHash = imagesHash;
   this.imageCount = 0;
   this.imageLoadedCounter = 0;
 };
 
-SL.ImageLoader.prototype.loadImages = function(callback) {
+/** Load the images and callback when done.
+* @param {function} callback Will call this function when all images have been loaded.
+*/
+ImageLoader.prototype.loadImages = function(callback) {
   this.imagesDoneLoadingCallback = callback;
   var keys = Object.keys(this.imagesHash);
   this.imageCount = keys.length;
@@ -25,9 +29,12 @@ SL.ImageLoader.prototype.loadImages = function(callback) {
   }
 };
 
-SL.ImageLoader.prototype.loadImagesCallback = function() {
+/** @private */
+ImageLoader.prototype.loadImagesCallback = function() {
   this.imageLoadedCounter++;
   if (this.imageLoadedCounter === this.imageCount) {
     this.imagesDoneLoadingCallback(this.imagesHash);
   }
 };
+
+module.exports = ImageLoader;

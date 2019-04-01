@@ -1,9 +1,7 @@
 Proposed changes:
 Modernize
-Update to use latest version of slcommon
 Don't mix 'props' and other types of parameters; have only 1 or the other.
 Improve test coverage - necessary with these level of changes.
-Merge slcommon Utils and these Utils on bundle export?
 
 ---------------------------------------------
 Sprite Frames
@@ -30,24 +28,18 @@ Eventing
 
 update documentation for imported gfx classes
 
-rotate over time
+rotate over time - done?
 
 Scrollable layers
-  scroll to point
+  scroll to point - done?
   documentation!
 
 is there a way of dimming layers without clearing the layer?
 - also use internal time instead of setTimeout - use replacement in common eventing system?
 
-support for turning mouse tracking off
+support for turning mouse tracking off - done?
 
-remove all elements
-
-move element from one layer to another
-  parentLayer
-  canvasContext
-
-LocalStorage - from RuneTx
+remove all elements - done?
 
 pix element?
 
