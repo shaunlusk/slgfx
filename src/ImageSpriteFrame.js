@@ -1,7 +1,7 @@
-var SL = {};
+var AnimationFrame = require('../src/AnimationFrame');
 
 /** ImageSprite implementation of AnimationFrame.
-* @extends {SL.AnimationFrame}
+* @extends {AnimationFrame}
 * @constructor
 * @params {Object} props Properties supported:
 * <ul>
@@ -12,40 +12,42 @@ var SL = {};
 *   <li>sourceHeight - number - The height of the sub-section of the image for this frame.
 * </ul>
 */
-SL.ImageSpriteFrame = function(props) {
+function ImageSpriteFrame(props) {
   props = props || {};
-  SL.AnimationFrame.call(this);
+  AnimationFrame.call(this);
   this._duration = props.duration;
   this._sx = props.sourceX;
   this._sy = props.sourceY;
   this._sWidth = props.sourceWidth;
   this._sHeight = props.sourceHeight;
 };
-SL.ImageSpriteFrame.prototype = new SL.AnimationFrame();
-SL.ImageSpriteFrame.prototype.callback = SL.ImageSpriteFrame;
+ImageSpriteFrame.prototype = new AnimationFrame();
+ImageSpriteFrame.prototype.callback = ImageSpriteFrame;
 
 /** Return the duration of this frame.
 * @override
 * @returns {number}
 */
-SL.ImageSpriteFrame.prototype.getDuration = function() {return this._duration;};
+ImageSpriteFrame.prototype.getDuration = function() {return this._duration;};
 
 /** Return the starting x point on the source Image for this frame
 * @returns {number}
 */
-SL.ImageSpriteFrame.prototype.getSourceX = function() {return this._sx;};
+ImageSpriteFrame.prototype.getSourceX = function() {return this._sx;};
 
 /** Return the starting y point on the source Image for this frame
 * @returns {number}
 */
-SL.ImageSpriteFrame.prototype.getSourceY = function() {return this._sy;};
+ImageSpriteFrame.prototype.getSourceY = function() {return this._sy;};
 
 /** Return the width of the subsection of the source Image for this frame
 * @returns {number}
 */
-SL.ImageSpriteFrame.prototype.getSourceWidth = function() {return this._sWidth;};
+ImageSpriteFrame.prototype.getSourceWidth = function() {return this._sWidth;};
 
 /** Return the height of the subsection of the source Image for this frame
 * @returns {number}
 */
-SL.ImageSpriteFrame.prototype.getSourceHeight = function() {return this._sHeight;};
+ImageSpriteFrame.prototype.getSourceHeight = function() {return this._sHeight;};
+
+module.exports = ImageSpriteFrame;

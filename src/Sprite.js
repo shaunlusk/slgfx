@@ -38,9 +38,9 @@ var Event = require('slcommon/src/Event');
 * @see AnimationFrame
 * @see ImageSprite
 */
-function Sprite(screenContext, parentLayer, props) {
+function Sprite(props) {
   props = props || {};
-  GfxElement.call(this, screenContext, parentLayer, props);
+  GfxElement.call(this, props);
 
   this._frames = props.frames || [];
   this._ttl = props.ttl || -1;
@@ -53,7 +53,6 @@ function Sprite(screenContext, parentLayer, props) {
   this._done = false;
   this._loopCount = 0;
   this._elapsed = 0;
-
 };
 
 Sprite.prototype = new GfxElement();
