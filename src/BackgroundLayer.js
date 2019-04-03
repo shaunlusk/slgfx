@@ -11,7 +11,7 @@ var GfxLayer = require("./GfxLayer");
 * @param {int} props.width The width of the layer.  Should match Screen.
 * @param {int} props.height The height of the layer.  Should match Screen.
 */
-BackgroundLayer = function(props) {
+function BackgroundLayer(props) {
   props = props || {};
   GfxLayer.call(this, props);
 };

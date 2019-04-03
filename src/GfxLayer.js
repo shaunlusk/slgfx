@@ -14,7 +14,7 @@ var Layer = require("./Layer");
 * @param {int} props.width The width of the layer.  Should match Screen.
 * @param {int} props.height The height of the layer.  Should match Screen.
 */
-GfxLayer = function(props) {
+function GfxLayer(props) {
   props = props || {};
   Layer.call(this, props);
   this._elements = [];

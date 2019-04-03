@@ -1,40 +1,34 @@
-var SL = {};
+var Utils = require('./Utils');
+var GfxLayer = require('./GfxLayer');
+var BackgroundLayer = require('./BackgroundLayer');
 
-/**
-* @interface
-*/
-SL.ILayerFactory = function() {};
-
-/** abstract */
-SL.ILayerFactory.prototype.getLayer = function(parentScreen, type, canvasContextWrapper, props) {
-  throw new Error("getLayer() Not Implemented.");
-};
-
-SL.LayerFactory = function(registeredTypes) {
+function LayerFactory(registeredTypes) {
   registeredTypes = registeredTypes || {};
   this._registeredTypes = {};
-  Object.keys(SL.LayerFactory.DefaultTypes).forEach(function(key) {
-    this._registeredTypes[key] = SL.LayerFactory.DefaultTypes[key];
+  Object.keys(LayerFactory.DefaultTypes).forEach(function(key) {
+    this._registeredTypes[key] = LayerFactory.DefaultTypes[key];
   }.bind(this));
   Object.keys(registeredTypes).forEach(function(key) {
     this._registeredTypes[key] = registeredTypes[key];
   }.bind(this));
 };
 
-SL.LayerFactory.prototype.getLayer = function(parentScreen, type, canvasContextWrapper, props) {
+LayerFactory.prototype.getLayer = function(type, layerProps) {
   var layer = null;
   var ctor = this._registeredTypes[type];
-  if (ctor && SL.Utils.isFunction(ctor)) {
-    layer = ctor(parentScreen, canvasContextWrapper, props);
+  if (ctor && Utils.isFunction(ctor)) {
+    layer = ctor(layerProps);
   }
   return layer;
 };
 
-SL.LayerFactory.DefaultTypes = {
-  "GfxLayer" : function(parentScreen, canvasContextWrapper, props) {
-    return new SL.GfxLayer(parentScreen, canvasContextWrapper, props);
+LayerFactory.DefaultTypes = {
+  "GfxLayer" : function(props) {
+    return new GfxLayer(props);
   },
-  "BackgroundLayer" : function(parentScreen, canvasContextWrapper, props) {
-    return new SL.BackgroundLayer(parentScreen, canvasContextWrapper, props);
+  "BackgroundLayer" : function(props) {
+    return new BackgroundLayer(props);
   }
 };
+
+module.exports = LayerFactory;

@@ -1,52 +1,57 @@
+var LayerFactory = require('../src/LayerFactory');
+var Utils = require('../src/Utils');
+var GfxLayer = require('../src/GfxLayer');
+var BackgroundLayer = require('../src/BackgroundLayer');
+
 describe("LayerFactory", function() {
   describe("#constructor", function() {
     it("should setup default layer type creator functions", function(done) {
-      var lf = new SL.LayerFactory();
+      var lf = new LayerFactory();
 
-      assert(lf._registeredTypes !== null, "_registeredTypes was not created");
-      assert(SL.Utils.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
-      assert(SL.Utils.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
+      expect(lf._registeredTypes).toBeTruthy();
+      expect(Utils.isFunction(lf._registeredTypes.GfxLayer)).toBeTruthy();
+      expect(Utils.isFunction(lf._registeredTypes.BackgroundLayer)).toBeTruthy();
       done();
     });
     it("should setup default layer type creator functions and those passed in", function(done) {
-      var lf = new SL.LayerFactory({
+      var lf = new LayerFactory({
         "BogusLayer":function() {}
       });
 
-      assert(lf._registeredTypes !== null, "_registeredTypes was not created");
-      assert(SL.Utils.isFunction(lf._registeredTypes.GfxLayer), "_registeredTypes does not contain function for GfxLayer");
-      assert(SL.Utils.isFunction(lf._registeredTypes.BackgroundLayer), "_registeredTypes does not contain function for BackgroundLayer");
-      assert(SL.Utils.isFunction(lf._registeredTypes.BogusLayer), "_registeredTypes does not contain function for BogusLayer");
+      expect(lf._registeredTypes).toBeTruthy();
+      expect(Utils.isFunction(lf._registeredTypes.GfxLayer)).toBeTruthy();
+      expect(Utils.isFunction(lf._registeredTypes.BackgroundLayer)).toBeTruthy();
+      expect(Utils.isFunction(lf._registeredTypes.BogusLayer)).toBeTruthy();
       done();
     });
   });
   describe("#getLayer", function() {
     it("should create GfxLayer", function(done) {
-      var lf = new SL.LayerFactory();
+      var lf = new LayerFactory();
 
-      var result = lf.getLayer(null, "GfxLayer", null);
+      var result = lf.getLayer("GfxLayer", {});
 
-      assert(result !== null, "should have created layer");
-      assert(result instanceof SL.GfxLayer, "should have created GfxLayer type");
+      expect(result).toBeTruthy();
+      expect(result).toBeInstanceOf(GfxLayer);
       done();
     });
     it("should create BackgroundLayer", function(done) {
-      var lf = new SL.LayerFactory();
+      var lf = new LayerFactory();
 
-      var result = lf.getLayer(null, "BackgroundLayer", null);
+      var result = lf.getLayer("BackgroundLayer", {});
 
-      assert(result !== null, "should have created layer");
-      assert(result instanceof SL.BackgroundLayer, "should have created BackgroundLayer type");
+      expect(result).toBeTruthy();
+      expect(result).toBeInstanceOf(BackgroundLayer);
       done();
     });
     it("should create other layer", function(done) {
-      var lf = new SL.LayerFactory({
+      var lf = new LayerFactory({
         "BogusLayer":function() {return "fakeLayer";}
       });
 
-      var result = lf.getLayer(null, "BogusLayer", null);
+      var result = lf.getLayer("BogusLayer", {});
 
-      assert(result === "fakeLayer", "should have created fake layer");
+      expect(result).toBe("fakeLayer");
       done();
     });
   });
