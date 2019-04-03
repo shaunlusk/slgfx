@@ -1,14 +1,14 @@
-var SL = {};
+var Utils = require('./Utils');
 
 /** Draws images to a canvas.<br />
 * Can be used to draw all or portions of images to a canvas.
 * @constructor
-* @param {integer} screenScaleX Horizontal scale of the SL.Screen
-* @param {integer} screenScaleY Vertical scale of the SL.Screen
-* @see SL.ImageElement
-* @see SL.ImageSprite
+* @param {int} screenScaleX Horizontal scale of the Screen
+* @param {int} screenScaleY Vertical scale of the Screen
+* @see ImageElement
+* @see ImageSprite
 */
-SL.ImageRenderer = function(screenScaleX, screenScaleY) {
+function ImageRenderer(screenScaleX, screenScaleY) {
   this._screenScaleX = screenScaleX;
   this._screenScaleY = screenScaleY;
 };
@@ -30,7 +30,7 @@ SL.ImageRenderer = function(screenScaleX, screenScaleY) {
 * @param {boolean} isVerticallyFlipped Whether the element is flipped vertically.
 * @param {number} rotation The element's rotation in radians.
 */
-SL.ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
+ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
   if (flipHorizontally || flipVertically || rotation) {
     this.renderImageWithTranslation(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation);
   } else {
@@ -47,10 +47,10 @@ SL.ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth
   }
 };
 
-SL.ImageRenderer.prototype.renderImageWithTranslation = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
+ImageRenderer.prototype.renderImageWithTranslation = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
   var translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
   var translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;
-  SL.renderWithTranslation(context, translationX, translationY, flipHorizontally, flipVertically, rotation, function() {
+  Utils.renderWithTranslation(context, translationX, translationY, flipHorizontally, flipVertically, rotation, function() {
     context.drawImageWithTranslation(
       image,
       sx,
@@ -69,24 +69,26 @@ SL.ImageRenderer.prototype.renderImageWithTranslation = function(context, image,
 * Return the horizontal scale of the renderer.
 * @return {integer}
 */
-SL.ImageRenderer.prototype.getScreenScaleX = function() {return this._screenScaleX;};
+ImageRenderer.prototype.getScreenScaleX = function() {return this._screenScaleX;};
 
 /**
 * Return the vertical scale of the renderer.
 * @return {integer}
 */
-SL.ImageRenderer.prototype.getScreenScaleY = function() {return this._screenScaleY;};
+ImageRenderer.prototype.getScreenScaleY = function() {return this._screenScaleY;};
 
 /**
 * Return the total horizontal scale (screen scale * image scale).
 * @param {integer} imageScaleX The x amount to scale the portion of the image drawn to the canvas.
 * @return {integer}
 */
-SL.ImageRenderer.prototype.getTotalScaleX = function(imageScaleX) {return this._screenScaleX * imageScaleX;};
+ImageRenderer.prototype.getTotalScaleX = function(imageScaleX) {return this._screenScaleX * imageScaleX;};
 
 /**
 * Return the total vertical scale (screen scale * image scale).
 * @param {integer} imageScaleY The y amount to scale the portion of the image drawn to the canvas.
 * @return {integer}
 */
-SL.ImageRenderer.prototype.getTotalScaleY = function(imageScaleY) {return this._screenScaleY * imageScaleY;};
+ImageRenderer.prototype.getTotalScaleY = function(imageScaleY) {return this._screenScaleY * imageScaleY;};
+
+module.exports = ImageRenderer;

@@ -1,8 +1,10 @@
+var ImageRenderer = require('../src/ImageRenderer');
+
 describe("ImageRenderer", function() {
   describe("#renderImage()", function() {
     it("should call drawImage on context", function(done) {
       var screenScaleX = 2, screenScaleY = 2;
-      var renderer = new SL.ImageRenderer(screenScaleX, screenScaleY);
+      var renderer = new ImageRenderer(screenScaleX, screenScaleY);
       var context = {
         drawImage : function(image, sx, sy, sWidth, sHeight, tx, ty, tWidth, tHeight) {
           this.sx = sx;
@@ -22,14 +24,14 @@ describe("ImageRenderer", function() {
 
       renderer.renderImage(context, image, sx, sy, sWidth, sHeight, tx, ty, tWidth, tHeight, imageScaleX, imageScaleY);
 
-      assert(context.sx === sx, "should have called drawImage sx with " + sx);
-      assert(context.sy === sy, "should have called drawImage sy with " + sy);
-      assert(context.sWidth === sWidth, "should have called drawImage sWidth with " + sWidth);
-      assert(context.sHeight === sHeight, "should have called drawImage sHeight with " + sHeight);
-      assert(context.tx === tx * screenScaleX, "should have called drawImage tx with " + tx * screenScaleX);
-      assert(context.ty === ty * screenScaleY, "should have called drawImage ty with " + ty * screenScaleY);
-      assert(context.tWidth === tWidth * screenScaleX * imageScaleX, "should have called drawImage tWidth with " + tWidth);
-      assert(context.tHeight === tHeight * screenScaleY * imageScaleY, "should have called drawImage tHeight with " + tHeight * screenScaleY * imageScaleY);
+      expect(context.sx).toBe(sx);
+      expect(context.sy).toBe(sy);
+      expect(context.sWidth).toBe(sWidth);
+      expect(context.sHeight).toBe(sHeight);
+      expect(context.tx).toBe(tx * screenScaleX);
+      expect(context.ty).toBe(ty * screenScaleY);
+      expect(context.tWidth).toBe(tWidth * screenScaleX * imageScaleX);
+      expect(context.tHeight).toBe(tHeight * screenScaleY * imageScaleY);
       done();
     });
   });
