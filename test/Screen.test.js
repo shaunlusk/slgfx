@@ -1,15 +1,25 @@
+var Screen = require('../src/Screen');
+var EventType = require('../src/EventType');
+var Mocks = require('./Mocks');
+
 describe("Screen", function() {
   var scrn, targetDiv, layerFactory, fpsElem, config, calledRequestAnimationFrame,
+    calledLayer1, calledLayer2, e,
     windowEventListeners = {};
 
-  requestAnimationFrame = function() {calledRequestAnimationFrame = true;};
+  var requestAnimationFrame = function() {calledRequestAnimationFrame = true;};
   beforeEach(function() {
     // blanket.js weirdness means we have to reset document link each time
-    SL.Screen.document = {
+    Screen.document = {
       addEventListener : function(event, listener) {
         if (!windowEventListeners[event]) windowEventListeners[event] = [];
         windowEventListeners[event].push(listener);
-      }
+      },
+      createElement : function() {return {
+        style:{},
+        getContext:function() {return Mocks.getMockCanvasContext()}
+      }},
+      hidden:false
     };
     windowEventListeners = {};
     calledRequestAnimationFrame = false;
@@ -24,9 +34,13 @@ describe("Screen", function() {
       offsetTop : 16
     };
     fpsElem = {};
-    layerFactory = SL.Mocks.getMockLayerFactory();
-    config = {"fpsElem" : fpsElem};
-    scrn = new SL.Screen(targetDiv, layerFactory, config);
+    layerFactory = Mocks.getMockLayerFactory();
+    scrn = new Screen({
+      targetDiv:targetDiv,
+      layerFactory:layerFactory,
+      "fpsElem" : fpsElem,
+      requestAnimationFrame:requestAnimationFrame
+    });
   });
 
   describe("#initialize()", function() {
@@ -37,8 +51,8 @@ describe("Screen", function() {
 
       scrn.initialize();
 
-      assert(calledPrepareDiv === true, "should have called _prepareDiv");
-      assert(calledSetupEventListeners === true, "should have called _setupEventListeners");
+      expect(calledPrepareDiv).toBeTruthy();
+      expect(calledSetupEventListeners).toBeTruthy();
       done();
     });
   });
@@ -46,10 +60,10 @@ describe("Screen", function() {
     it("should set div styles", function(done) {
       scrn._prepareDiv();
 
-      assert(targetDiv.style.width === scrn._width, "should have set width");
-      assert(targetDiv.style.height === scrn._height, "should have set heights");
-      assert(targetDiv.style.backgroundColor === scrn._backgroundColor, "should have set backgroundColor");
-      assert(targetDiv.style.border === scrn._borderSize + "px solid " + scrn._borderColor, "should have set border");
+      expect(targetDiv.style.width).toBe(scrn._width, "should have set width");
+      expect(targetDiv.style.height).toBe(scrn._height, "should have set heights");
+      expect(targetDiv.style.backgroundColor).toBe(scrn._backgroundColor, "should have set backgroundColor");
+      expect(targetDiv.style.border).toBe(scrn._borderSize + "px solid " + scrn._borderColor, "should have set border");
       done();
     });
   });
@@ -57,27 +71,27 @@ describe("Screen", function() {
     it("should setup event listeners", function(done) {
       scrn._setupEventListeners();
 
-      assert(targetDiv.eventListeners.mouseup, "should have set mouseup handler");
-      assert(targetDiv.eventListeners.mousedown, "should have set mousedown handler");
-      assert(targetDiv.eventListeners.mousemove, "should have set mousemove handler");
-      assert(windowEventListeners.visibilitychange !== undefined, "should have set visibilitychange handler");
+      expect(targetDiv.eventListeners.mouseup).toBeTruthy();
+      expect(targetDiv.eventListeners.mousedown).toBeTruthy();
+      expect(targetDiv.eventListeners.mousemove).toBeTruthy();
+      expect(windowEventListeners.visibilitychange !== undefined).toBeTruthy();
       done();
     });
   });
   describe("#handleVisibilityChange()", function() {
     it("should unpause", function(done) {
-      document.hidden = false;
+      Screen.document.hidden = false;
       scrn.handleVisibilityChange();
 
-      assert(scrn.isPaused() === false, "should have unpaused");
+      expect(scrn.isPaused()).toBeFalsy();
       done();
     });
     it("should not unpause if explicitly paused", function(done) {
-      document.hidden = false;
+      Screen.document.hidden = false;
       scrn.setPaused(true);
       scrn.handleVisibilityChange();
 
-      assert(scrn._unpaused === false, "should not have unpaused");
+      expect(scrn._unpaused).toBeFalsy();
       done();
     });
   });
@@ -85,7 +99,7 @@ describe("Screen", function() {
     it("should add event listener to document", function(done) {
       scrn.addEventListenerToDocument("dummyEvent", function() {});
 
-      assert(windowEventListeners.dummyEvent !== undefined, "should have added dummy event");
+      expect(windowEventListeners.dummyEvent !== undefined).toBeTruthy();
       done();
     });
   });
@@ -95,8 +109,8 @@ describe("Screen", function() {
 
       scrn.setBackgroundColor(color);
 
-      assert(scrn.getBackgroundColor() === color, "should have set background color");
-      assert(targetDiv.style.backgroundColor === color, "should have set background color on target div");
+      expect(scrn.getBackgroundColor()).toBe(color, "should have set background color");
+      expect(targetDiv.style.backgroundColor).toBe(color, "should have set background color on target div");
       done();
     });
   });
@@ -106,8 +120,8 @@ describe("Screen", function() {
 
       scrn.setBorderColor(color);
 
-      assert(scrn.getBorderColor() === color, "should have set border color");
-      assert(targetDiv.style.border === scrn._borderSize + "px solid " + color, "should have set border color on target div");
+      expect(scrn.getBorderColor()).toBe(color, "should have set border color");
+      expect(targetDiv.style.border).toBe(scrn._borderSize + "px solid " + color, "should have set border color on target div");
       done();
     });
   });
@@ -117,8 +131,8 @@ describe("Screen", function() {
 
       scrn.setBorderSize(amount);
 
-      assert(scrn.getBorderSize() === amount, "should have set border size");
-      assert(targetDiv.style.border === amount + "px solid " + scrn._borderColor, "should have set border size on target div");
+      expect(scrn.getBorderSize()).toBe(amount, "should have set border size");
+      expect(targetDiv.style.border).toBe(amount + "px solid " + scrn._borderColor, "should have set border size on target div");
       done();
     });
   });
@@ -126,7 +140,7 @@ describe("Screen", function() {
     it("should add layer", function(done) {
       scrn.createLayer();
 
-      assert(scrn.getLayers().length, "should have added a layer");
+      expect(scrn.getLayers().length).toBeTruthy();
       done();
     });
   });
@@ -136,10 +150,10 @@ describe("Screen", function() {
       scrn.notify = function(event) {eventType = event.type;};
       scrn.setPaused(true);
 
-      assert(scrn.isPaused() === true, "should have set paused");
-      assert(scrn._unpaused === false, "should not have set unpaused true");
-      assert(eventType === SL.EventType.SCREEN_PAUSED, "should have notified of pause event");
-      assert(calledRequestAnimationFrame === false, "should not have called requestAnimationFrame");
+      expect(scrn.isPaused()).toBeTruthy();
+      expect(scrn._unpaused).toBeFalsy();
+      expect(eventType).toBe(EventType.SCREEN_PAUSED, "should have notified of pause event");
+      expect(calledRequestAnimationFrame).toBeFalsy();
       done();
     });
     it("should unpause", function(done) {
@@ -148,10 +162,10 @@ describe("Screen", function() {
       scrn.setPaused(true);
       scrn.setPaused(false);
 
-      assert(scrn.isPaused() === false, "should have set paused false");
-      assert(scrn._unpaused === true, "should have set unpaused true");
-      assert(eventType === SL.EventType.SCREEN_RESUMED, "should have notified of resume event");
-      assert(calledRequestAnimationFrame === true, "should have called requestAnimationFrame");
+      expect(scrn.isPaused()).toBeFalsy();
+      expect(scrn._unpaused).toBeTruthy();
+      expect(eventType).toBe(EventType.SCREEN_RESUMED, "should have notified of resume event");
+      expect(calledRequestAnimationFrame).toBeTruthy();
       done();
     });
   });
@@ -159,28 +173,19 @@ describe("Screen", function() {
     it("should add callback to list", function(done) {
       var eventType = "newType";
       scrn.on(eventType, function() {
-        assert(true);
         done();
       }, "testHandler");
       scrn._eventListeners[eventType].testHandler();
     });
   });
   describe("#clearEventHandlers()", function(){
-    it("should add callback to list", function(done) {
+    it("should clear callbacks from list", function(done) {
       var eventType = "newType";
       scrn.on(eventType, function() {}, "testHandler");
 
       scrn.clearEventHandlers(eventType);
 
-      assert(scrn._eventListeners[eventType].testHandler === undefined, "should have cleared handler list");
-      done();
-    });
-    it("should throw error", function(done) {
-      var eventType = "newType";
-
-      var result = throwsError(scrn.clearEventHandlers.bind(scrn, eventType));
-
-      assert(result === true, "should have thrown error");
+      expect(scrn._eventListeners[eventType].testHandler).toBe(undefined, "should have cleared handler list");
       done();
     });
   });
@@ -196,7 +201,7 @@ describe("Screen", function() {
       });
 
       scrn.notify(event);
-      assert(result, "should have notified listeners");
+      expect(result).toBeTruthy();
       done();
     });
   });
@@ -208,7 +213,7 @@ describe("Screen", function() {
 
       scrn.render(1);
 
-      assert(calledInternalRender === false, "should have returned.");
+      expect(calledInternalRender).toBeFalsy();
       done();
     });
     it("should call handleMouseMoveEvent if mouse moved", function(done) {
@@ -218,24 +223,24 @@ describe("Screen", function() {
 
       scrn.render(1);
 
-      assert(calledIt === true, "should have called handleMouseMoveEvent.");
+      expect(calledIt).toBeTruthy();
       done();
     });
     it("should notify before and after render event", function(done) {
       var eventTypes = [];
       var calledBeforeRender = false;
       var calledAfterRender = false;
-      scrn.on(SL.EventType.BEFORE_RENDER, function(event) {
+      scrn.on(EventType.BEFORE_RENDER, function(event) {
         calledBeforeRender = true;
       });
-      scrn.on(SL.EventType.AFTER_RENDER, function(event) {
+      scrn.on(EventType.AFTER_RENDER, function(event) {
         calledAfterRender = true;
       });
 
       scrn.render(1);
 
-      assert(calledBeforeRender === true, "should have notified of before render event.");
-      assert(calledAfterRender === true, "should have notified of after render event.");
+      expect(calledBeforeRender).toBeTruthy();
+      expect(calledAfterRender).toBeTruthy();
       done();
     });
     it("should call updateFps", function(done) {
@@ -244,7 +249,7 @@ describe("Screen", function() {
 
       scrn.render(1);
 
-      assert(calledIt === true, "should have called updateFps.");
+      expect(calledIt).toBeTruthy();
       done();
     });
     it("should call _update", function(done) {
@@ -253,7 +258,7 @@ describe("Screen", function() {
 
       scrn.render(1);
 
-      assert(calledIt === true, "should have called _update.");
+      expect(calledIt).toBeTruthy();
       done();
     });
     it("should call _render", function(done) {
@@ -262,24 +267,24 @@ describe("Screen", function() {
 
       scrn.render(1);
 
-      assert(calledIt === true, "should have called _render.");
+      expect(calledIt).toBeTruthy();
       done();
     });
     it("should call requestAnimationFrame", function(done) {
       scrn.render(1);
 
-      assert(calledRequestAnimationFrame === true, "should have called requestAnimationFrame.");
+      expect(calledRequestAnimationFrame).toBeTruthy();
       done();
     });
     it("should unpause", function(done) {
       var time = 100;
       scrn.setPaused(true);
       scrn.setPaused(false);
-      assert(scrn._unpaused === true, "unpaused should be true here");
+      expect(scrn._unpaused).toBeTruthy();
 
       scrn.render(time);
 
-      assert(scrn._unpaused === false, "should have reset unpaused flag.");
+      expect(scrn._unpaused).toBeFalsy();
       done();
     });
     it("should calculate diff based on unpause", function(done) {
@@ -291,7 +296,7 @@ describe("Screen", function() {
 
       scrn.render(time);
 
-      assert(calledWithDiff === 1, "should calculated diff properly.");
+      expect(calledWithDiff).toBe(1, "should calculated diff properly.");
       done();
     });
   });
@@ -302,7 +307,7 @@ describe("Screen", function() {
 
       scrn._handleMouseMoveEvent();
 
-      assert(eventType === SL.EventType.MOUSE_MOVE, "should have notified of before mouse move event.");
+      expect(eventType).toBe(EventType.MOUSE_MOVE, "should have notified of before mouse move event.");
       done();
     });
     it("should propagate event", function(done) {
@@ -311,7 +316,7 @@ describe("Screen", function() {
 
       scrn._handleMouseMoveEvent();
 
-      assert(calledIt === true, "should have propagated event.");
+      expect(calledIt).toBeTruthy();
       done();
     });
     it("should reset mouseMoved", function(done) {
@@ -319,7 +324,7 @@ describe("Screen", function() {
 
       scrn._handleMouseMoveEvent();
 
-      assert(scrn._mouseMoved === false, "should have reset mouseMoved.");
+      expect(scrn._mouseMoved).toBeFalsy();
       done();
     });
     it("should return coordinate data", function(done) {
@@ -334,7 +339,7 @@ describe("Screen", function() {
 
       scrn._handleMouseMoveEvent(1);
 
-      assert(result.data.check === expected.check, "should have set event data");
+      expect(result.data.check).toBe(expected.check, "should have set event data");
       done();
     });
     it("should not notify if endEventPropagation becomes set", function(done) {
@@ -345,7 +350,7 @@ describe("Screen", function() {
 
       scrn._handleMouseMoveEvent(1);
 
-      assert(calledIt === false, "should not have notified");
+      expect(calledIt).toBeFalsy();
       done();
     });
   });
@@ -355,8 +360,8 @@ describe("Screen", function() {
 
       scrn._updateFps(100);
 
-      assert(scrn._fpsMonitorArray.length === 1, "Should have pushed fps to _fps");
-      assert(scrn._fpsMonitorArray[0] === 10, "Should have pushed fps to _fps");
+      expect(scrn._fpsMonitorArray.length).toBe(1, "Should have pushed fps to _fps");
+      expect(scrn._fpsMonitorArray[0]).toBe(10, "Should have pushed fps to _fps");
       done();
     });
     it("should add fps to _fpsMonitorArray", function(done) {
@@ -366,7 +371,7 @@ describe("Screen", function() {
 
       scrn._updateFps(100);
 
-      assert(scrn._fpsMonitorArray.length === 31, "Should have pushed fps to _fps");
+      expect(scrn._fpsMonitorArray.length).toBe(31, "Should have pushed fps to _fps");
       done();
     });
     it("should reset _fpsMonitorIndex", function(done) {
@@ -376,7 +381,7 @@ describe("Screen", function() {
 
       scrn._updateFps(100);
 
-      assert(scrn._fpsMonitorIndex === 0, "Should have reset _fpsMonitorIndex");
+      expect(scrn._fpsMonitorIndex).toBe(0, "Should have reset _fpsMonitorIndex");
       done();
     });
   });
@@ -395,8 +400,8 @@ describe("Screen", function() {
 
       scrn._update(1,1);
 
-      assert(calledUpdate1 === true, "should have called update on layer1");
-      assert(calledUpdate2 === true, "should have called update on layer2");
+      expect(calledUpdate1).toBeTruthy();
+      expect(calledUpdate2).toBeTruthy();
       done();
     });
   });
@@ -419,8 +424,8 @@ describe("Screen", function() {
 
       scrn._render(1,1);
 
-      assert(calledRender1 === true, "should have called render on layer1");
-      assert(calledRender2 === true, "should have called render on layer2");
+      expect(calledRender1).toBeTruthy();
+      expect(calledRender2).toBeTruthy();
       done();
     });
   });
@@ -443,12 +448,12 @@ describe("Screen", function() {
 
       var result = scrn._getCoordinateDataForMouseEvent(x, y);
 
-      assert(result.x === expected.x, "expected " + expected.x + ", actual " + result.x);
-      assert(result.y === expected.y, "expected " + expected.y + ", actual " + result.y);
-      assert(result.unscaledX === expected.unscaledX, "expected " + expected.unscaledX + ", actual " + result.unscaledX);
-      assert(result.unscaledY === expected.unscaledY, "expected " + expected.unscaledY + ", actual " + result.unscaledY);
-      assert(result.rawX === expected.rawX, "expected " + expected.rawX + ", actual " + result.rawX);
-      assert(result.rawY === expected.rawY, "expected " + expected.rawY + ", actual " + result.rawY);
+      expect(result.x).toBe(expected.x, "expected " + expected.x + ", actual " + result.x);
+      expect(result.y).toBe(expected.y, "expected " + expected.y + ", actual " + result.y);
+      expect(result.unscaledX).toBe(expected.unscaledX, "expected " + expected.unscaledX + ", actual " + result.unscaledX);
+      expect(result.unscaledY).toBe(expected.unscaledY, "expected " + expected.unscaledY + ", actual " + result.unscaledY);
+      expect(result.rawX).toBe(expected.rawX, "expected " + expected.rawX + ", actual " + result.rawX);
+      expect(result.rawY).toBe(expected.rawY, "expected " + expected.rawY + ", actual " + result.rawY);
       done();
     });
   });
@@ -460,7 +465,7 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === false, "should not have updated _mouseMoved");
+      expect(scrn._mouseMoved).toBeFalsy();
       done();
     });
     it("should set mouse coords if x < 0", function(done) {
@@ -470,9 +475,9 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === true, "should have updated _mouseMoved");
-      assert(scrn._mouseX === -1, "should have updated mouseX");
-      assert(scrn._mouseY === -1, "should have updated mouseY");
+      expect(scrn._mouseMoved).toBeTruthy();
+      expect(scrn._mouseX).toBe(-1, "should have updated mouseX");
+      expect(scrn._mouseY).toBe(-1, "should have updated mouseY");
       done();
     });
     it("should set mouse coords if y < 0", function(done) {
@@ -482,9 +487,9 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === true, "should have updated _mouseMoved");
-      assert(scrn._mouseX === -1, "should have updated mouseX");
-      assert(scrn._mouseY === -1, "should have updated mouseY");
+      expect(scrn._mouseMoved).toBeTruthy();
+      expect(scrn._mouseX).toBe(-1, "should have updated mouseX");
+      expect(scrn._mouseY).toBe(-1, "should have updated mouseY");
       done();
     });
     it("should set mouse coords if x >= screenWidth", function(done) {
@@ -494,9 +499,9 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === true, "should have updated _mouseMoved");
-      assert(scrn._mouseX === -1, "should have updated mouseX");
-      assert(scrn._mouseY === -1, "should have updated mouseY");
+      expect(scrn._mouseMoved).toBeTruthy();
+      expect(scrn._mouseX).toBe(-1, "should have updated mouseX");
+      expect(scrn._mouseY).toBe(-1, "should have updated mouseY");
       done();
     });
     it("should set mouse coords if y >= screen height", function(done) {
@@ -506,9 +511,9 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === true, "should have updated _mouseMoved");
-      assert(scrn._mouseX === -1, "should have updated mouseX");
-      assert(scrn._mouseY === -1, "should have updated mouseY");
+      expect(scrn._mouseMoved).toBeTruthy();
+      expect(scrn._mouseX).toBe(-1, "should have updated mouseX");
+      expect(scrn._mouseY).toBe(-1, "should have updated mouseY");
       done();
     });
     it("should set mouse coords", function(done) {
@@ -518,9 +523,9 @@ describe("Screen", function() {
 
       scrn.handleMouseMoveEvent(e);
 
-      assert(scrn._mouseMoved === true, "should have updated _mouseMoved");
-      assert(scrn._mouseX === 5, "should have updated mouseX");
-      assert(scrn._mouseY === 7, "should have updated mouseY");
+      expect(scrn._mouseMoved).toBeTruthy();
+      expect(scrn._mouseX).toBe(5, "should have updated mouseX");
+      expect(scrn._mouseY).toBe(7, "should have updated mouseY");
       done();
     });
   });
@@ -533,7 +538,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === false, "should not have propagated");
+      expect(calledPropagate).toBeFalsy();
       done();
     });
     it("should return if not in bounds, x < 0", function(done) {
@@ -545,7 +550,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === false, "should not have propagated");
+      expect(calledPropagate).toBeFalsy();
       done();
     });
     it("should return if not in bounds, x = width", function(done) {
@@ -557,7 +562,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === false, "should not have propagated");
+      expect(calledPropagate).toBeFalsy();
       done();
     });
     it("should return if not in bounds, y < 0", function(done) {
@@ -569,7 +574,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === false, "should not have propagated");
+      expect(calledPropagate).toBeFalsy();
       done();
     });
     it("should return if not in bounds, y = height", function(done) {
@@ -581,7 +586,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === false, "should not have propagated");
+      expect(calledPropagate).toBeFalsy();
       done();
     });
     it("should notify mouseup", function(done) {
@@ -598,7 +603,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(eventType === SL.EventType.MOUSE_UP, "should have notified mouseup event");
+      expect(eventType).toBe(EventType.MOUSE_UP, "should have notified mouseup event");
       done();
     });
     it("should notify mousedown", function(done) {
@@ -615,7 +620,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(eventType === SL.EventType.MOUSE_DOWN, "should have notified mousedown event");
+      expect(eventType).toBe(EventType.MOUSE_DOWN, "should have notified mousedown event");
       done();
     });
     it("should not notify if endEventPropagation becomes set", function(done) {
@@ -632,7 +637,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledIt === false, "should not have notified");
+      expect(calledIt).toBeFalsy();
       done();
     });
     it("should propagate", function(done) {
@@ -647,7 +652,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(calledPropagate === true, "should have propagated");
+      expect(calledPropagate).toBeTruthy();
       done();
     });
     it("should return false if button 1", function(done) {
@@ -662,7 +667,7 @@ describe("Screen", function() {
 
       var result = scrn.handleMouseEvent(e);
 
-      assert(result === false, "should have returned false");
+      expect(result).toBeFalsy();
       done();
     });
     it("should include coordinate data", function(done) {
@@ -683,7 +688,7 @@ describe("Screen", function() {
 
       scrn.handleMouseEvent(e);
 
-      assert(result.data.check === expected.check, "should have set event data");
+      expect(result.data.check).toBe(expected.check, "should have set event data");
       done();
     });
   });
@@ -703,8 +708,8 @@ describe("Screen", function() {
 
       scrn.propagateMouseEventThroughLayers(e);
 
-      assert(calledLayer1 === true, "should have propagated to layer1");
-      assert(calledLayer2 === true, "should have propagated to layer2");
+      expect(calledLayer1).toBeTruthy();
+      expect(calledLayer2).toBeTruthy();
       done();
     });
     it("should call stop propagation if event handled", function(done) {
@@ -725,8 +730,8 @@ describe("Screen", function() {
 
       scrn.propagateMouseEventThroughLayers(e);
 
-      assert(calledLayer1 === false, "should not have propagated to layer1");
-      assert(calledLayer2 === true, "should have propagated to layer2");
+      expect(calledLayer1).toBeFalsy();
+      expect(calledLayer2).toBeTruthy();
       done();
     });
   });
@@ -737,7 +742,7 @@ describe("Screen", function() {
       var result = scrn.getXFromMouseEvent(e);
 
       var expected = e.pageX - (scrn._targetDiv.offsetLeft + scrn.getBorderSize());
-      assert(result === expected, "should have returned correct x value (expected: " + expected + ", actual: " + result + ")");
+      expect(result).toBe(expected, "should have returned correct x value (expected: " + expected + ", actual: " + result + ")");
       done();
     });
   });
@@ -748,7 +753,7 @@ describe("Screen", function() {
       var result = scrn.getYFromMouseEvent(e);
 
       var expected = e.pageY - (scrn._targetDiv.offsetTop + scrn.getBorderSize());
-      assert(result === expected, "should have returned correct y value (expected: " + expected + ", actual: " + result + ")");
+      expect(result).toBe(expected, "should have returned correct y value (expected: " + expected + ", actual: " + result + ")");
       done();
     });
   });
@@ -758,7 +763,7 @@ describe("Screen", function() {
 
       scrn.setViewOriginX(expected);
 
-      assert(expected === scrn.getPendingViewOriginX(), "should have set _pendingViewOriginX");
+      expect(expected).toBe(scrn.getPendingViewOriginX(), "should have set _pendingViewOriginX");
       done();
     });
     it("should not set viewOriginX", function(done) {
@@ -766,7 +771,7 @@ describe("Screen", function() {
 
       scrn.setViewOriginX(expected);
 
-      assert(expected !== scrn.getViewOriginX(), "should not have set ViewOriginX");
+      expect(expected !== scrn.getViewOriginX()).toBeTruthy();
       done();
     });
     it("should call setViewOriginX for each layer", function(done) {
@@ -783,8 +788,8 @@ describe("Screen", function() {
 
       scrn.setViewOriginX(expected);
 
-      assert(calledLayer1 === true, "should have called setViewOriginX on layer 1");
-      assert(calledLayer2 === true, "should have called setViewOriginX on layer 2");
+      expect(calledLayer1).toBeTruthy();
+      expect(calledLayer2).toBeTruthy();
       done();
     });
   });
@@ -794,7 +799,7 @@ describe("Screen", function() {
 
       scrn.setViewOriginY(expected);
 
-      assert(expected === scrn.getPendingViewOriginY(), "should have set _pendingViewOriginY");
+      expect(expected).toBe(scrn.getPendingViewOriginY(), "should have set _pendingViewOriginY");
       done();
     });
     it("should not set viewOriginY", function(done) {
@@ -802,7 +807,7 @@ describe("Screen", function() {
 
       scrn.setViewOriginY(expected);
 
-      assert(expected !== scrn.getViewOriginY(), "should not have set ViewOriginY");
+      expect(expected !== scrn.getViewOriginY()).toBeTruthy();
       done();
     });
     it("should call setViewOriginY for each layer", function(done) {
@@ -819,8 +824,8 @@ describe("Screen", function() {
 
       scrn.setViewOriginY(expected);
 
-      assert(calledLayer1 === true, "should have called setViewOriginY on layer 1");
-      assert(calledLayer2 === true, "should have called setViewOriginY on layer 2");
+      expect(calledLayer1).toBeTruthy();
+      expect(calledLayer2).toBeTruthy();
       done();
     });
   });
@@ -831,13 +836,13 @@ describe("Screen", function() {
 
       scrn._updateViewOrigins();
 
-      assert(scrn.getViewOriginX() === expected, "should have updated viewOriginX");
+      expect(scrn.getViewOriginX()).toBe(expected, "should have updated viewOriginX");
       done();
     });
     it("should not update viewOriginX if there is not a _pendingViewOriginX", function(done) {
       scrn._updateViewOrigins();
 
-      assert(scrn.getViewOriginX() === 0, "should have updated viewOriginX");
+      expect(scrn.getViewOriginX()).toBe(0, "should have updated viewOriginX");
       done();
     });
     it("should update viewOriginY if there is a _pendingViewOriginY", function(done) {
@@ -846,13 +851,13 @@ describe("Screen", function() {
 
       scrn._updateViewOrigins();
 
-      assert(scrn.getViewOriginY() === expected, "should have updated viewOriginY");
+      expect(scrn.getViewOriginY()).toBe(expected, "should have updated viewOriginY");
       done();
     });
     it("should not update viewOriginY if there is not a _pendingViewOriginY", function(done) {
       scrn._updateViewOrigins();
 
-      assert(scrn.getViewOriginY() === 0, "should have updated viewOriginY");
+      expect(scrn.getViewOriginY()).toBe(0, "should have updated viewOriginY");
       done();
     });
     it("should set _pendingViewOriginX to null if there is a _pendingViewOriginX", function(done) {
@@ -860,7 +865,7 @@ describe("Screen", function() {
 
       scrn._updateViewOrigins();
 
-      assert(scrn.getPendingViewOriginX() === null, "should have set _pendingViewOriginX to null");
+      expect(scrn.getPendingViewOriginX()).toBe(null, "should have set _pendingViewOriginX to null");
       done();
     });
     it("should set _pendingViewOriginY to null if there is a _pendingViewOriginY", function(done) {
@@ -868,7 +873,7 @@ describe("Screen", function() {
 
       scrn._updateViewOrigins();
 
-      assert(scrn.getPendingViewOriginY() === null, "should have set _pendingViewOriginY to null");
+      expect(scrn.getPendingViewOriginY()).toBe(null, "should have set _pendingViewOriginY to null");
       done();
     });
   });
@@ -881,7 +886,7 @@ describe("Screen", function() {
 
       var result = scrn.getViewOriginAdjustedX(x);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -894,7 +899,7 @@ describe("Screen", function() {
 
       var result = scrn.getViewOriginAdjustedY(y);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -906,7 +911,7 @@ describe("Screen", function() {
 
       var result = scrn.getUnScaledX(x);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
     it("should return unscaledX", function(done) {
@@ -916,7 +921,7 @@ describe("Screen", function() {
 
       var result = scrn.getUnScaledX(x);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
   });
@@ -928,7 +933,7 @@ describe("Screen", function() {
 
       var result = scrn.getUnScaledY(y);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
     it("should return unscaledY", function(done) {
@@ -938,7 +943,7 @@ describe("Screen", function() {
 
       var result = scrn.getUnScaledY(y);
 
-      assert(result === expected, "expected " + expected + ", actual " + result);
+      expect(result).toBe(expected, "expected " + expected + ", actual " + result);
       done();
     });
   });

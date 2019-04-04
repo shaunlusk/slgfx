@@ -1,5 +1,11 @@
-/** @namespace */
-var SL = {};
+var LayerFactory = require('./LayerFactory');
+var Utils = require('./Utils');
+var EventType = require('./EventType');
+var EventNotifierMixin = require('slcommon/src/EventNotifierMixin');
+var CanvasContextWrapper = require('./CanvasContextWrapper');
+var Event = require('slcommon/src/Event');
+var MouseEvent = require('./MouseEvent');
+
 
 /** The Screen is the overriding container for Graphics components.
 * The Screen orchestrates updating and rendering its layers, propagates
@@ -18,16 +24,16 @@ var SL = {};
 *   <li>borderSize - integer - The borderSize of the screen, in pixels. Default: 1</li>
 * </ul>
 */
-SL.Screen = function(targetDiv, layerFactory, config) {
-  this._targetDiv = targetDiv;
-  this._layerFactory = layerFactory || new SL.LayerFactory();
-  this._config = config || {};
-  this._scaleX = this._config.scaleX || 1;
-  this._scaleY = this._config.scaleY || 1;
-  this._width = (this._config.width || 640) * this._scaleX;
-  this._height = (this._config.height || 480) * this._scaleY;
-  this._fpsElem = this._config.fpsElem || null;
-  this._imageSmoothingEnabled = this._config.imageSmoothingEnabled || false;
+function Screen(props) {
+  props = props || {};
+  this._targetDiv = props.targetDiv;
+  this._layerFactory = props.layerFactory || new LayerFactory();
+  this._scaleX = props.scaleX || 1;
+  this._scaleY = props.scaleY || 1;
+  this._width = (props.width || 640) * this._scaleX;
+  this._height = (props.height || 480) * this._scaleY;
+  this._fpsElem = props.fpsElem || null;
+  this._imageSmoothingEnabled = props.imageSmoothingEnabled || false;
   this._avgTime = 0;
   this._last = 0;
   this._mouseX = -1;
@@ -35,11 +41,11 @@ SL.Screen = function(targetDiv, layerFactory, config) {
   this._mouseMoved = false;
   this._paused = false;
   this._unpaused = false;
-  this._useMouseMoveEvents = SL.Utils.isNullOrUndefined(this._config.useMouseMoveEvents) ? true : this._config.useMouseMoveEvents;
+  this._useMouseMoveEvents = Utils.isNullOrUndefined(props.useMouseMoveEvents) ? true : props.useMouseMoveEvents;
 
-  this._backgroundColor = this._config.backgroundColor || "black";
-  this._borderColor = this._config.borderColor || "grey";
-  this._borderSize = this._config.borderSize || 1;
+  this._backgroundColor = props.backgroundColor || "black";
+  this._borderColor = props.borderColor || "grey";
+  this._borderSize = props.borderSize || 1;
 
   this._fpsMonitorArray = [];
   this._fpsMonitorIndex = 0;
@@ -50,47 +56,21 @@ SL.Screen = function(targetDiv, layerFactory, config) {
   this._pendingViewOriginY = null;
   this._layers = [];
 
-  this.EventNotifierMixinInitializer({
-    eventListeners:[
-      SL.EventType.SCREEN_PAUSED,
-      SL.EventType.SCREEN_RESUMED,
-      SL.EventType.BEFORE_RENDER,
-      SL.EventType.AFTER_RENDER,
-      SL.EventType.MOUSE_MOVE,
-      SL.EventType.MOUSE_UP,
-      SL.EventType.MOUSE_DOWN,
-      SL.EventType.ELEMENT_MOVED,
-      SL.EventType.ELEMENT_STARTED_MOVING,
-      SL.EventType.ELEMENT_STOPPED_MOVING,
-      SL.EventType.ELEMENT_COLLISION,
-      SL.EventType.MOUSE_ENTER_ELEMENT,
-      SL.EventType.MOUSE_EXIT_ELEMENT,
-      SL.EventType.MOUSE_MOVE_OVER_ELEMENT,
-      SL.EventType.MOUSE_DOWN_ON_ELEMENT,
-      SL.EventType.MOUSE_UP_ON_ELEMENT,
-      SL.EventType.ELEMENT_HIT_LEFT_EDGE,
-      SL.EventType.ELEMENT_HIT_RIGHT_EDGE,
-      SL.EventType.ELEMENT_HIT_TOP_EDGE,
-      SL.EventType.ELEMENT_HIT_BOTTOM_EDGE,
-      SL.EventType.SPRITE_ANIMATION_DONE,
-      SL.EventType.NEXT_FRAME_BEGIN,
-      SL.EventType.NEXT_FRAME_END,
-    ]
-  });
+  this._requestAnimationFrame = props.requestAnimationFrame;
 };
 
-SL.EventNotifierMixin.call(SL.Screen.prototype);
+EventNotifierMixin.call(Screen.prototype);
 
-SL.Screen.document = window.document;
+Screen.document = window.document;
 
 /** Setup the screen on the page. Must be called prior to rendering.
 */
-SL.Screen.prototype.initialize = function() {
+Screen.prototype.initialize = function() {
   this._prepareDiv();
   this._setupEventListeners();
 };
 
-SL.Screen.prototype.setViewOriginX = function(viewOriginX) {
+Screen.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) {
     this.getLayers().forEach(function(layer) {
@@ -98,7 +78,7 @@ SL.Screen.prototype.setViewOriginX = function(viewOriginX) {
     });
   }
 };
-SL.Screen.prototype.setViewOriginY = function(viewOriginY) {
+Screen.prototype.setViewOriginY = function(viewOriginY) {
   this._pendingViewOriginY = viewOriginY;
   if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) {
     this.getLayers().forEach(function(layer) {
@@ -107,15 +87,15 @@ SL.Screen.prototype.setViewOriginY = function(viewOriginY) {
   }
 };
 
-SL.Screen.prototype.getViewOriginX = function() {return this._viewOriginX;};
-SL.Screen.prototype.getViewOriginY = function() {return this._viewOriginY;};
+Screen.prototype.getViewOriginX = function() {return this._viewOriginX;};
+Screen.prototype.getViewOriginY = function() {return this._viewOriginY;};
 
-SL.Screen.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
-SL.Screen.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
+Screen.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
+Screen.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
 
 
 /** @private */
-SL.Screen.prototype._prepareDiv = function() {
+Screen.prototype._prepareDiv = function() {
   this._targetDiv.style.width = this._width;
   this._targetDiv.style.height = this._height;
   this._targetDiv.style.backgroundColor = this._backgroundColor;
@@ -123,19 +103,19 @@ SL.Screen.prototype._prepareDiv = function() {
 };
 
 /** @private */
-SL.Screen.prototype._setupEventListeners = function() {
+Screen.prototype._setupEventListeners = function() {
   this._targetDiv.addEventListener("mouseup",this.handleMouseEvent.bind(this), true);
   this._targetDiv.addEventListener("mousedown",this.handleMouseEvent.bind(this), true);
   if (this._useMouseMoveEvents) this._targetDiv.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
-  SL.Screen.document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this), false);
+  Screen.document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this), false);
 };
 
 /** @private */
-SL.Screen.prototype.handleVisibilityChange = function() {
-  this._tabNotVisible = document.hidden;
+Screen.prototype.handleVisibilityChange = function() {
+  this._tabNotVisible = Screen.document.hidden;
   if (!this._tabNotVisible && !this._paused) {
     this._unpaused = true;
-    requestAnimationFrame(this.render.bind(this));
+    this._requestAnimationFrame(this.render.bind(this));
   }
 };
 
@@ -143,14 +123,14 @@ SL.Screen.prototype.handleVisibilityChange = function() {
 * @param {string} event The type of event.
 * @param {Function} listener The function to call when the event occurs.
 */
-SL.Screen.prototype.addEventListenerToDocument = function(event, listener) {
-  SL.Screen.document.addEventListener(event,listener);
+Screen.prototype.addEventListenerToDocument = function(event, listener) {
+  Screen.document.addEventListener(event,listener);
 };
 
 /** Set the background color.
-* @param {string} color Any valid CSS color string, or SL.Color value.
+* @param {string} color Any valid CSS color string.
 */
-SL.Screen.prototype.setBackgroundColor = function(color) {
+Screen.prototype.setBackgroundColor = function(color) {
   this._backgroundColor = color;
   this._targetDiv.style.backgroundColor = color;
 };
@@ -158,14 +138,14 @@ SL.Screen.prototype.setBackgroundColor = function(color) {
 /** Return the current backgroundColor.
 * @returns {string}
 */
-SL.Screen.prototype.getBackgroundColor = function(color) {
+Screen.prototype.getBackgroundColor = function(color) {
   return this._backgroundColor;
 };
 
 /** Set the border color.
-* @param {string} color Any valid CSS color string, or SL.Color value.
+* @param {string} color Any valid CSS color string.
 */
-SL.Screen.prototype.setBorderColor = function(color) {
+Screen.prototype.setBorderColor = function(color) {
   this._borderColor = color;
   this._targetDiv.style.border = this._borderSize + "px solid " + color;
 };
@@ -173,14 +153,14 @@ SL.Screen.prototype.setBorderColor = function(color) {
 /** Return the current border color.
 * @returns {string}
 */
-SL.Screen.prototype.getBorderColor = function() {
+Screen.prototype.getBorderColor = function() {
   return this._borderColor;
 };
 
 /** Set the border size.
 * @param {integer} size The size for the border; will be interpretted as pixels.
 */
-SL.Screen.prototype.setBorderSize = function(size) {
+Screen.prototype.setBorderSize = function(size) {
   this._borderSize = size;
   this._targetDiv.style.border = size + "px solid " + this._borderColor;
 };
@@ -188,50 +168,50 @@ SL.Screen.prototype.setBorderSize = function(size) {
 /** Return the current border size, in pixels.
 * @returns {integer}
 */
-SL.Screen.prototype.getBorderSize = function() {
+Screen.prototype.getBorderSize = function() {
   return this._borderSize;
 };
 
 /** Return the width.
 * @returns {integer}
 */
-SL.Screen.prototype.getWidth = function() {return this._width;};
+Screen.prototype.getWidth = function() {return this._width;};
 
 /** Return the height.
 * @returns {integer}
 */
-SL.Screen.prototype.getHeight = function() {return this._height;};
+Screen.prototype.getHeight = function() {return this._height;};
 
 /** Return the x-scale.
 * @returns {integer}
 */
-SL.Screen.prototype.getScaleX = function() {return this._scaleX;};
+Screen.prototype.getScaleX = function() {return this._scaleX;};
 
 /** Return the y-scale.
 * @returns {integer}
 */
-SL.Screen.prototype.getScaleY = function() {return this._scaleY;};
+Screen.prototype.getScaleY = function() {return this._scaleY;};
 
 /** Return the current x coordinate of the mouse.
 * @returns {integer}
 */
-SL.Screen.prototype.getMouseX = function() {return this._mouseX;};
+Screen.prototype.getMouseX = function() {return this._mouseX;};
 
 /** Return the current y coordinate of the mouse.
 * @returns {integer}
 */
-SL.Screen.prototype.getMouseY = function() {return this._mouseY;};
+Screen.prototype.getMouseY = function() {return this._mouseY;};
 
-SL.Screen.prototype.isImageSmoothingEnabled = function() {return this._imageSmoothingEnabled;};
-SL.Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {this._imageSmoothingEnabled = imageSmoothingEnabled;};
+Screen.prototype.isImageSmoothingEnabled = function() {return this._imageSmoothingEnabled;};
+Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {this._imageSmoothingEnabled = imageSmoothingEnabled;};
 
 
-/** Create a new {@link SL.Layer} and add it to this screen.  Layers will be rendered in FIFO order,
+/** Create a new {@link Layer} and add it to this screen.  Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
 * @param {string} type The type of layer to add - either "TextLayer" or "GfxLayer"
-* @see SL.Layer
+* @see Layer
 */
-SL.Screen.prototype.createLayer = function(type, props) {
+Screen.prototype.createLayer = function(type, props) {
   var canvasContextWrapper = this.createCanvasForLayer();
   props = props || {};
   props.width = this.getWidth();
@@ -243,92 +223,98 @@ SL.Screen.prototype.createLayer = function(type, props) {
   return layer;
 };
 
-SL.Screen.prototype.createCanvasForLayer = function() {
-  var canvas = document.createElement("CANVAS");
+Screen.prototype.createCanvasForLayer = function() {
+  var canvas = Screen.document.createElement("CANVAS");
   this._targetDiv.appendChild(canvas);
   canvas.width = this._width;
   canvas.height = this._height;
   canvas.style.position = "absolute";
-  return new SL.CanvasContextWrapper(canvas, 0, 0, this._imageSmoothingEnabled);
+  debugger;
+  return new CanvasContextWrapper({
+    canvasContext:canvas.getContext("2d"),
+    imageSmoothingEnabled:this._imageSmoothingEnabled,
+    width:this._width,
+    height:this._height
+  });
 };
 
-/** Add a new  {@link SL.Layer} to this screen.  The preferred method of adding layers
+/** Add a new  {@link Layer} to this screen.  The preferred method of adding layers
 * is via the createLayer() method, but this will also work.
 * Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
-* @param {SL.Layer} layer The layer to add to the screen.
-* @see SL.Layer
+* @param {Layer} layer The layer to add to the screen.
+* @see Layer
 */
-SL.Screen.prototype.addLayer = function(layer) {
+Screen.prototype.addLayer = function(layer) {
   this._layers.push(layer);
 };
 
 /** Return the array of layers.
 * @returns {Array}
 */
-SL.Screen.prototype.getLayers = function() {
+Screen.prototype.getLayers = function() {
   return this._layers;
 };
 
 /** Pause or unpause the screen.
 * @param {boolean} boolean true = pause the screen; false = unpause the screen.
 */
-SL.Screen.prototype.setPaused = function(boolean) {
+Screen.prototype.setPaused = function(boolean) {
   if (this._paused && !boolean) this._unpaused = true;
   this._paused = boolean;
   this.notify(
-    new SL.Event(
-      this._paused ? SL.EventType.SCREEN_PAUSED : SL.EventType.SCREEN_RESUMED
+    new Event(
+      this._paused ? EventType.SCREEN_PAUSED : EventType.SCREEN_RESUMED
     )
   );
-  if (!this._paused) requestAnimationFrame(this.render.bind(this));
+  if (!this._paused) this._requestAnimationFrame(this.render.bind(this));
 };
 
 /** Add a one-time event handler for the start of the next frame.
 * @param {Function} callback The handler function.
 * @returns {String} The Id assigned to the handler function.
 */
-SL.Screen.prototype.onNextFrameBegin = function(callback) {
-  return this.on(SL.EventType.NEXT_FRAME_BEGIN, callback);
+Screen.prototype.onNextFrameBegin = function(callback) {
+  return this.on(EventType.NEXT_FRAME_BEGIN, callback);
 };
 
 /** Add a one-time event handler for the end of the next frame.
 * @param {Function} callback The handler function.
 * @returns {String} The Id assigned to the handler function.
 */
-SL.Screen.prototype.onNextFrameEnd = function(callback) {
-  return this.on(SL.EventType.NEXT_FRAME_END, callback);
+Screen.prototype.onNextFrameEnd = function(callback) {
+  return this.on(EventType.NEXT_FRAME_END, callback);
 };
 
-SL.Screen.prototype._doBeforeRenderEvents = function(time, diff) {
+Screen.prototype._doBeforeRenderEvents = function(time, diff) {
   this.notify(
-    new SL.Event(SL.EventType.NEXT_FRAME_BEGIN, {diff:diff}, time)
+    new Event(EventType.NEXT_FRAME_BEGIN, {diff:diff}, time)
   );
-  this.clearEventHandlers(SL.EventType.NEXT_FRAME_BEGIN);
+  this.clearEventHandlers(EventType.NEXT_FRAME_BEGIN);
   this.notify(
-    new SL.Event(SL.EventType.BEFORE_RENDER, {diff:diff}, time)
+    new Event(EventType.BEFORE_RENDER, {diff:diff}, time)
   );
 };
 
-SL.Screen.prototype._doAfterRenderEvents = function(time, diff) {
+Screen.prototype._doAfterRenderEvents = function(time, diff) {
   this.notify(
-    new SL.Event(SL.EventType.NEXT_FRAME_END, {diff:diff}, time)
+    new Event(EventType.NEXT_FRAME_END, {diff:diff}, time)
   );
-  this.clearEventHandlers(SL.EventType.NEXT_FRAME_END);
+  this.clearEventHandlers(EventType.NEXT_FRAME_END);
   this.notify(
-    new SL.Event(SL.EventType.AFTER_RENDER, {diff:diff}, time)
+    new Event(EventType.AFTER_RENDER, {diff:diff}, time)
   );
 };
 
 /** Return whether the screen is paused
 * @returns {boolean}
 */
-SL.Screen.prototype.isPaused = function() {return this._paused;};
+Screen.prototype.isPaused = function() {return this._paused;};
 
 /** Render the screen and all layers.
 * @param {number} time The current time in milliseconds.
 */
-SL.Screen.prototype.render = function(time) {
+Screen.prototype.render = function(time) {
   time = time || 1;
   if (this._paused || this._tabNotVisible) return;
   if (this._unpaused) {
@@ -358,26 +344,26 @@ SL.Screen.prototype.render = function(time) {
   if (this._fpsElem && this._fpsMonitorIndex === 0)
     this._fpsElem.innerHTML += "<br />Avg MS per frame: " + elapsed;
 
-  requestAnimationFrame(this.render.bind(this));
+  this._requestAnimationFrame(this.render.bind(this));
 };
 
-SL.Screen.prototype._updateViewOrigins = function() {
-  if (!SL.Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
+Screen.prototype._updateViewOrigins = function() {
+  if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
     this._viewOriginX = this.getPendingViewOriginX();
     this._pendingViewOriginX = null;
   }
-  if (!SL.Utils.isNullOrUndefined(this.getPendingViewOriginY())) {
+  if (!Utils.isNullOrUndefined(this.getPendingViewOriginY())) {
     this._viewOriginY = this.getPendingViewOriginY();
     this._pendingViewOriginY = null;
   }
 };
 
 /** @private */
-SL.Screen.prototype._handleMouseMoveEvent = function(time) {
+Screen.prototype._handleMouseMoveEvent = function(time) {
   var coordinateData = this._getCoordinateDataForMouseEvent(this._mouseX, this._mouseY);
 
-  var event = new SL.MouseEvent(
-    SL.EventType.MOUSE_MOVE,
+  var event = new MouseEvent(
+    EventType.MOUSE_MOVE,
     coordinateData,
     time
   );
@@ -387,7 +373,7 @@ SL.Screen.prototype._handleMouseMoveEvent = function(time) {
 };
 
 /** @private */
-SL.Screen.prototype._updateFps = function(diff) {
+Screen.prototype._updateFps = function(diff) {
   if (this._fpsElem) {
     var fps = Math.floor(1000 / diff);
     if (this._fpsMonitorArray.length < 30){
@@ -408,14 +394,14 @@ SL.Screen.prototype._updateFps = function(diff) {
 };
 
 /** @private */
-SL.Screen.prototype._update = function (time,diff) {
+Screen.prototype._update = function (time,diff) {
   for (var i = 0; i < this._layers.length; i++) {
     this._layers[i].update(time,diff);
   }
 };
 
 /** @private */
-SL.Screen.prototype._render = function(time,diff) {
+Screen.prototype._render = function(time,diff) {
   for (var i = 0; i < this._layers.length; i++) {
     this._layers[i].prerender(time,diff);
     this._layers[i].render(time,diff);
@@ -428,7 +414,7 @@ SL.Screen.prototype._render = function(time,diff) {
 * The event will be propagated during the next render cycle.
 * @param {Event} e The mouse event
 */
-SL.Screen.prototype.handleMouseMoveEvent = function(e) {
+Screen.prototype.handleMouseMoveEvent = function(e) {
   if (this._paused) return false;
   this._mouseMoved = true;
   var x = this.getXFromMouseEvent(e);
@@ -444,7 +430,7 @@ SL.Screen.prototype.handleMouseMoveEvent = function(e) {
 };
 
 /** @private */
-SL.Screen.prototype._getCoordinateDataForMouseEvent = function(canvasX, canvasY) {
+Screen.prototype._getCoordinateDataForMouseEvent = function(canvasX, canvasY) {
   var viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
   var viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
 
@@ -464,7 +450,7 @@ SL.Screen.prototype._getCoordinateDataForMouseEvent = function(canvasX, canvasY)
 /** Handles mouse up and mouse down events; notifies any local handlers and propagates the event to all layers.
 * @param {Event} e The mouse event
 */
-SL.Screen.prototype.handleMouseEvent = function(e) {
+Screen.prototype.handleMouseEvent = function(e) {
   if (this._paused) return false;
   var canvasX = this.getXFromMouseEvent(e);
   var canvasY = this.getYFromMouseEvent(e);
@@ -475,8 +461,8 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
 
   var data = this._getCoordinateDataForMouseEvent(canvasX, canvasY);
   data.baseEvent = e;
-  var type = e.type === "mouseup" ? SL.EventType.MOUSE_UP : SL.EventType.MOUSE_DOWN;
-  var event = new SL.MouseEvent(type, data);
+  var type = e.type === "mouseup" ? EventType.MOUSE_UP : EventType.MOUSE_DOWN;
+  var event = new MouseEvent(type, data);
 
   // propagate through layers
   this.propagateMouseEventThroughLayers(event);
@@ -486,7 +472,7 @@ SL.Screen.prototype.handleMouseEvent = function(e) {
 };
 
 /** @private */
-SL.Screen.prototype.propagateMouseEventThroughLayers = function(event) {
+Screen.prototype.propagateMouseEventThroughLayers = function(event) {
   for (var i = this._layers.length - 1; i >= 0; i--) {
     if (event.endEventPropagation) return;
     this._layers[i].handleMouseEvent(event);
@@ -496,14 +482,14 @@ SL.Screen.prototype.propagateMouseEventThroughLayers = function(event) {
 /** Return the x coordinate from a mouse event.  Accounts for screen position.
 * @param {Event} e Mouse Event
 */
-SL.Screen.prototype.getXFromMouseEvent = function(e) {
+Screen.prototype.getXFromMouseEvent = function(e) {
   return (e.pageX - (this._targetDiv.offsetLeft + this._borderSize));
 };
 
 /** Return the y coordinate from a mouse event.  Accounts for screen position.
 * @param {Event} e Mouse Event
 */
-SL.Screen.prototype.getYFromMouseEvent = function(e) {
+Screen.prototype.getYFromMouseEvent = function(e) {
   return (e.pageY - (this._targetDiv.offsetTop + this._borderSize));
 };
 
@@ -511,7 +497,7 @@ SL.Screen.prototype.getYFromMouseEvent = function(e) {
 * @param {int} x The x coordinate.
 * @return {int} The unscaled x.
 */
-SL.Screen.prototype.getUnScaledX = function(x) {
+Screen.prototype.getUnScaledX = function(x) {
   return Math.floor(x / this.getScaleX());
 };
 
@@ -519,7 +505,7 @@ SL.Screen.prototype.getUnScaledX = function(x) {
 * @param {int} y The y coordinate.
 * @return {int} The unscaled y.
 */
-SL.Screen.prototype.getUnScaledY = function(y) {
+Screen.prototype.getUnScaledY = function(y) {
   return Math.floor(y / this.getScaleY());
 };
 
@@ -527,7 +513,7 @@ SL.Screen.prototype.getUnScaledY = function(y) {
 * @param {int} x The x coordinate.
 * @return {int} The view origin adjusted x.
 */
-SL.Screen.prototype.getViewOriginAdjustedX = function(x) {
+Screen.prototype.getViewOriginAdjustedX = function(x) {
   return x - this.getViewOriginX();
 };
 
@@ -535,7 +521,7 @@ SL.Screen.prototype.getViewOriginAdjustedX = function(x) {
 * @param {int} y The y coordinate.
 * @return {int} The view origin adjusted y.
 */
-SL.Screen.prototype.getViewOriginAdjustedY = function(y) {
+Screen.prototype.getViewOriginAdjustedY = function(y) {
   return y - this.getViewOriginY();
 };
 
@@ -545,8 +531,10 @@ SL.Screen.prototype.getViewOriginAdjustedY = function(y) {
 * @param {string} style Any valid CSS Border style string.
 * @param {string} color Any valid CSS Border color string.
 */
-SL.Screen.prototype.setBorder = function(width, style, color) {
+Screen.prototype.setBorder = function(width, style, color) {
   this._targetDiv.style.borderWidth = width;
   this._targetDiv.style.borderStyle = style;
   this._targetDiv.style.borderColor = color;
 };
+
+module.exports = Screen;
