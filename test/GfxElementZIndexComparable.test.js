@@ -1,7 +1,9 @@
+var GfxElementZIndexComparable = require('../src/GfxElementZIndexComparable');
+
 describe("GfxElementZIndexComparable", function() {
   var zIndexComparable;
   beforeEach(function(){
-    zIndexComparable = new SL.GfxElementZIndexComparable();
+    zIndexComparable = new GfxElementZIndexComparable();
   });
   describe("#getElement()", function() {
     it("should return element", function(done) {
@@ -9,7 +11,7 @@ describe("GfxElementZIndexComparable", function() {
 
       var result = zIndexComparable.getElement();
 
-      assert(result === zIndexComparable._parentElement, "should have returned parent element");
+      expect(result).toBe(zIndexComparable._parentElement);
       done();
     });
   });
@@ -18,39 +20,39 @@ describe("GfxElementZIndexComparable", function() {
       zIndexComparable._parentElement = {
         getZIndex : function() {return 0;}
       };
-      var other = new SL.GfxElementZIndexComparable({
+      var other = new GfxElementZIndexComparable({
         getZIndex : function() {return 1;}
       });
       var expected = -1;
       var result = zIndexComparable.compareTo(other);
 
-      assert(result === expected, "compareTo Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
     it("should return 0", function(done) {
       zIndexComparable._parentElement = {
         getZIndex : function() {return 0;}
       };
-      var other = new SL.GfxElementZIndexComparable({
+      var other = new GfxElementZIndexComparable({
         getZIndex : function() {return 0;}
       });
       var expected = 0;
       var result = zIndexComparable.compareTo(other);
 
-      assert(result === expected, "compareTo Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
     it("should return 1", function(done) {
       zIndexComparable._parentElement = {
         getZIndex : function() {return 2;}
       };
-      var other = new SL.GfxElementZIndexComparable({
+      var other = new GfxElementZIndexComparable({
         getZIndex : function() {return 1;}
       });
       var expected = 1;
       var result = zIndexComparable.compareTo(other);
 
-      assert(result === expected, "compareTo Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
   });
@@ -59,26 +61,26 @@ describe("GfxElementZIndexComparable", function() {
       zIndexComparable._parentElement = {
         getZIndex : function() {return 1;}
       };
-      var other = new SL.GfxElementZIndexComparable({
+      var other = new GfxElementZIndexComparable({
         getZIndex : function() {return 1;}
       });
       var expected = true;
       var result = zIndexComparable.equals(other);
 
-      assert(result === expected, "equals Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
     it("should return false", function(done) {
       zIndexComparable._parentElement = {
         getZIndex : function() {return 1;}
       };
-      var other = new SL.GfxElementZIndexComparable({
+      var other = new GfxElementZIndexComparable({
         getZIndex : function() {return 2;}
       });
       var expected = false;
       var result = zIndexComparable.equals(other);
 
-      assert(result === expected, "equals Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
   });
@@ -91,7 +93,7 @@ describe("GfxElementZIndexComparable", function() {
       var expected = 3;
       var result = zIndexComparable.getKey();
 
-      assert(result === expected, "getKey Failed. expected " + expected + ", actual " + result);
+      expect(result).toBe(expected);
       done();
     });
   });
