@@ -136,9 +136,9 @@ GfxLayer.prototype._checkBorderCollision = function(element,time) {
 /** @private */
 GfxLayer.prototype._handleCollisions = function() {
   var element1, element2, j;
-  for (i = 0; i < this._elements.length - 1; i++) {
+  for (var i = 0; i < this._elements.length - 1; i++) {
     element1 = this._elements[i];
-    for (j = i+1; j < this._elements.length; j++) {
+    for (var j = i+1; j < this._elements.length; j++) {
       element2 = this._elements[j];
 
       this._collisionCheckElementsIfNeeded(element1, element2);

@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run test && npm run build:docs && webpack --config webpack.config.js",
     "build:dev": "webpack --config webpack.dev.config.js",
-    "test": "./node_modules/.bin/mocha --require @babel/register",
+    "test": "node ./node_modules/jest/bin/jest ./test --colors",
     "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/"
   },
   "dependencies": {
