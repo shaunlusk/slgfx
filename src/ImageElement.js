@@ -46,7 +46,7 @@ function ImageElement(props) {
   this._sWidth = props.sourceWidth;
   this._sHeight = props.sourceHeight;
 
-  this._imageRenderer = props.imageRenderer || new ImageRenderer(props.screenContext.getScaleX(), props.screenContext.getScaleY());
+  this._imageRenderer = props.imageRenderer;
 };
 
 ImageElement.prototype = new GfxElement();

@@ -122,13 +122,13 @@ GfxLayer.prototype._checkBorderCollision = function(element,time) {
   if (element.getCollisionBoxX() <= 0) {
     element.notify(new Event(EventType.ELEMENT_HIT_LEFT_EDGE, {layer:this, element:element}, time));
   }
-  if (element.getCollisionBoxX() + element.getCollisionBoxWidth() > this.getCanvas().width) {
+  if (element.getCollisionBoxX() + element.getCollisionBoxWidth() > this.getWidth()) {
     element.notify(new Event(EventType.ELEMENT_HIT_RIGHT_EDGE, {layer:this, element:element}, time));
   }
   if (element.getCollisionBoxY() <= 0) {
     element.notify(new Event(EventType.ELEMENT_HIT_TOP_EDGE, {layer:this, element:element}, time));
   }
-  if (element.getCollisionBoxY() + element.getCollisionBoxHeight() > this.getCanvas().height) {
+  if (element.getCollisionBoxY() + element.getCollisionBoxHeight() > this.getHeight()) {
     element.notify(new Event(EventType.ELEMENT_HIT_BOTTOM_EDGE, {layer:this, element:element}, time));
   }
 };

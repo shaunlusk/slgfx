@@ -49,7 +49,7 @@ function ImageSprite(props) {
   this._width = props.width;
   this._height = props.height;
 
-  this._imageRenderer = props.imageRenderer || new ImageRenderer(props.screenContext.getScaleX(), props.screenContext.getScaleY());
+  this._imageRenderer = props.imageRenderer;
 };
 
 ImageSprite.prototype = new Sprite();

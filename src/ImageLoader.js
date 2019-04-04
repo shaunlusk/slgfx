@@ -1,5 +1,5 @@
 // Mock for node testing.
-var Image = Image || function() {};
+var Image = window.Image || function() {};
 
 /**
 * @class

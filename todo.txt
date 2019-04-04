@@ -1,7 +1,10 @@
 Proposed changes:
 Modernize
-Don't mix 'props' and other types of parameters; have only 1 or the other.
+make consistent naming:
+  screenContext
+  canvasContext / canvasContextWrapper
 Improve test coverage - necessary with these level of changes.
+revisit including canvas in layers
 
 ---------------------------------------------
 Sprite Frames

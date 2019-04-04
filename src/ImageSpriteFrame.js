@@ -1,7 +1,7 @@
-var AnimationFrame = require('../src/AnimationFrame');
+var SpriteAnimationFrame = require('../src/SpriteAnimationFrame');
 
-/** ImageSprite implementation of AnimationFrame.
-* @extends {AnimationFrame}
+/** ImageSprite implementation of SpriteAnimationFrame.
+* @extends {SpriteAnimationFrame}
 * @constructor
 * @params {Object} props Properties supported:
 * <ul>
@@ -14,14 +14,14 @@ var AnimationFrame = require('../src/AnimationFrame');
 */
 function ImageSpriteFrame(props) {
   props = props || {};
-  AnimationFrame.call(this);
+  SpriteAnimationFrame.call(this);
   this._duration = props.duration;
   this._sx = props.sourceX;
   this._sy = props.sourceY;
   this._sWidth = props.sourceWidth;
   this._sHeight = props.sourceHeight;
 };
-ImageSpriteFrame.prototype = new AnimationFrame();
+ImageSpriteFrame.prototype = new SpriteAnimationFrame();
 ImageSpriteFrame.prototype.callback = ImageSpriteFrame;
 
 /** Return the duration of this frame.

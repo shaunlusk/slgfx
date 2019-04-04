@@ -212,12 +212,15 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
-  var canvasContextWrapper = this.createCanvasForLayer();
-  props = props || {};
-  props.width = this.getWidth();
-  props.height = this.getHeight();
+  var canvas = this.createCanvasForLayer();
+  var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
 
-  var layer = this._layerFactory.getLayer(this, type, canvasContextWrapper, props);
+  var layer = this._layerFactory.getLayer(type, {
+    canvas:canvas
+    canvasContextWrapper:canvasContextWrapper,
+    width:this.getWidth(),
+    height:this.getHeight()
+  });
 
   this.addLayer(layer);
   return layer;
@@ -229,7 +232,10 @@ Screen.prototype.createCanvasForLayer = function() {
   canvas.width = this._width;
   canvas.height = this._height;
   canvas.style.position = "absolute";
-  debugger;
+  return canvas;
+};
+
+Screen.prototype.createCanvasContextWrapper = function(canvas) {
   return new CanvasContextWrapper({
     canvasContext:canvas.getContext("2d"),
     imageSmoothingEnabled:this._imageSmoothingEnabled,
