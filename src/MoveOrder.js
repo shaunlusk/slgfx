@@ -1,3 +1,5 @@
+var Utils = require('./Utils');
+
 /** Directs movement of {@link GfxElements} when moveTo() is called.
 * These are created and handled internally in GfxElements.
 * @constructor
