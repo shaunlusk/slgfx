@@ -11,8 +11,8 @@ var Layer = require("./Layer");
 * @param {Object} props The properties to create this layer with. <br />
 * @param {Screen} props.screenContext The parent screen for this layer.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {int} props.width The width of the layer.  Should match Screen.
-* @param {int} props.height The height of the layer.  Should match Screen.
+* @param {number} props.width The width of the layer.  Should match Screen.
+* @param {number} props.height The height of the layer.  Should match Screen.
 */
 function GfxLayer(props) {
   props = props || {};
@@ -62,8 +62,8 @@ GfxLayer.prototype.removeElement = function(element) {
   return this.removeElementById(element.getId());
 };
 
-/** @private
-* Does not bounds check.
+/** Does not bounds check.
+* @private
 */
 GfxLayer.prototype._removeElementByIndex = function(idx) {
   this._removedElements[this._elements[idx].getId()] = this._elements[idx];
@@ -85,21 +85,19 @@ GfxLayer.prototype.removeAllElements = function() {
 };
 
 /** Update the layer.
-* Calls update on each element.
+* Calls update on each element belonging to this layer.
 * Checks for elements colliding with the layer boundary and emits events accordingly (event emitted from the elements themselves):
-* <ul>
-* <li>EventType.ELEMENT_HIT_LEFT_EDGE</li>
-* <li>EventType.ELEMENT_HIT_RIGHT_EDGE</li>
-* <li>EventType.ELEMENT_HIT_TOP_EDGE</li>
-* <li>EventType.ELEMENT_HIT_BOTTOM_EDGE</li>
-* </ul>
-* The data for these events consists of:
+* The ELEMENT_HIT_<X> events will send the following properties in the data for the events:
 * <ul>
 * <li>element : The element that hit the border</li>
 * <li>layer : This layer</li>
 * </ul>
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
+* @emits EventType.ELEMENT_HIT_LEFT_EDGE
+* @emits EventType.ELEMENT_HIT_RIGHT_EDGE
+* @emits EventType.ELEMENT_HIT_TOP_EDGE
+* @emits EventType.ELEMENT_HIT_BOTTOM_EDGE
 */
 GfxLayer.prototype.update = function(time,diff) {
   var dirtyElement;
@@ -161,6 +159,11 @@ GfxLayer.prototype._updateElementOnCollision = function(element) {
   this._dirtyElements.push(element.getZIndexComparable());
 };
 
+/** Execute prerendering activities.
+* @override
+* @param {number} time The current time (milliseconds)
+* @param {number} diff The difference between the last time and the current time  (milliseconds)
+*/
 GfxLayer.prototype.prerender = function(time,diff) {
   var i;
   Layer.prototype.prerender.call(this,time,diff);

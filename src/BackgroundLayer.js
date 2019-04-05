@@ -9,8 +9,8 @@ var GfxLayer = require("./GfxLayer");
 * @param {Object} props The properties to create this layer with.
 * @param {Screen} props.screenContext The parent screen for this layer.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {int} props.width The width of the layer.  Should match Screen.
-* @param {int} props.height The height of the layer.  Should match Screen.
+* @param {number} props.width The width of the layer.  Should match Screen.
+* @param {number} props.height The height of the layer.  Should match Screen.
 */
 function BackgroundLayer(props) {
   props = props || {};

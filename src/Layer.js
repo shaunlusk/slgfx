@@ -7,8 +7,8 @@ var Utils = require('slcommon/src/Utils');
 * @param {Object} props Configuration properties.
 * @param {Screen} props.screenContext The parent screen.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {int} props.width The width of the layer.  Should match Screen.
-* @param {int} props.height The height of the layer.  Should match Screen.
+* @param {number} props.width The width of the layer.  Should match Screen.
+* @param {number} props.height The height of the layer.  Should match Screen.
 * @see BackgroundLayer
 * @see GfxLayer
 */
