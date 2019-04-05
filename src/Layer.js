@@ -15,7 +15,7 @@ function Layer(props) {
   this._width = props.width || 320;
   this._height = props.height || 200;
   this._canvas = props.canvas;
-  this._canvasContext = props.canvasContextWrapper;
+  this._canvasContextWrapper = props.canvasContextWrapper;
   this._dirty = true;
   this._pendingViewOriginX = null;
   this._pendingViewOriginY = null;
@@ -51,12 +51,12 @@ Layer.prototype.setViewOriginY = function(viewOriginY) {
 /** Return the current x coordinate of the viewport.
 * @return {number} The x coordinate.
 */
-Layer.prototype.getViewOriginX = function() {return this._canvasContext.getViewOriginX();};
+Layer.prototype.getViewOriginX = function() {return this._canvasContextWrapper.getViewOriginX();};
 
 /** Return the current y coordinate of the viewport.
 * @return {number} The y coordinate.
 */
-Layer.prototype.getViewOriginY = function() {return this._canvasContext.getViewOriginY();};
+Layer.prototype.getViewOriginY = function() {return this._canvasContextWrapper.getViewOriginY();};
 
 /** @private */
 Layer.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
@@ -73,27 +73,21 @@ Layer.prototype.getWidth = function() {return this._width;};
 */
 Layer.prototype.getHeight = function() {return this._height;};
 
-/** Returns the Canvas for this layer.
-* <b>Note</b>: this does not return the drawable CanvasContext, rather it returns the reference to the DOM element.
-* @returns {HTMLElement}
+/** Returns the CanvasContextWrapper for this layer.
+* @returns {CanvasContextWrapper}
 */
-Layer.prototype.getCanvas = function() {return this._canvas;};
-
-/** Returns the CanvasContext for this layer.
-* @returns {CanvasContext}
-*/
-Layer.prototype.getCanvasContext = function() {return this._canvasContext;};
+Layer.prototype.getCanvasContextWrapper = function() {return this._canvasContextWrapper;};
 
 /** Check if image smoothing is enabled for this layer.
 * @return {bool}
 */
-Layer.prototype.isImageSmoothingEnabled = function() {return this._canvasContext.isImageSmoothingEnabled();};
+Layer.prototype.isImageSmoothingEnabled = function() {return this._canvasContextWrapper.isImageSmoothingEnabled();};
 
 /** Turn image smoothing on or off for this layer.
 * @param {bool} imageSmoothingEnabled
 */
 Layer.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {
-  this._canvasContext.setImageSmoothingEnabled(imageSmoothingEnabled);
+  this._canvasContextWrapper.setImageSmoothingEnabled(imageSmoothingEnabled);
   this.setDirty(true);
 };
 
@@ -116,13 +110,13 @@ Layer.prototype.render = function(time,diff) {};
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
 Layer.prototype.prerender = function(time,diff) {
-  if (this.isDirty()) this.getCanvasContext().clear();
+  if (this.isDirty()) this.getCanvasContextWrapper().clear();
   if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
-    this.getCanvasContext().setViewOriginX(this.getPendingViewOriginX());
+    this.getCanvasContextWrapper().setViewOriginX(this.getPendingViewOriginX());
     this._pendingViewOriginX = null;
   }
   if (!Utils.isNullOrUndefined(this.getPendingViewOriginY())) {
-    this.getCanvasContext().setViewOriginY(this.getPendingViewOriginY());
+    this.getCanvasContextWrapper().setViewOriginY(this.getPendingViewOriginY());
     this._pendingViewOriginY = null;
   }
 };
@@ -144,7 +138,7 @@ Layer.prototype.handleMouseEvent = function(event) {};
 /** Clears all contents of this Layer.
 */
 Layer.prototype.clearLayer = function() {
-  this._canvasContext.clearRect(0, 0, this.getWidth(), this.getHeight());
+  this._canvasContextWrapper.clearRect(0, 0, this.getWidth(), this.getHeight());
 };
 
 /** Progressively fade the layer to black.
@@ -159,7 +153,7 @@ Layer.prototype.dimLayer = function(amount, steps, interval) {
 
 /** @private */
 Layer.prototype._dimStep = function(amount, stepAmount, steps, interval) {
-  var canvasContext = this.getCanvasContext();
+  var canvasContext = this.getCanvasContextWrapper();
   canvasContext.clearRect(0, 0, this.getWidth(), this.getHeight());
   canvasContext.fillStyle = "rgba(0,0,0," + amount + ")";
   canvasContext.fillRect(0, 0, this.getWidth(), this.getHeight());

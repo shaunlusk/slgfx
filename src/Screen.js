@@ -216,7 +216,6 @@ Screen.prototype.createLayer = function(type, props) {
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
 
   var layer = this._layerFactory.getLayer(type, {
-    canvas:canvas
     canvasContextWrapper:canvasContextWrapper,
     width:this.getWidth(),
     height:this.getHeight()

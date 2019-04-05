@@ -58,7 +58,7 @@ function GfxElement(props) {
   props = props || {};
   this._id = GfxElement.id++;
   this._screenContext = props.screenContext;
-  this._canvasContext = props.canvasContextWrapper;
+  this._canvasContextWrapper = props.canvasContextWrapper;
   this._scaleX = props.scaleX || 1;
   this._scaleY = props.scaleY || 1;
   this._currentMove = null;
@@ -204,7 +204,7 @@ GfxElement.prototype.getZIndexComparable = function() {
 * Return the canvas context for this element's parent layer.
 * @return {CanvasContext}
 */
-GfxElement.prototype.getCanvasContext = function() {return this._canvasContext;};
+GfxElement.prototype.getCanvasContextWrapper = function() {return this._canvasContextWrapper;};
 
 /**
 * Return the parent Screen for this element.
@@ -721,7 +721,7 @@ GfxElement.prototype._updateMoveOrder = function(time,diff) {
 * @param {number} diff
 */
 GfxElement.prototype.clear = function(time, diff) {
-  this.getCanvasContext().clearRect(
+  this.getCanvasContextWrapper().clearRect(
     this._lastCollisionBoxX,
     this._lastCollisionBoxY,
     this._lastCollisionBoxWidth,

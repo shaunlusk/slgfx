@@ -16,8 +16,7 @@ Mocks.getMockLayer = function(props) {
     getWidth : function() {return 0;},
     getHeight : function() {return 0;},
     getScreenContext : function() {return props.screenContext || null;},
-    getCanvas : function() {return null;},
-    getCanvasContext : function() {return Mocks.getMockCanvasContext();},
+    getCanvasContextWrapper : function() {return Mocks.getMockCanvasContextWrapper();},
     update : function() {},
     render : function() {},
     handleMouseEvent : function() {},
@@ -81,7 +80,7 @@ Mocks.getMockScreen = function(props) {
   return screen;
 };
 
-Mocks.getMockCanvasContext = function(props) {
+Mocks.getMockCanvasContextWrapper = function(props) {
   props = props || {};
   var context = {};
   context.clearRect = function(x, y, width, height) {
@@ -100,7 +99,6 @@ Mocks.getMockCanvasContext = function(props) {
   context.getViewOriginY = function() {};
   context.setViewOriginX = function() {};
   context.setViewOriginY = function() {};
-  context.getCanvas = function() {};
   context.getCanvasContext = function() {};
   context.isImageSmoothingEnabled = function() {};
   context.setImageSmoothingEnabled = function() {};

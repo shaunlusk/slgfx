@@ -96,7 +96,7 @@ ImageElement.prototype.getSourceHeight = function() {return this._sHeight;};
 */
 ImageElement.prototype.render = function(time,diff) {
     this._imageRenderer.renderImage(
-      this.getCanvasContext(),
+      this.getCanvasContextWrapper(),
       this.getImage(),
       this.getSourceX(),
       this.getSourceY(),

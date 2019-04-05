@@ -1,7 +1,8 @@
 var GfxLayer = require("./GfxLayer");
 
 /** Background Graphics layer.<br />
-* Intended for backgrounds that don't change much.
+* Intended for backgrounds that don't change much; sprites are ok, but moving
+* elements will require marking the entire layer dirty for proper functionality.
 * Generally, the use of Screen.createLayer("BackgroundLayer") is preferred over creating layer by hand.
 * @constructor
 * @augments GfxLayer

@@ -7,7 +7,7 @@ describe("ImageElement", function() {
     calledRenderImage = false;
     imageElement = new ImageElement({
       screenContext : Mocks.getMockScreen(),
-      canvasContextWrapper:Mocks.getMockCanvasContext(),
+      canvasContextWrapper:Mocks.getMockCanvasContextWrapper(),
       imageRenderer : {
         renderImage : function() {
           calledRenderImage = true;

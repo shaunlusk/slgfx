@@ -4,7 +4,7 @@ import CanvasContextWrapper from '../src/CanvasContextWrapper';
 describe('CanvasContextWrapper', () => {
   let canvasContext = null, wrapper = null;
   beforeEach(() => {
-    canvasContext = Mocks.getMockCanvasContext();
+    canvasContext = Mocks.getMockCanvasContextWrapper();
     wrapper = new CanvasContextWrapper({
       canvasContext:canvasContext,
       width:10,

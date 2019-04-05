@@ -5,6 +5,7 @@ make consistent naming:
   canvasContext / canvasContextWrapper
 Improve test coverage - necessary with these level of changes.
 revisit including canvas in layers
+move orders should pause with screen
 
 ---------------------------------------------
 Sprite Frames

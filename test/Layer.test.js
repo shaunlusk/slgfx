@@ -2,7 +2,6 @@ var Layer = require('../src/Layer');
 
 describe('Layer', function() {
   var canvasContextWrapper = {
-    getCanvas : function() {},
     setImageSmoothingEnabled : function(value) {this.bool = value;},
     isImageSmoothingEnabled : function() {return this.bool;},
     setViewOriginX : function(viewOriginX) {this.viewOriginX = viewOriginX;},

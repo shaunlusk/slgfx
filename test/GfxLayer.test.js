@@ -246,7 +246,6 @@ describe("GfxLayer", function() {
     var notifiedWith = null;
     var time = 1;
     beforeEach(function() {
-      gfxLayer.getCanvas = function() {return {width:320, height:200};};
       mockElement.getCollisionBoxWidth = function() {return 10;};
       mockElement.getCollisionBoxHeight = function() {return 10;};
       mockElement.notify = function(event) {notifiedWith = event.type;};

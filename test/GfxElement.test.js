@@ -86,9 +86,9 @@ describe("GfxElement", function() {
       expect(zindex).toBeTruthy();
     });
   });
-  describe("#getCanvasContext()", function() {
+  describe("#getCanvasContextWrapper()", function() {
     it("should return canvas context", function() {
-      var context = element.getCanvasContext();
+      var context = element.getCanvasContextWrapper();
       expect(context).toBeTruthy();
     });
   });
@@ -114,7 +114,7 @@ describe("GfxElement", function() {
     it("should return total scalex", function() {
       element = new GfxElement({
         screenContext:Mocks.getMockScreen({scaleX:2}),
-        canvasContextWrapper:Mocks.getMockCanvasContext(),
+        canvasContextWrapper:Mocks.getMockCanvasContextWrapper(),
         scaleX:3}
       );
       var scaleX = element.getTotalScaleX();
@@ -125,7 +125,7 @@ describe("GfxElement", function() {
     it("should return total scaley", function() {
       element = new GfxElement({
         screenContext:Mocks.getMockScreen({scaleY:4}),
-        canvasContextWrapper:Mocks.getMockCanvasContext(),
+        canvasContextWrapper:Mocks.getMockCanvasContextWrapper(),
         scaleY:7
       });
       var scaleY = element.getTotalScaleY();
@@ -530,7 +530,7 @@ describe("GfxElement", function() {
       element._lastCollisionBoxWidth = 7;
       element._lastCollisionBoxHeight = 8;
       element.clear();
-      var mockContext = element.getCanvasContext();
+      var mockContext = element.getCanvasContextWrapper();
       expect(mockContext.clearedX).toBe(-1);
       expect(mockContext.clearedY).toBe(-1);
       expect(mockContext.clearedWidth).toBe(7);
@@ -919,7 +919,7 @@ function getGfxElement(props) {
   var element = new GfxElement({
     ...props,
     screenContext:Mocks.getMockScreen(),
-    canvasContextWrapper:Mocks.getMockCanvasContext()
+    canvasContextWrapper:Mocks.getMockCanvasContextWrapper()
   });
   return element;
 }

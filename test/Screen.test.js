@@ -17,7 +17,7 @@ describe("Screen", function() {
       },
       createElement : function() {return {
         style:{},
-        getContext:function() {return Mocks.getMockCanvasContext()}
+        getContext:function() {return Mocks.getMockCanvasContextWrapper()}
       }},
       hidden:false
     };

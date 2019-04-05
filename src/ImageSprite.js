@@ -68,7 +68,7 @@ ImageSprite.prototype.getImage = function() {return this._image;};
 */
 ImageSprite.prototype.renderFrame = function(time, diff, frame) {
   this._imageRenderer.renderImage(
-    this.getCanvasContext(),
+    this.getCanvasContextWrapper(),
     this.getImage(),
     frame.getSourceX(),
     frame.getSourceY(),
