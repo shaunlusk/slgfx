@@ -15,7 +15,7 @@ GfxElementZIndexComparable.prototype.getElement = function() {return this._paren
 /**
 * @implements {IComparable.compareTo}
 * @param {GfxElementZIndexComparable} other The object to compare to this one.
-* @returns {integer} -1: less than the other object; 0 equivalent to the other object; 1 greater than the other object.
+* @returns {int} -1: less than the other object; 0 equivalent to the other object; 1 greater than the other object.
 */
 GfxElementZIndexComparable.prototype.compareTo = function(other) {
   if (this._parentElement.getZIndex() < other._parentElement.getZIndex()) return -1;
@@ -34,7 +34,7 @@ GfxElementZIndexComparable.prototype.equals = function(other) {
 
 /**Returns this comparables key (uses Id from parent element).
 * Implementation for getKey for UniquePriorityQueue
-* @returns {integer}
+* @returns {int}
 */
 GfxElementZIndexComparable.prototype.getKey = function() {
   return this._parentElement.getId();

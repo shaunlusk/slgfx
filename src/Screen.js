@@ -158,7 +158,7 @@ Screen.prototype.getBorderColor = function() {
 };
 
 /** Set the border size.
-* @param {integer} size The size for the border; will be interpretted as pixels.
+* @param {int} size The size for the border; will be interpretted as pixels.
 */
 Screen.prototype.setBorderSize = function(size) {
   this._borderSize = size;
@@ -166,39 +166,39 @@ Screen.prototype.setBorderSize = function(size) {
 };
 
 /** Return the current border size, in pixels.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getBorderSize = function() {
   return this._borderSize;
 };
 
 /** Return the width.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getWidth = function() {return this._width;};
 
 /** Return the height.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getHeight = function() {return this._height;};
 
 /** Return the x-scale.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getScaleX = function() {return this._scaleX;};
 
 /** Return the y-scale.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getScaleY = function() {return this._scaleY;};
 
 /** Return the current x coordinate of the mouse.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getMouseX = function() {return this._mouseX;};
 
 /** Return the current y coordinate of the mouse.
-* @returns {integer}
+* @returns {int}
 */
 Screen.prototype.getMouseY = function() {return this._mouseY;};
 

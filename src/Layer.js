@@ -2,19 +2,20 @@ var Utils = require('slcommon/src/Utils');
 
 /**
 * Abstract class for graphical layers on a Screen.<br />
-* Existing implementations: {@link TextLayer}, {@link GfxLayer}
+* Existing implementations: {@link BackgroundLayer}, {@link GfxLayer}
 * @constructor
 * @param {Object} props Configuration properties.
 * @param {Screen} props.screenContext The parent screen.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @see TextLayer
+* @param {int} props.width The width of the layer.  Should match Screen.
+* @param {int} props.height The height of the layer.  Should match Screen.
+* @see BackgroundLayer
 * @see GfxLayer
 */
 function Layer(props) {
   props = props || {};
   this._width = props.width || 320;
   this._height = props.height || 200;
-  this._canvas = props.canvas;
   this._canvasContextWrapper = props.canvasContextWrapper;
   this._dirty = true;
   this._pendingViewOriginX = null;
@@ -32,29 +33,29 @@ Layer.prototype.isDirty = function() {return this._dirty;};
 */
 Layer.prototype.setDirty = function(dirty) {this._dirty = dirty;};
 
-/** Move the viewport to the specified X coordinate
-* @param {number} viewOriginX The X coordinate.
+/** Offset the canvasContextWrapper horizontally by a specified amount.
+* @param {number} viewOriginX The X offset.
 */
 Layer.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) this.setDirty(true);
 };
 
-/** Move the viewport to the specified Y coordinate
-* @param {number} viewOriginY The Y coordinate.
+/** Offset the canvasContextWrapper vertically by a specified amount.
+* @param {number} viewOriginY The Y offset.
 */
 Layer.prototype.setViewOriginY = function(viewOriginY) {
   this._pendingViewOriginY = viewOriginY;
   if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) this.setDirty(true);
 };
 
-/** Return the current x coordinate of the viewport.
-* @return {number} The x coordinate.
+/** Return the current x offset of the canvasContextWrapper.
+* @return {number} The x offset.
 */
 Layer.prototype.getViewOriginX = function() {return this._canvasContextWrapper.getViewOriginX();};
 
-/** Return the current y coordinate of the viewport.
-* @return {number} The y coordinate.
+/** Return the current y offset of the viewport.
+* @return {number} The y offset.
 */
 Layer.prototype.getViewOriginY = function() {return this._canvasContextWrapper.getViewOriginY();};
 

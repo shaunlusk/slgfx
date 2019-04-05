@@ -94,12 +94,12 @@ Sprite.prototype.doesLoop = function() {return this._loop;};
 Sprite.prototype.setDoLoop = function(loop) {this._loop = loop;};
 
 /** Returns the number of times this Sprite will loop.
-* @returns {integer}
+* @returns {int}
 */
 Sprite.prototype.getLoopsToLive = function() {return this._loopsToLive;};
 
 /** Sets the number of times this Sprite will loop.
-* @param {integer} loopsToLive
+* @param {int} loopsToLive
 */
 Sprite.prototype.setLoopsToLive = function(loopsToLive) {this._loopsToLive = loopsToLive;};
 
@@ -117,27 +117,27 @@ Sprite.prototype.setDone = function(done) {
 };
 
 /** Returns the freeze frame index for this Sprite
-* @returns {integer}
+* @returns {int}
 */
 Sprite.prototype.getFreezeFrameIndex = function() {return this._freezeFrameIdx;};
 
 /** Sets the freeze frame index for this Sprite.
-* @param {integer} idx
+* @param {int} idx
 */
 Sprite.prototype.setFreezeFrameIndex = function(idx) {this._freezeFrameIdx = idx;};
 
 /** Returns the current number of times the Sprite has looped.
-* @returns {integer}
+* @returns {int}
 */
 Sprite.prototype.getLoopCount = function() {return this._loopCount;};
 
 /** Returns the current frame index.
-* @returns {integer}
+* @returns {int}
 */
 Sprite.prototype.getCurrentFrameIndex = function() {return this._fidx;};
 
 /** Manually sets the current frame index.
-* @param {integer} idx
+* @param {int} idx
 */
 Sprite.prototype.setCurrentFrameIndex = function(idx) {
   this._fidx = idx;

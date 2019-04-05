@@ -24,8 +24,8 @@ function ImageRenderer(screenScaleX, screenScaleY) {
 * @param {number} y The target y position of the canvas to draw the image to.
 * @param {number} width The target width of the drawn image. If different than the dimensions of the image subsection, the image subsection will be stretched or shrunk.
 * @param {number} height The target height of the drawn image. If different than the dimensions of the image subsection, the image subsection will be stretched or shrunk.
-* @param {integer} imageScaleX The amount to scale the drawn image horizontally.
-* @param {integer} imageScaleY The amount to scale the drawn image vertically.
+* @param {int} imageScaleX The amount to scale the drawn image horizontally.
+* @param {int} imageScaleY The amount to scale the drawn image vertically.
 * @param {boolean} isHorizontallyFlipped Whether the element is flipped horizontally.
 * @param {boolean} isVerticallyFlipped Whether the element is flipped vertically.
 * @param {number} rotation The element's rotation in radians.
@@ -67,27 +67,27 @@ ImageRenderer.prototype.renderImageWithTranslation = function(context, image, sx
 
 /**
 * Return the horizontal scale of the renderer.
-* @return {integer}
+* @return {int}
 */
 ImageRenderer.prototype.getScreenScaleX = function() {return this._screenScaleX;};
 
 /**
 * Return the vertical scale of the renderer.
-* @return {integer}
+* @return {int}
 */
 ImageRenderer.prototype.getScreenScaleY = function() {return this._screenScaleY;};
 
 /**
 * Return the total horizontal scale (screen scale * image scale).
-* @param {integer} imageScaleX The x amount to scale the portion of the image drawn to the canvas.
-* @return {integer}
+* @param {int} imageScaleX The x amount to scale the portion of the image drawn to the canvas.
+* @return {int}
 */
 ImageRenderer.prototype.getTotalScaleX = function(imageScaleX) {return this._screenScaleX * imageScaleX;};
 
 /**
 * Return the total vertical scale (screen scale * image scale).
-* @param {integer} imageScaleY The y amount to scale the portion of the image drawn to the canvas.
-* @return {integer}
+* @param {int} imageScaleY The y amount to scale the portion of the image drawn to the canvas.
+* @return {int}
 */
 ImageRenderer.prototype.getTotalScaleY = function(imageScaleY) {return this._screenScaleY * imageScaleY;};
 

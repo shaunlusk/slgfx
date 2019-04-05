@@ -47,8 +47,8 @@ var MouseEvent = require('./MouseEvent');
 * @param {Object} props Properties for this GfxElement.
 * @param {Screen} props.screenContext The target screen.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {integer} props.scaleX Horizontal scale of this element.  Independent of screen scale.
-* @param {integer} props.scaleY Vertical scale of this element.  Independent of screen scale.
+* @param {int} props.scaleX Horizontal scale of this element.  Independent of screen scale.
+* @param {int} props.scaleY Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} props.hidden Whether to hide this element.
 * @param {number} props.x The X coordinate for this element.
 * @param {number} props.y The Y coordinate for this element.
@@ -138,7 +138,7 @@ GfxElement.prototype.notify = function(event) {
 GfxElement.id = 0;
 
 /** Return the unique id of this element.
-* @return {integer} This element's unique id.
+* @return {int} This element's unique id.
 */
 GfxElement.prototype.getId = function() {return this._id;};
 
@@ -202,7 +202,7 @@ GfxElement.prototype.getZIndexComparable = function() {
 
 /**
 * Return the canvas context for this element's parent layer.
-* @return {CanvasContext}
+* @return {CanvasContextWrapper}
 */
 GfxElement.prototype.getCanvasContextWrapper = function() {return this._canvasContextWrapper;};
 
@@ -214,43 +214,43 @@ GfxElement.prototype.getScreenContext = function() {return this._screenContext;}
 
 /**
 * Return the horizontal scale of this element's parent screen.
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getScreenScaleX = function() {return this.getScreenContext().getScaleX();};
 
 /**
 * Return the vertical scale of this element's parent screen.
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getScreenScaleY = function() {return this.getScreenContext().getScaleY();};
 
 /**
 * Return the total horizontal scale for this element (screen scale * element scale).
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getTotalScaleX = function() {return this.getElementScaleX() * this.getScreenContext().getScaleX();};
 
 /**
 * Return the total vertical scale for this element (screen scale * element scale).
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getTotalScaleY = function() {return this.getElementScaleY() * this.getScreenContext().getScaleY();};
 
 /**
 * Return the horizontal scale of this element.
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getElementScaleX = function() {return this._scaleX;};
 
 /**
 * Return the vertical scale of this element.
-* @return {integer}
+* @return {int}
 */
 GfxElement.prototype.getElementScaleY = function() {return this._scaleY;};
 
 /**
 * Set the horizontal scale of this element.
-* @param {integer} scaleX
+* @param {int} scaleX
 */
 GfxElement.prototype.setElementScaleX = function(scaleX) {
   this._scaleX = scaleX;
@@ -258,7 +258,7 @@ GfxElement.prototype.setElementScaleX = function(scaleX) {
 
 /**
 * Set the vertical scale of this element.
-* @param {integer} scaleY
+* @param {int} scaleY
 */
 GfxElement.prototype.setElementScaleY = function(scaleY) {this._scaleY = scaleY;};
 

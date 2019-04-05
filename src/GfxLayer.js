@@ -43,7 +43,7 @@ GfxLayer.prototype.addElement = function(element) {
 };
 
 /** Remove an element from the layer.
-* @param {integer} id The id of the element to remove
+* @param {int} id The id of the element to remove
 * @return {GfxElement} The removed element, if found.
 */
 GfxLayer.prototype.removeElementById = function(id) {
