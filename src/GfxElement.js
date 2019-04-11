@@ -7,9 +7,8 @@ var EventType = require('./EventType');
 var MoveOrder = require('./MoveOrder');
 var MouseEvent = require('./MouseEvent');
 
-/**
-* <p>Graphics element base class.</p>
-* <p>* Current Implementations:
+/** <p>Graphics element base class.</p>
+* <p>Current Implementations:
 * <ul>
 *   <li>{@link ImageElement}</li>
 *   <li>{@link Sprite}
@@ -17,42 +16,44 @@ var MouseEvent = require('./MouseEvent');
 *       <li>{@link ImageSprite}</li>
 *     </ul>
 *   </li>
-* </ul>
+* </ul></p>
 * <p>GfxElements support two types of movement: moveTo() instructions and movementRates.
 * The former, moveTo() will send an element toward a specified set of coordinates, scheduled to arrive after a
 * specified duration.  The latter, movementRates, will start an element moving at a given rate and continue until stopped.
 * See moveTo() and setMoveRates() for more details.</p>
-* <p>GfxElements emit a number of events:
+* <p> GfxElements emit a number of events.
+* In most cases, the event data will include an 'element' property that refers to the element.  The only exception is ELEMENT_COLLISION;
+* this will have element1 and element2 properties, where element1 is the element on which collidesWith() was called, and element2 was the element passed to the method.</p>
+* <p>In addition to the element property, the mouse events will also include x,y properties in the data, corresponding to the coordinates of the event. </p>
+*
+* <p>Event listeners can be attached to individual elements, or at the screen level.  Refer to documentation on the "on" and "notify" methods.</p>
 * <ul>
 *   <li>ELEMENT_MOVED : Any time the element moves.</li>
 *   <li>ELEMENT_STARTED_MOVING : When the element starts moving.</li>
 *   <li>ELEMENT_STOPPED_MOVING : When the element stops moving.</li>
 *   <li>ELEMENT_COLLISION : When the element collides with another.</li>
-*   <li>MOUSE_ENTER_ELEMENT : When the mouse enters the element's bounding box.</li>
-*   <li>MOUSE_EXIT_ELEMENT : When the mouse leaves the element's bouding box.</li>
-*   <li>MOUSE_MOVE_OVER_ELEMENT : When the mouse moves and is over the element.</li>
-*   <li>MOUSE_DOWN_ON_ELEMENT : When there is a mouse down event on the element.</li>
-*   <li>MOUSE_UP_ON_ELEMENT : When there is a mouse up event on the element.</li>
+
 *   <li>ELEMENT_HIT_LEFT_EDGE : When the element hits the left edge of its layer.</li>
 *   <li>ELEMENT_HIT_RIGHT_EDGE : When the element hits the right edge of its layer.</li>
 *   <li>ELEMENT_HIT_TOP_EDGE : When the element hits the top edge of its layer.</li>
 *   <li>ELEMENT_HIT_BOTTOM_EDGE : When the element hits the bottom edge of its layer.</li>
 * </ul>
-* In most cases, the event data will include an 'element' property that refers to the element.  The only exception is ELEMENT_COLLISION;
-* this will have element1 and element2 properties, where element1 is the element on which collidesWith() was called, and element2 was the element passed to the method.</p>
-* <p>In addition to the element property, the mouse events will also include x,y, and row, column properties in the data, corresponding to the coordinates of the event. </p>
 *
-* <p>Event listeners can be attached to individual elements, or at the screen level.  Refer to documentation on the "on" and "notify" methods.</p>
 * @constructor
 * @param {Object} props Properties for this GfxElement.
 * @param {Screen} props.screenContext The target screen.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
-* @param {int} props.scaleX Horizontal scale of this element.  Independent of screen scale.
-* @param {int} props.scaleY Vertical scale of this element.  Independent of screen scale.
-* @param {boolean} props.hidden Whether to hide this element.
+* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
+* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
+* @param {boolean} [props.hidden=false] Whether to hide this element.
 * @param {number} props.x The X coordinate for this element.
 * @param {number} props.y The Y coordinate for this element.
 * @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @fires GfxElement#MOUSE_ENTER_ELEMENT
+* @fires GfxElement#MOUSE_EXIT_ELEMENT
+* @fires GfxElement#MOUSE_MOVE_OVER_ELEMENT
+* @fires GfxElement#MOUSE_DOWN_ON_ELEMENT
+* @fires GfxElement#MOUSE_UP_ON_ELEMENT
 */
 function GfxElement(props) {
   props = props || {};
@@ -129,6 +130,9 @@ GfxElement.AntiAliasCorrection = {
   sizeAdjustment: 2
 };
 
+/** Notify event handlers when an event has occured.
+* @param {Event} event The event that occured
+*/
 GfxElement.prototype.notify = function(event) {
   this._baseNotify(event);
   this.getScreenContext().notify(event);
@@ -308,22 +312,16 @@ GfxElement.prototype.setY = function(y) {
   this._y = y;
 };
 
-/**
-* Get the x coordinate of this element for the previous frame.
-* @return {number}
-*/
+/** @private */
 GfxElement.prototype.getLastX = function() {return this._lastX;};
 
-/**
-* Get the y coordinate of this element for the previous frame.
-* @return {number}
-*/
+/** @private */
 GfxElement.prototype.getLastY = function() {return this._lastY;};
 
-/** Override if dimensions can change */
+/** @private */
 GfxElement.prototype.getLastWidth = function() {return this.getWidth();};
 
-/** Override if dimensions can change */
+/** @private */
 GfxElement.prototype.getLastHeight = function() {return this.getHeight();};
 
 /** @private */
@@ -363,14 +361,31 @@ GfxElement.prototype.getHeight = function() {return this._height;};
 */
 GfxElement.prototype.getScaledHeight = function() {return this.getHeight() * this.getTotalScaleY();};
 
+/** Get the amount of rotation, ignoring any base rotation.
+* @return {number} The rotation in radians.
+* @see GfxElement#setBaseRotation
+*/
 GfxElement.prototype.getUnAdjustedRotation = function() { return this._rotation; };
+
+/** Get the base rotation.
+* @return {number} The rotation in radians.
+* @see GfxElement#setBaseRotation
+*/
 GfxElement.prototype.getBaseRotation = function() { return this._baseRotation; };
+
+/** Get the total effective rotation of the element, including base rotation.
+* @return {number} The rotation in radians.
+* @see GfxElement#setBaseRotation
+*/
 GfxElement.prototype.getRotation = function() {
   if (this._rotation || this._baseRotation)
   return (this._rotation || 0) + (this._baseRotation || 0);
   return null;
 };
 
+/** Rotate the element by a specified number of radians.
+* @param {number} rotation The rotation in radians.
+*/
 GfxElement.prototype.setRotation = function(rotation) {
   this._rotation = rotation;
   if (this._rotation === null) {
@@ -380,6 +395,11 @@ GfxElement.prototype.setRotation = function(rotation) {
   this._recalculateRotatedCollisionBox();
   this.setDirty(true);
 };
+
+/** Set a base rotation for this element.  Calling setRotation
+* will apply the rotation on top of any base rotation.
+* @param {number} rotation The rotation in radians.
+*/
 GfxElement.prototype.setBaseRotation = function(rotation) {
   this._baseRotation = rotation;
   if (this._baseRotation === null) {
@@ -390,18 +410,29 @@ GfxElement.prototype.setBaseRotation = function(rotation) {
   this.setDirty(true);
 };
 
+/** @private */
 GfxElement.prototype.wasRotated = function() {return this._wasRotated;};
+
+/** @private */
 GfxElement.prototype.setWasRotated = function(wasRotated) {
   this._wasRotated = wasRotated;
 };
+
+/** Return whether this element is rotated.  Ignores base rotation.
+* @return {number} The rotation in radians.
+*/
 GfxElement.prototype.hasRotation = function() {return !(Utils.isNullOrUndefined(this.getRotation()) || this.getRotation() === 0);};
 
+/** @private */
 GfxElement.prototype.getRotatedScaledX = function() {return this._rotatedScaledX; };
+/** @private */
 GfxElement.prototype.getRotatedScaledY = function() {return this._rotatedScaledY; };
+/** @private */
 GfxElement.prototype.getScaledDiagonalSize = function() {
   return this._scaledDiagonalSize;
 };
 
+/** @private */
 GfxElement.prototype._recalculateRotatedCollisionBox = function() {
   if (this.getRotation() === null) return;
   this._scaledDiagonalSize = Math.ceil(Math.sqrt( Math.pow(this.getScaledWidth(), 2) + Math.pow(this.getScaledHeight(), 2) ));
@@ -409,20 +440,36 @@ GfxElement.prototype._recalculateRotatedCollisionBox = function() {
   this._rotatedScaledY = Math.floor(this.getScaledY() - (this._scaledDiagonalSize - this.getScaledHeight()) / 2);
 };
 
+/** Return whether the element is flipped horizontally.
+* @return {bool}
+*/
 GfxElement.prototype.isHorizontallyFlipped = function() {return this._horizontalFlip;};
+
+/** Return whether the element is flipped vertically.
+* @return {bool}
+*/
 GfxElement.prototype.isVerticallyFlipped = function() {return this._verticalFlip;};
 
+/** Set whether to horizontally flip this element.
+* @param {bool} flipped If true, flip the element; false, do not.
+*/
 GfxElement.prototype.setHorizontallyFlipped = function(flipped) {
   if (this._horizontalFlip !== flipped) this.setDirty(true);
   this._horizontalFlip = flipped;
 };
+
+/** Set whether to vertically flip this element.
+* @param {bool} flipped If true, flip the element; false, do not.
+*/
 GfxElement.prototype.setVerticallyFlipped = function(flipped) {
   if (this._verticalFlip !== flipped) this.setDirty(true);
   this._verticalFlip = flipped;
 };
 
-/*
-If duration is -1, will flash until turned off.
+/** Make the element flash.
+* @param {number} interval How frequently, in milliseconds to flash the element.
+* @param {number} duration How long to keep flashing. If duration is -1, will flash until turned off.
+* @param {function} callback A function to call when flashing ends.
 */
 GfxElement.prototype.flash = function(interval, duration, callback) {
   this._flashInterval = interval;
@@ -434,12 +481,18 @@ GfxElement.prototype.flash = function(interval, duration, callback) {
   this._flashDoneCallback = callback;
 };
 
+/** Return whether the element is currenlyt flashing.
+* @return {bool}
+*/
 GfxElement.prototype.isFlashing = function() { return this._isFlashing; };
 
+/** Turn flashing off.  If a callback was provided when flash was turned on, it will be turned off.
+*/
 GfxElement.prototype.turnFlashOff = function() {
   this._endFlash();
 };
 
+/** @private */
 GfxElement.prototype._endFlash = function() {
   this._isFlashing = false;
   this._flashStartTime = -1;
@@ -448,6 +501,7 @@ GfxElement.prototype._endFlash = function() {
   if (Utils.isFunction(this._flashDoneCallback)) this._flashDoneCallback();
 };
 
+/** @private */
 GfxElement.prototype._updateFlash = function(time,diff) {
   if (this._flashStartTime === -1) this._flashStartTime = time;
   if (time - this._flashStartTime >= this._flashDuration && this._flashDuration > -1) {
@@ -463,6 +517,18 @@ GfxElement.prototype._updateFlash = function(time,diff) {
   }
 };
 
+/** Nudge the element, make it move back and forth rapidly.  Provides options for decays of movement range
+* (will make movement less extreme over time), and of time interval (movement becomes more rapid over time).
+* Automatically returns to its starting position upon completion.
+* If the offsets or the interval time reaches zero due to the decay parameters, the nudge will finish.
+* Will throw an error if the parameters will cause the nudge to repeat for >= 1000 intervals.
+* @param {number} offsetX The maximum (positive and negative) horizontal offset to move the element.
+* @param {number} offsetY The maximum (positive and negative) vertical offset to move the element.
+* @param {number} decay After hitting the current offset and reversing direction, reduce the offsets by this amount.
+* @param {number} interval How rapidly (milliseconds) the element should move to the offset, before reversing direction.
+* @param {number} intervalDecay Reduces the interval time after each iteration.
+* @param {function} callback A function to call when the nudge has completed.
+*/
 GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, intervalDecay, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
   this._nudgeDoneCallback = callback;
@@ -474,6 +540,7 @@ GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, interva
   while((Math.abs(offsetX) > decay || Math.abs(offsetY) > decay) && interval >= 0) {
     tx = this.getX() + offsetX;
     ty = this.getY() + offsetY;
+    // Add movement to the queue.
     this.moveTo(tx, ty, interval);
     this._isProcessingNudge = true;
 
@@ -489,6 +556,18 @@ GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, interva
   this.moveTo(this.getX(), this.getY(), interval < 0 ? 0 : interval);
 };
 
+/** Shake the element in random directions, up to a maximum range.  Provides options for decays of movement range
+* (will make movement less extreme over time), and of time interval (movement becomes more rapid over time).
+* If the intensity or the interval time reaches zero due to the decay parameters, the shake will finish.
+* Automatically returns to its starting position upon completion.
+* Will throw an error if the parameters will cause the nudge to repeat for >= 1000 intervals.
+* @param {number} intensity The maximum (positive and negative) range the element will move in any direction.
+* @param {number} intensityDecay After each movement interval, reduce the intensity by this amount.
+* @param {number} interval How rapidly (milliseconds) the element should move to the offset, before starting a new iteration.
+* @param {number} intervalDecay Reduces the interval time after each iteration.
+* @param {number} notToExceedTime An upper limit in milliseconds to allow the shake to process.
+* @param {function} callback A function to call when the shake has completed.
+*/
 GfxElement.prototype.shake = function(intensity, intensityDecay, interval, intervalDecay, notToExceedTime, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
   if (intervalDecay === 0 && !notToExceedTime) throw new Error("must specify either intervalDecay or notToExceedTime");
@@ -517,8 +596,7 @@ GfxElement.prototype.shake = function(intensity, intensityDecay, interval, inter
   this.moveTo(this.getX(), this.getY(), interval < 0 ? 0 : interval);
 };
 
-/**
-* Set the horizontal and vertical movement rates for this element.
+/** Set the horizontal and vertical movement rates for this element.
 * Rates will be treated as approximately pixels per second.
 * Negative values will move the element left for xMoveRate or up for yMoveRate.
 * Zero values will halt movement on a given axis.
@@ -526,6 +604,8 @@ GfxElement.prototype.shake = function(intensity, intensityDecay, interval, inter
 * Note that moveTo instructions will supercede movement rates in determining the element's position.
 * @param {number} xMoveRate Horizontal movement rate
 * @param {number} yMoveRate Vertical movement rate
+* @fires GfxElement#ELEMENT_STOPPED_MOVING
+* @fires GfxElement#ELEMENT_STARTED_MOVING
 */
 GfxElement.prototype.setMoveRates = function(xMoveRate, yMoveRate) {
   if (xMoveRate === 0 && yMoveRate === 0 && this._currentMove === null && (this._xMoveRate !== 0 || this._yMoveRate !== 0)) {
@@ -562,6 +642,8 @@ GfxElement.prototype.getMoveRateY = function() {return this._yMoveRate;};
 * @param {number} y The target y coordinate
 * @param {number} duration Optional. How long it should take the element to move from its current position to the target position, in milliseconds. Defaults to 16ms.
 * @param {function} callback Optional.  The function to call when the move is complete.
+* @fires GfxElement#ELEMENT_STARTED_MOVING
+* @fires GfxElement#ELEMENT_STOPPED_MOVING
 */
 GfxElement.prototype.moveTo = function(x,y,duration, callback) {
   duration = duration || 16;
@@ -644,10 +726,11 @@ GfxElement.prototype.hide = function() {
   this.setDirty(true);
 };
 
-/** Update the element.  Will update location based on current time/diff.
+/** Called by the parent layer. Update the element.  Will update location based on current time/diff.
 * @param {number} time The current time.  Not specifically used, but provided for extension.
 * @param {number} diff The difference between the previous time and the current time. Use to calculate element's position if it is moving.
 * @return {GfxElement} Returns this element if it needs to be redrawn, null otherwise.
+* @fires GfxElement#ELEMENT_MOVED
 */
 GfxElement.prototype.update = function(time,diff) {
   this._updateLocationFromMoveRates(time,diff);
@@ -729,14 +812,14 @@ GfxElement.prototype.clear = function(time, diff) {
   );
 };
 
-/** Perform any preRendering steps, return whether the element needs to be rendered.
+/** Called by the parent layer. Perform any preRendering steps, return whether the element needs to be rendered.
 */
 GfxElement.prototype.preRender = function(time, diff) {
   if (!this.isHidden() && !this._flashHidden && this.isDirty()) return true;
   return false;
 };
 
-/**
+/** Called by the parent layer.
 * The render method should be implemented in subclasses.
 * Time parameters provided for extension.
 */
@@ -745,7 +828,7 @@ GfxElement.prototype.render = function(time, diff) {
 };
 
 
-/**
+/** Called by the parent layer.
 * Provides post-render clean up.
 * Time parameters provided for extension.
 * @param {number} time
@@ -766,6 +849,7 @@ GfxElement.prototype.postRender = function(time, diff) {
   this.setDirty(false);
 };
 
+/** @private */
 GfxElement.prototype._saveLastCollisionBox = function() {
   this._lastCollisionBoxX = this.getCollisionBoxX();
   this._lastCollisionBoxY = this.getCollisionBoxY();
@@ -878,22 +962,11 @@ GfxElement.prototype.getCollisionBoxHeight = function() {
 };
 
 /** Fires events if the mouse event is on this element.<br />
-* Events emitted:
-* <ul>
-*   <li>{@link EventType.MOUSE_ENTER_ELEMENT}</li>
-*   <li>{@link EventType.MOUSE_EXIT_ELEMENT}</li>
-*   <li>{@link EventType.MOUSE_MOVE_OVER_ELEMENT}</li>
-*   <li>{@link EventType.MOUSE_DOWN_ON_ELEMENT}</li>
-*   <li>{@link EventType.MOUSE_UP_ON_ELEMENT}</li>
-* </ul>
-* For these events, data is as follows:
-*   <ul>
-*     <li>x : mouse event x value</li>
-*     <li>y : mouse event y value</li>
-*     <li>row : mouse event row value</li>
-*     <li>col : mouse event col value</li>
-*     <li>element : this element</li>
-*   </ul>
+* @fires MOUSE_ENTER_ELEMENT
+* @fires MOUSE_EXIT_ELEMENT
+* @fires MOUSE_MOVE_OVER_ELEMENT
+* @fires MOUSE_DOWN_ON_ELEMENT
+* @fires MOUSE_UP_ON_ELEMENT
 * @param {Event}
 */
 GfxElement.prototype.handleMouseEvent = function(event) {
@@ -947,6 +1020,7 @@ GfxElement.prototype.handleMouseEvent = function(event) {
   }
 };
 
+/** @private */
 GfxElement.prototype._setupSecondaryEventData = function(event) {
   var eventData = {
       x : event.data.x,
@@ -961,3 +1035,43 @@ GfxElement.prototype._setupSecondaryEventData = function(event) {
 };
 
 module.exports = GfxElement;
+
+/** Element stopped moving.
+* @event GfxElement#ELEMENT_STOPPED_MOVING
+* @type {ElementEvent}
+*/
+
+/** Element started moving.
+* @event GfxElement#ELEMENT_STARTED_MOVING
+* @type {ElementEvent}
+*/
+
+/** Element Moved.
+* @event GfxElement#ELEMENT_MOVED
+* @type {ElementEvent}
+*/
+
+/** An element collided with another element.
+* @event GfxElement#ELEMENT_COLLISION
+* @type {ElementCollidesWithElementEvent}
+*/
+/** Mouse moves into the element's coolision box.
+* @event GfxElement#MOUSE_ENTER_ELEMENT
+* @type {ElementMouseEvent}
+*/
+/** Mouse moves inside the element's coolision box.
+* @event GfxElement#MOUSE_MOVE_OVER_ELEMENT
+* @type {ElementMouseEvent}
+*/
+/** Mouse button down on an element.
+* @event GfxElement#MOUSE_DOWN_ON_ELEMENT
+* @type {ElementMouseEvent}
+*/
+/** Mouse button up on element.
+* @event GfxElement#MOUSE_UP_ON_ELEMENT
+* @type {ElementMouseEvent}
+*/
+/** Mouse leaves the element's coolision box.
+* @event GfxElement#MOUSE_EXIT_ELEMENT
+* @type {ElementMouseEvent}
+*/
