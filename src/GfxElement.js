@@ -27,17 +27,6 @@ var MouseEvent = require('./MouseEvent');
 * <p>In addition to the element property, the mouse events will also include x,y properties in the data, corresponding to the coordinates of the event. </p>
 *
 * <p>Event listeners can be attached to individual elements, or at the screen level.  Refer to documentation on the "on" and "notify" methods.</p>
-* <ul>
-*   <li>ELEMENT_MOVED : Any time the element moves.</li>
-*   <li>ELEMENT_STARTED_MOVING : When the element starts moving.</li>
-*   <li>ELEMENT_STOPPED_MOVING : When the element stops moving.</li>
-*   <li>ELEMENT_COLLISION : When the element collides with another.</li>
-
-*   <li>ELEMENT_HIT_LEFT_EDGE : When the element hits the left edge of its layer.</li>
-*   <li>ELEMENT_HIT_RIGHT_EDGE : When the element hits the right edge of its layer.</li>
-*   <li>ELEMENT_HIT_TOP_EDGE : When the element hits the top edge of its layer.</li>
-*   <li>ELEMENT_HIT_BOTTOM_EDGE : When the element hits the bottom edge of its layer.</li>
-* </ul>
 *
 * @constructor
 * @param {Object} props Properties for this GfxElement.
@@ -49,11 +38,6 @@ var MouseEvent = require('./MouseEvent');
 * @param {number} props.x The X coordinate for this element.
 * @param {number} props.y The Y coordinate for this element.
 * @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
-* @fires GfxElement#MOUSE_ENTER_ELEMENT
-* @fires GfxElement#MOUSE_EXIT_ELEMENT
-* @fires GfxElement#MOUSE_MOVE_OVER_ELEMENT
-* @fires GfxElement#MOUSE_DOWN_ON_ELEMENT
-* @fires GfxElement#MOUSE_UP_ON_ELEMENT
 */
 function GfxElement(props) {
   props = props || {};
@@ -528,6 +512,8 @@ GfxElement.prototype._updateFlash = function(time,diff) {
 * @param {number} interval How rapidly (milliseconds) the element should move to the offset, before reversing direction.
 * @param {number} intervalDecay Reduces the interval time after each iteration.
 * @param {function} callback A function to call when the nudge has completed.
+* @fires GfxElement#ELEMENT_STARTED_MOVING
+* @fires GfxElement#ELEMENT_STOPPED_MOVING
 */
 GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, intervalDecay, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
@@ -567,6 +553,8 @@ GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, interva
 * @param {number} intervalDecay Reduces the interval time after each iteration.
 * @param {number} notToExceedTime An upper limit in milliseconds to allow the shake to process.
 * @param {function} callback A function to call when the shake has completed.
+* @fires GfxElement#ELEMENT_STARTED_MOVING
+* @fires GfxElement#ELEMENT_STOPPED_MOVING
 */
 GfxElement.prototype.shake = function(intensity, intensityDecay, interval, intervalDecay, notToExceedTime, callback) {
   if (interval < 0) throw new Error ("interval cannot be less than 0");
@@ -861,6 +849,7 @@ GfxElement.prototype._saveLastCollisionBox = function() {
 * Compares the boundaries of this element and the other to check for overlap; if so return true, else return false.
 * @param {GfxElement} element
 * @return {boolean}
+* @fires GfxElement#ELEMENT_COLLISION
 */
 GfxElement.prototype.collidesWith = function(element) {
   var thisX = this.getCollisionBoxX();
@@ -962,11 +951,11 @@ GfxElement.prototype.getCollisionBoxHeight = function() {
 };
 
 /** Fires events if the mouse event is on this element.<br />
-* @fires MOUSE_ENTER_ELEMENT
-* @fires MOUSE_EXIT_ELEMENT
-* @fires MOUSE_MOVE_OVER_ELEMENT
-* @fires MOUSE_DOWN_ON_ELEMENT
-* @fires MOUSE_UP_ON_ELEMENT
+* @fires GfxElement#MOUSE_ENTER_ELEMENT
+* @fires GfxElement#MOUSE_EXIT_ELEMENT
+* @fires GfxElement#MOUSE_MOVE_OVER_ELEMENT
+* @fires GfxElement#MOUSE_DOWN_ON_ELEMENT
+* @fires GfxElement#MOUSE_UP_ON_ELEMENT
 * @param {Event}
 */
 GfxElement.prototype.handleMouseEvent = function(event) {
@@ -1055,22 +1044,27 @@ module.exports = GfxElement;
 * @event GfxElement#ELEMENT_COLLISION
 * @type {ElementCollidesWithElementEvent}
 */
+
 /** Mouse moves into the element's coolision box.
 * @event GfxElement#MOUSE_ENTER_ELEMENT
 * @type {ElementMouseEvent}
 */
+
 /** Mouse moves inside the element's coolision box.
 * @event GfxElement#MOUSE_MOVE_OVER_ELEMENT
 * @type {ElementMouseEvent}
 */
+
 /** Mouse button down on an element.
 * @event GfxElement#MOUSE_DOWN_ON_ELEMENT
 * @type {ElementMouseEvent}
 */
+
 /** Mouse button up on element.
 * @event GfxElement#MOUSE_UP_ON_ELEMENT
 * @type {ElementMouseEvent}
 */
+
 /** Mouse leaves the element's coolision box.
 * @event GfxElement#MOUSE_EXIT_ELEMENT
 * @type {ElementMouseEvent}

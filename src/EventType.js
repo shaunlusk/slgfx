@@ -4,30 +4,88 @@
 */
 var EventType = {};
 
+/** Fired when the screen is paused. */
 EventType.SCREEN_PAUSED = "SCREEN_PAUSED";
+/** Fired when the screen is unpaused. */
 EventType.SCREEN_RESUMED = "SCREEN_RESUMED";
+/** Fired before the next frame is rendered. */
 EventType.BEFORE_RENDER = "BEFORE_RENDER";
+/** Fired after the last frame render completes */
 EventType.AFTER_RENDER = "AFTER_RENDER";
+/** Fired when the mouse moves inside the bounds of the Screen. */
 EventType.MOUSE_MOVE = "MOUSE_MOVE";
+/** Fired when the mouse button is released inside the bounds of the Screen. */
 EventType.MOUSE_UP = "MOUSE_UP";
+/** Fired when the mouse button is pressed inside the bounds of the Screen. */
 EventType.MOUSE_DOWN = "MOUSE_DOWN";
+
+/** A GfxElement moved.
+* @see ElementEvent
+*/
 EventType.ELEMENT_MOVED = "ELEMENT_MOVED";
+
 /** A GfxElement started moving.
 * @see ElementEvent
 */
 EventType.ELEMENT_STARTED_MOVING = "ELEMENT_STARTED_MOVING";
+
+
+/** A GfxElement stopped moving.
+* @see ElementEvent
+*/
 EventType.ELEMENT_STOPPED_MOVING = "ELEMENT_STOPPED_MOVING";
+
+/** A GfxElement stopped moving.
+* @see ElementCollidesWithElementEvent
+*/
 EventType.ELEMENT_COLLISION = "ELEMENT_COLLISION";
 
+/** The mouse entered an element's collison box.
+* @see ElementMouseEvent
+*/
 EventType.MOUSE_ENTER_ELEMENT = "MOUSE_ENTER_ELEMENT";
+
+/** The mouse left an element's collison box.
+* @see ElementMouseEvent
+*/
 EventType.MOUSE_EXIT_ELEMENT = "MOUSE_EXIT_ELEMENT";
+
+/** The mouse moved within an element's collison box.
+* @see ElementMouseEvent
+*/
 EventType.MOUSE_MOVE_OVER_ELEMENT = "MOUSE_MOVE_OVER_ELEMENT";
+
+/** The mouse button was pressed within an element's collison box.
+* @see ElementMouseEvent
+*/
 EventType.MOUSE_DOWN_ON_ELEMENT = "MOUSE_DOWN_ON_ELEMENT";
+
+/** The mouse button was released within an element's collison box.
+* @see ElementMouseEvent
+*/
 EventType.MOUSE_UP_ON_ELEMENT = "MOUSE_UP_ON_ELEMENT";
+
+/** An Element hit the left edge of a layer.
+* @see ElementCollidesWithEdgeEvent
+*/
 EventType.ELEMENT_HIT_LEFT_EDGE = "ELEMENT_HIT_LEFT_EDGE";
+
+/** An Element hit the right edge of a layer.
+* @see ElementCollidesWithEdgeEvent
+*/
 EventType.ELEMENT_HIT_RIGHT_EDGE = "ELEMENT_HIT_RIGHT_EDGE";
+
+/** An Element hit the top edge of a layer.
+* @see ElementCollidesWithEdgeEvent
+*/
 EventType.ELEMENT_HIT_TOP_EDGE = "ELEMENT_HIT_TOP_EDGE";
+
+/** An Element hit the bottom edge of a layer.
+* @see ElementCollidesWithEdgeEvent
+*/
 EventType.ELEMENT_HIT_BOTTOM_EDGE = "ELEMENT_HIT_BOTTOM_EDGE";
+
+/** A sprite completed its animation */
 EventType.SPRITE_ANIMATION_DONE = "SPRITE_ANIMATION_DONE";
 /** Intended for use as one-time events; handlers will be cleared by the screen after each frame. */
 EventType.NEXT_FRAME_BEGIN = "NEXT_FRAME_BEGIN";
@@ -60,12 +118,22 @@ module.exports = EventType;
   * @property {number} time The time the event was fired.
   */
 
-  /**
-   * GfxElement collides with another.
-   * @typedef {Object} ElementCollidesWithElementEvent
-   * @property {string} type EventType
-   * @property {Object} data The data provided by the event emitter.
-   * @property {GfxElement} data.element1 The first element in the collision.
-   * @property {GfxElement} data.element2 The first element in the collision.
-   * @property {number} time The time the event was fired.
-   */
+/**
+ * GfxElement collides with another.
+ * @typedef {Object} ElementCollidesWithElementEvent
+ * @property {string} type EventType
+ * @property {Object} data The data provided by the event emitter.
+ * @property {GfxElement} data.element1 The first element in the collision.
+ * @property {GfxElement} data.element2 The first element in the collision.
+ * @property {number} time The time the event was fired.
+ */
+
+/**
+* GfxElement hit the edge of a layer.
+* @typedef {Object} ElementCollidesWithEdgeEvent
+* @property {string} type EventType; indicates which edge was hit.
+* @property {Object} data The data provided by the event emitter.
+* @property {GfxElement} data.layer The layer where the event occured.
+* @property {GfxElement} data.element The element that hit the edge.
+* @property {number} time The time the event was fired.
+*/
