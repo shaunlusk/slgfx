@@ -133,7 +133,7 @@ module.exports = EventType;
 * @typedef {Object} ElementCollidesWithEdgeEvent
 * @property {string} type EventType; indicates which edge was hit.
 * @property {Object} data The data provided by the event emitter.
-* @property {GfxElement} data.layer The layer where the event occured.
+* @property {GfxLayer} data.layer The layer where the event occured.
 * @property {GfxElement} data.element The element that hit the edge.
 * @property {number} time The time the event was fired.
 */

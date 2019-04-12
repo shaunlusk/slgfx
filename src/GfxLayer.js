@@ -94,10 +94,10 @@ GfxLayer.prototype.removeAllElements = function() {
 * </ul>
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
-* @emits EventType.ELEMENT_HIT_LEFT_EDGE
-* @emits EventType.ELEMENT_HIT_RIGHT_EDGE
-* @emits EventType.ELEMENT_HIT_TOP_EDGE
-* @emits EventType.ELEMENT_HIT_BOTTOM_EDGE
+* @fires GfxLayer#ELEMENT_HIT_LEFT_EDGE
+* @fires GfxLayer#ELEMENT_HIT_RIGHT_EDGE
+* @fires GfxLayer#ELEMENT_HIT_TOP_EDGE
+* @fires GfxLayer#ELEMENT_HIT_BOTTOM_EDGE
 */
 GfxLayer.prototype.update = function(time,diff) {
   var dirtyElement;
@@ -219,3 +219,25 @@ GfxLayer.prototype.handleMouseEvent = function(event) {
 };
 
 module.exports = GfxLayer;
+
+
+
+/** An Element hit the left edge of a layer.
+* @event GfxLayer#ELEMENT_HIT_LEFT_EDGE
+* @type {ElementCollidesWithEdgeEvent}
+*/
+
+/** An Element hit the right edge of a layer.
+* @event GfxLayer#ELEMENT_HIT_RIGHT_EDGE
+* @type {ElementCollidesWithEdgeEvent}
+*/
+
+/** An Element hit the top edge of a layer.
+* @event GfxLayer#ELEMENT_HIT_TOP_EDGE
+* @type {ElementCollidesWithEdgeEvent}
+*/
+
+/** An Element hit the bottom edge of a layer.
+* @event GfxLayer#ELEMENT_HIT_BOTTOM_EDGE
+* @type {ElementCollidesWithEdgeEvent}
+*/
