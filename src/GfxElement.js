@@ -37,6 +37,12 @@ var MouseEvent = require('./MouseEvent');
 * @param {boolean} [props.hidden=false] Whether to hide this element.
 * @param {number} props.x The X coordinate for this element.
 * @param {number} props.y The Y coordinate for this element.
+* @param {number} props.width The width of this element.
+* @param {number} props.height The height this element.
+* @param {number} props.rotation The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} props.baseRotation The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} props.horizontalFlip Whether to flip the element horizontally.
+* @param {boolean} props.verticalFlip Whether to flip the element vertically.
 * @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
 */
 function GfxElement(props) {

@@ -1,39 +1,35 @@
 var GfxElement = require('./GfxElement');
-var ImageRenderer = require('./ImageRenderer');
 
-/** Graphics element that uses part or all of an Image.<br />
-* <b>Extends</b> {@link GfxElement}<br />
+/** Graphics element that renders part or all of an Image.<br />
 * It is good practice to have a single or few Images that have many tiles on them
 * to make efficient use of memory and screen drawing. Using ImageElement, you
 * can treat tiles from the source image as discrete screen elements that can be
 * moved and interacted with.
 * For animations, see {@link ImageSprite}
 * @constructor
+* @augments GfxElement
 * @param {Object} props The properties for this object.
-* @param {Screen} props.screenContext The parent screenContext
-* @param {GfxLayer} props.parentLayer The parent layer that will draw this element.
-* from GfxElement:
-*   <ul>
-*     <li>scaleX - integer - Horizontal scale of this element.  Independent of screen scale.</li>
-*     <li>scaleY - integer - Vertical scale of this element.  Independent of screen scale.</li>
-*     <li>hidden - boolean - Whether to hide this element.</li>
-*     <li>x - number - The X coordinate for this element.</li>
-*     <li>y - number - The Y coordinate for this element.</li>
-*     <li>zIndex - number - The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).</li>
-*   </ul>
-* for ImageElement:
-* <ul>
-* <li>image - Image - The image to use for this element. Can be created via html (&lt;img&gt;) or javascript (new Image()).</li>
-* <li>sourceX - number - The x starting point of the desired subsection of the image
-* <li>sourceY - number - The y starting point of the desired subsection of the image
-* <li>sourceWidth - number - The width of the desired subsection of the image
-* <li>sourceHeight - number - The height of the desired subsection of the image
-* <li>width - number - The desired width of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly</li>
-* <li>height - number - The desired height of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly</li>
-* <li>imageRenderer - {@link ImageRenderer} - Optional.  The ImageRenderer that will draw on the canvas.
-*   If not provided, this element will create one.
-*   If using multiple ImageElement's or ImageSprite's it is good practice to create a single ImageRenderer and pass the reference to each element via this property.</li>
-* </ul>
+* @param {Screen} props.screenContext The target screen.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
+* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
+* @param {boolean} [props.hidden=false] Whether to hide this element.
+* @param {number} props.x The X coordinate for this element.
+* @param {number} props.y The Y coordinate for this element.
+* @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @param {number} props.rotation The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} props.baseRotation The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} props.horizontalFlip Whether to flip the element horizontally.
+* @param {boolean} props.verticalFlip Whether to flip the element vertically.
+
+* @param {Image} image The image to use for this element. Can be created via html (&lt;img&gt;) or javascript (new Image()).
+* @param {number} sourceX The x starting point of the desired subsection of the image
+* @param {number} sourceY The y starting point of the desired subsection of the image
+* @param {number} sourceWidth The width of the desired subsection of the image
+* @param {number} sourceHeight The height of the desired subsection of the image
+* @param {number} width The desired width of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
+* @param {number} height The desired height of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
+* @param {ImageRenderer} imageRenderer The ImageRenderer that will draw on the canvas.
 * @see GfxElement
 * @see ImageSprite
 */
