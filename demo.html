@@ -1,0 +1,195 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Scratch Page</title>
+  <script type="text/javascript" src="./dist/bundle.dev.js"></script>
+
+<style>
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div id="buttons"><button onclick="screen.setPaused(!screen.isPaused());">Pause</button></div>
+  <div id="info"></div>
+
+  <script type="text/javascript">
+
+  SL.debug = true;
+  var screen = null,
+  canvas,
+  context,
+    gfxLayer = null,
+    images = null,
+    elementFront = null,
+    elementLeft = null,
+    elementRight = null,
+    elementBack = null;
+  var config = {
+    "backgroundColor":"grey",
+    "scaleX" : 1,
+    "scaleY" : 1,
+    "fpsElem" : document.getElementById('info')
+  };
+
+  function initialize(targetDiv, config) {
+    screen = new SL.Screen({
+      "targetDiv":targetDiv,
+      "backgroundColor":"#172723",
+      "borderColor":"white",
+      "borderSize":1,
+      "scaleX" : 1,
+      "scaleY" : 1,
+      "fpsElem" : document.getElementById('info')
+    });
+    screen.initialize();
+    gfxLayer = screen.createLayer("GfxLayer");
+    context = gfxLayer.getCanvasContextWrapper();
+    screen.render();
+  }
+
+  function setupSprites() {
+    var imageRenderer =  new SL.ImageRenderer(config.scaleX, config.scaleY);
+    var elementProps = {
+      screenContext:screen,
+      canvasContextWrapper:context,
+      image:images.blueBall.image,
+      scaleX:1, scaleY:1,
+      width:32, height:32,
+      imageRenderer:imageRenderer
+    };
+
+    var elementFrontProps = {
+      x : 100, y : 100,
+      frames:[
+        new SL.ImageSpriteFrame({
+          duration:2500,
+          sourceX:0, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+        new SL.ImageSpriteFrame({
+          duration:200,
+          sourceX:32, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+      ]
+    };
+    SL.Utils.mergeProperties(elementProps, elementFrontProps);
+    elementFront = new SL.ImageSprite(elementFrontProps);
+    gfxLayer.addElement(elementFront);
+
+    var elementRightProps = {
+      x : 100, y : 300,
+      hidden: true,
+      frames:[
+        new SL.ImageSpriteFrame({
+          duration:2500,
+          sourceX:64, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+        new SL.ImageSpriteFrame({
+          duration:200,
+          sourceX:96, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+      ]
+    };
+    SL.Utils.mergeProperties(elementProps, elementRightProps);
+    elementRight = new SL.ImageSprite(elementRightProps);
+    gfxLayer.addElement(elementRight);
+
+    var elementLeftProps = {
+      x: 500, y: 100,
+      hidden: true,
+      frames:[
+        new SL.ImageSpriteFrame({
+          duration:2500,
+          sourceX:128, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+        new SL.ImageSpriteFrame({
+          duration:200,
+          sourceX:160, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        }),
+      ]
+    };
+    SL.Utils.mergeProperties(elementProps, elementLeftProps);
+    elementLeft = new SL.ImageSprite(elementLeftProps);
+    gfxLayer.addElement(elementLeft);
+
+    var elementBackProps = {
+      x:500, y:300,
+      hidden: true,
+      frames:[
+        new SL.ImageSpriteFrame({
+          duration:2500,
+          sourceX:192, sourceY:0,
+          sourceWidth:32, sourceHeight:32
+        })
+      ]
+    };
+    SL.Utils.mergeProperties(elementProps, elementBackProps);
+    elementBack = new SL.ImageSprite(elementBackProps);
+    gfxLayer.addElement(elementBack);
+
+    elementFront.on("ELEMENT_STOPPED_MOVING", moveEast);
+    elementRight.on("ELEMENT_STOPPED_MOVING", moveNorth);
+    elementBack.on("ELEMENT_STOPPED_MOVING", moveWest);
+    elementLeft.on("ELEMENT_STOPPED_MOVING", moveSouth);
+
+    moveSouth();
+  }
+
+  function moveSouth(){
+    elementLeft.hide();
+    elementFront.setX(100);
+    elementFront.setY(100);
+    elementFront.show();
+    elementFront.moveTo(100, 300, 4000);
+  }
+
+  function moveEast() {
+    elementFront.hide();
+    elementRight.setX(100);
+    elementRight.setY(300);
+    elementRight.show();
+    elementRight.moveTo(500, 300, 6000);
+  }
+
+  function moveNorth() {
+    elementRight.hide();
+    elementBack.setX(500);
+    elementBack.setY(300);
+    elementBack.show();
+    elementBack.moveTo(500, 100, 4000);
+  }
+
+  function moveWest() {
+    elementBack.hide();
+    elementLeft.setX(500);
+    elementLeft.setY(100);
+    elementLeft.show();
+    elementLeft.moveTo(100, 100, 6000);
+  }
+
+  var imgLoader = new SL.ImageLoader({
+    blueBall:{path:"spriteTest.png"}
+  });
+
+  imgLoader.loadImages(
+    function(imagesHash) {
+      images = imagesHash;
+      initialize(document.getElementById("content"), config);
+      setupSprites();
+    }
+  );
+
+  </script>
+</body>
+</html>

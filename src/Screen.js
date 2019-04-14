@@ -58,6 +58,7 @@ function Screen(props) {
   this._layers = [];
 
   this._requestAnimationFrame = props.requestAnimationFrame || window.requestAnimationFrame.bind(window);
+  this.EventNotifierMixinInitializer();
 };
 
 EventNotifierMixin.call(Screen.prototype);

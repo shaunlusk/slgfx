@@ -103,6 +103,7 @@ function GfxElement(props) {
   this._isProcessingShake = false;
 
   this._recalculateRotatedCollisionBox();
+  this.EventNotifierMixinInitializer();
 };
 
 EventNotifierMixin.call(GfxElement.prototype);

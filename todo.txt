@@ -1,10 +1,5 @@
 Proposed changes:
-Modernize
-make consistent naming:
-  screenContext
-  canvasContext / canvasContextWrapper
-Improve test coverage - necessary with these level of changes.
-revisit including canvas in layers
+
 move orders should pause with screen
 
 ---------------------------------------------
@@ -12,25 +7,14 @@ Sprite Frames
   variable size
   offset from base
 
-Tests
-  ImageLoader
-  Image sprite?
-  ImageSpriteFrame
-  Sprite
-  SpriteAnimationFrame
-
 Documentation
   CanvasContextWrapper
-
-
 
 SpriteSet?
 
 Eventing
   add eventing to layers and more eventing to elements
   replacement for setTimeout / setInterval?
-
-update documentation for imported gfx classes
 
 rotate over time - done?
 
@@ -40,8 +24,6 @@ Scrollable layers
 
 is there a way of dimming layers without clearing the layer?
 - also use internal time instead of setTimeout - use replacement in common eventing system?
-
-support for turning mouse tracking off - done?
 
 remove all elements - done?
 
