@@ -47,6 +47,23 @@ ImageRenderer.prototype.renderImage = function(context, image, sx, sy, sWidth, s
   }
 };
 
+/** Draws an image or portion of an image to the canvas where the canvas has been translated (rotated/flipped).
+* @param {CanvasContext} context The canvas to draw to.
+* @param {Image} image Image reference, created by &lt;img&gt; or new Image();
+* @param {number} sx The x starting point of a subsection of the image to draw.
+* @param {number} sy The y starting point of a subsection of the image to draw.
+* @param {number} sWidth The width of a subsection of the image to draw.
+* @param {number} sHeight The height of a subsection of the image to draw.
+* @param {number} x The target x position of the canvas to draw the image to.
+* @param {number} y The target y position of the canvas to draw the image to.
+* @param {number} width The target width of the drawn image. If different than the dimensions of the image subsection, the image subsection will be stretched or shrunk.
+* @param {number} height The target height of the drawn image. If different than the dimensions of the image subsection, the image subsection will be stretched or shrunk.
+* @param {int} imageScaleX The amount to scale the drawn image horizontally.
+* @param {int} imageScaleY The amount to scale the drawn image vertically.
+* @param {boolean} isHorizontallyFlipped Whether the element is flipped horizontally.
+* @param {boolean} isVerticallyFlipped Whether the element is flipped vertically.
+* @param {number} rotation The element's rotation in radians.
+*/
 ImageRenderer.prototype.renderImageWithTranslation = function(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation) {
   var translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
   var translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;

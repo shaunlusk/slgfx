@@ -137,3 +137,27 @@ module.exports = EventType;
 * @property {GfxElement} data.element The element that hit the edge.
 * @property {number} time The time the event was fired.
 */
+
+/**
+ * A Mouse Event on the screen.
+ * @typedef {Object} ScreenMouseEvent
+ * @property {string} type EventType
+ * @property {Object} data The data provided by the event emitter.
+ * @property {number} data.x The functional x coordinate of the mouse, incorporating the scale of canvas context wrapper view origin.
+ * @property {number} data.y The functional y coordinate of the mouse, incorporating the scale of canvas context wrapper view origin.
+ * @property {number} data.viewOriginAdjustedX The x coordinate of the mouse, relative to the view origin of the canvas context wrapper.
+ * @property {number} data.viewOriginAdjustedY The y coordinate of the mouse, relative to the view origin of the canvas context wrapper.
+ * @property {number} data.rawX The raw, unscaled x coordinate of the mouse, relative to the canvas.
+ * @property {number} data.rawY The raw, unscaled y coordinate of the mouse, relative to the canvas.
+ * @property {event} data.baseEvent The original mouse event in the browser.  Only provided on mouse up/down events.
+ * @property {number} time The time the event was fired.
+ */
+
+/**
+* Event that is triggered immediately before or after the screen's render cycle.
+* @typedef {Object} ScreenRenderEvent
+* @property {string} type EventType
+* @property {Object} data The data provided by the event emitter.
+* @property {number} data.diff The amount of time passed between this and the last render cycle.
+* @property {number} time The time the event was fired.
+*/

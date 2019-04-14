@@ -3,7 +3,7 @@ var EventType = require('./EventType');
 var Event = require('slcommon/src/Event');
 
 /** Base element for displaying animations.<br />
-* <b>Extends</b> {@link GfxElement} <br />
+
 * <p>Animation is provided through an array of frames.  Each frame will be shown for a specified duration; after that duration, the next frame is shown.
 * Animation can be looped, or terminated.</p>
 * <p>Animation lifetime of a Sprite can be controlled through the parameters, ttl (Time-to-live), loop (boolean, loop or not), and Loops-to-Live.
@@ -12,28 +12,27 @@ var Event = require('slcommon/src/Event');
 * <p>This is an abstract class; you must provide an implementation that overrides renderFrame(), and AnimationFrames that describe what should be rendered.</p>
 * Current Implementations: {@link ImageSprite}
 * @constructor
-* @param {Screen} screenContext The parent screen
-* @param {GfxLayer} parentLayer The parent layer.
-* @param {Object} props The properties for this ImageSprite.<br />
-*   from GfxElement:
-*   <ul>
-*     <li>scaleX - integer - Horizontal scale of this element.  Independent of screen scale.</li>
-*     <li>scaleY - integer - Vertical scale of this element.  Independent of screen scale.</li>
-*     <li>hidden - boolean - Whether to hide this element.</li>
-*     <li>x - number - The X coordinate for this element.</li>
-*     <li>y - number - The Y coordinate for this element.</li>
-*     <li>zIndex - number - The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).</li>
-*   </ul>
-*   for Sprite:
-*   <ul>
-*     <li>frames - Array - Optional. An array of AnimationFrame's. Default: empty array
-*     <li>ttl - number - Optional. Time-to-live.  The time (milliseconds) to continue the Sprites animation.  Default: -1 (unlimited time)
-*     <li>loop - boolean - Optional.  Whether to loop the animation or not. Default: true.
-*     <li>loopsToLive - integer - Optional. If loop is true, the number of loops to execute.  Default: -1 (unlimited loops)
-*     <li>freezeFrameIdx - integer - Optional.
-*        When animation completes, switch to the frame indicated by the freeze frame index
-*        (referring to the index of the frame in the frames array). Default: -1 (don't change frames when animation stops, stay with the final frame)
-*   </ul>
+* @augments GfxElement
+* @param {Object} props Properties for this GfxElement.
+* @param {Screen} props.screenContext The target screen.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
+* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
+* @param {boolean} [props.hidden=false] Whether to hide this element.
+* @param {number} [props.x=0] The X coordinate for this element.
+* @param {number} [props.y=0] The Y coordinate for this element.
+* @param {number} props.width The width of this element.
+* @param {number} props.height The height this element.
+* @param {number} [props.rotation=0] The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} [props.baseRotation=0] The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} [props.horizontalFlip=false] Whether to flip the element horizontally.
+* @param {boolean} [props.verticalFlip=false] Whether to flip the element vertically.
+* @param {number} [props.zIndex=-1] The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @param {Array} [props.frames=[]] Optional. An array of AnimationFrame's. Default: empty array.
+* @param {number} [props.ttl=-1] Time-to-live.  The time (milliseconds) to continue the Sprites animation.  Default: -1 (unlimited time)
+* @param {boolean} [props.loop=true] Whether to loop the animation or not.
+* @param {int} [props.loopsToLive=-1] If loop is true, the number of loops to execute.  Default: -1 (unlimited loops)
+* @param {int} [props.freezeFrameIdx=-1] When animation completes, switch to the frame indicated by the freeze frame index (referring to the index of the frame in the frames array). Default: -1 (don't change frames when animation stops, stay with the final frame)
 * @see GfxElement
 * @see AnimationFrame
 * @see ImageSprite
@@ -158,6 +157,8 @@ Sprite.prototype.reset = function() {
 /** Updates the state of the Sprite, if necessary.
 * @param {number} time The current time (milliseconds).
 * @param {number} diff The difference between the previous render cycle and the current cycle (milliseconds).
+* @return {Sprite} Returns this element if it needs to be redrawn, null otherwise.
+* @fires Sprite#SPRITE_ANIMATION_DONE Fired if this Sprite stopped animating.
 */
 Sprite.prototype.update = function (time,diff) {
   GfxElement.prototype.update.call(this, time, diff);
@@ -175,6 +176,7 @@ Sprite.prototype.update = function (time,diff) {
   return null;
 };
 
+/** @private */
 Sprite.prototype._updateFrame = function(diff) {
   this._currentFrameElapsed += diff;
   if (this._currentFrameElapsed >= this._frames[this._fidx].getDuration()) {
@@ -196,6 +198,7 @@ Sprite.prototype._updateFrame = function(diff) {
   }
 };
 
+/** @private */
 Sprite.prototype._updateTtl = function(diff) {
   if (this._ttl > -1) {
     this._elapsed += diff;
@@ -234,3 +237,11 @@ Sprite.prototype.doEndOfAnimation = function() {
 };
 
 module.exports = Sprite;
+
+/** When a sprite completes its animation.
+* @event Sprite#SPRITE_ANIMATION_DONE
+* @property {string} type EventType
+* @property {Object} data The data provided by the event emitter.
+* @property {Sprite} data.element The sprite that stopped animating.
+* @property {number} time The time the event was fired.
+*/

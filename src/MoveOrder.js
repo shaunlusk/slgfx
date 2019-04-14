@@ -8,7 +8,7 @@ var Utils = require('./Utils');
 * @param {number} ty The target y location for the element.
 * @param {number} duration The length of time (milliseconds) for the movement to the target location.
 * @param {function} elementCallback The callback of the parent element; called when movement is done.
-* @param {function} callback Optional callback to be called when movement is done.
+* @param {function} [callback] Optional callback to be called when movement is done.
 */
 function MoveOrder(element, tx, ty, duration, elementCallback, callback) {
   this._element = element;

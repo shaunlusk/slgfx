@@ -2,40 +2,31 @@ var Sprite = require('./Sprite.js');
 var ImageRenderer = require('./ImageRenderer');
 
 /** Animated element that displays images frames in succession.<br />
-* <b>Extends</b> {@link Sprite}, extends {@link GfxElement}<br />
 * Uses {@link ImageSpriteFrame} for its frames.
 * @constructor
-* @param {Screen} screenContext The parent screen
-* @param {GfxLayer} parentLayer The parent layer.
-* @param {Object} props The properties for this ImageSprite.
-*   from GfxElement:
-*   <ul>
-*     <li>scaleX - integer - Horizontal scale of this element.  Independent of screen scale.</li>
-*     <li>scaleY - integer - Vertical scale of this element.  Independent of screen scale.</li>
-*     <li>hidden - boolean - Whether to hide this element.</li>
-*     <li>x - number - The X coordinate for this element.</li>
-*     <li>y - number - The Y coordinate for this element.</li>
-*     <li>zIndex - number - The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).</li>
-*   </ul>
-*   from Sprite:
-*   <ul>
-*     <li>frames - Array - Optional. An array of AnimationFrame's. Default: empty array
-*     <li>ttl - number - Optional. Time-to-live.  The time (milliseconds) to continue the Sprites animation.  Default: -1 (unlimited time)
-*     <li>loop - boolean - Optional.  Whether to loop the animation or not. Default: true.
-*     <li>loopsToLive - integer - Optional. If loop is true, the number of loops to execute.  Default: -1 (unlimited loops)
-*     <li>freezeFrameIdx - integer - Optional.
-*        When animation completes, switch to the frame indicated by the freeze frame index
-*        (referring to the index of the frame in the frames array). Default: -1 (don't change frames when animation stops, stay with the final frame)
-*   </ul>
-*   for ImageSprite:
-*   <ul>
-*     <li>image - Image - the image to pull animation frames from.</li>
-*     <li>width - number - the width of the Sprite</li>
-*     <li>height - number - the height of the Sprite</li>
-*     <li>imageRenderer - {@link ImageRenderer} - Optional.  The ImageRenderer that will draw on the canvas.
-*       If not provided, this element will create one.
-*       If using multiple ImageElement's or ImageSprite's it is good practice to create a single ImageRenderer and pass the reference to each element via this property.</li>
-*   </ul>
+* @augments Sprite
+* @param {Object} props Properties for this GfxElement.
+* @param {Screen} props.screenContext The target screen.
+* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
+* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
+* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
+* @param {boolean} [props.hidden=false] Whether to hide this element.
+* @param {number} [props.x=0] The X coordinate for this element.
+* @param {number} [props.y=0] The Y coordinate for this element.
+* @param {number} props.width The width of this element.
+* @param {number} props.height The height this element.
+* @param {number} [props.rotation=0] The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} [props.baseRotation=0] The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} [props.horizontalFlip=false] Whether to flip the element horizontally.
+* @param {boolean} [props.verticalFlip=false] Whether to flip the element vertically.
+* @param {number} [props.zIndex=-1] The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @param {Array.<ImageSpriteFrame>} [props.frames=[]] Optional. An array of AnimationFrame's. Default: empty array.
+* @param {number} [props.ttl=-1] Time-to-live.  The time (milliseconds) to continue the Sprites animation.  Default: -1 (unlimited time)
+* @param {boolean} [props.loop=true] Whether to loop the animation or not.
+* @param {int} [props.loopsToLive=-1] If loop is true, the number of loops to execute.  Default: -1 (unlimited loops)
+* @param {int} [props.freezeFrameIdx=-1] When animation completes, switch to the frame indicated by the freeze frame index (referring to the index of the frame in the frames array). Default: -1 (don't change frames when animation stops, stay with the final frame)
+* @param {Image} props.image The image to use for this element. Can be created via html (&lt;img&gt;) or javascript (new Image()).
+* @param {ImageRenderer} props.imageRenderer The ImageRenderer that will draw on the canvas.
 * @see GfxElement
 * @see Sprite
 * @see AnimationFrame

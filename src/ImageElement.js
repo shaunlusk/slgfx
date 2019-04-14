@@ -8,28 +8,27 @@ var GfxElement = require('./GfxElement');
 * For animations, see {@link ImageSprite}
 * @constructor
 * @augments GfxElement
-* @param {Object} props The properties for this object.
+* @param {Object} props The properties for this element.
 * @param {Screen} props.screenContext The target screen.
 * @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
-* @param {number} props.x The X coordinate for this element.
-* @param {number} props.y The Y coordinate for this element.
-* @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
-* @param {number} props.rotation The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
-* @param {number} props.baseRotation The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
-* @param {boolean} props.horizontalFlip Whether to flip the element horizontally.
-* @param {boolean} props.verticalFlip Whether to flip the element vertically.
-
-* @param {Image} image The image to use for this element. Can be created via html (&lt;img&gt;) or javascript (new Image()).
-* @param {number} sourceX The x starting point of the desired subsection of the image
-* @param {number} sourceY The y starting point of the desired subsection of the image
-* @param {number} sourceWidth The width of the desired subsection of the image
-* @param {number} sourceHeight The height of the desired subsection of the image
-* @param {number} width The desired width of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
-* @param {number} height The desired height of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
-* @param {ImageRenderer} imageRenderer The ImageRenderer that will draw on the canvas.
+* @param {number} [props.x=0] The X coordinate for this element.
+* @param {number} [props.y=0] The Y coordinate for this element.
+* @param {number} [props.rotation=0] The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} [props.baseRotation=0] The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} [props.horizontalFlip=false] Whether to flip the element horizontally.
+* @param {boolean} [props.verticalFlip=false] Whether to flip the element vertically.
+* @param {number} [props.zIndex=-1] The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @param {Image} props.image The image to use for this element. Can be created via html (&lt;img&gt;) or javascript (new Image()).
+* @param {number} props.sourceX The x starting point of the desired subsection of the image
+* @param {number} props.sourceY The y starting point of the desired subsection of the image
+* @param {number} props.sourceWidth The width of the desired subsection of the image
+* @param {number} props.sourceHeight The height of the desired subsection of the image
+* @param {number} props.width The desired width of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
+* @param {number} props.height The desired height of the ImageElement; if this differs from the source dimensions, the image will be stretched or shrunk accordingly
+* @param {ImageRenderer} props.imageRenderer The ImageRenderer that will draw on the canvas.
 * @see GfxElement
 * @see ImageSprite
 */

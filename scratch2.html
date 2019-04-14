@@ -44,7 +44,7 @@ body {
       width:config.width,
       height:config.height,
       fpsElem : document.getElementById('info'),
-      requestAnimationFrame:window.requestAnimationFrame.bind(window)
+      // requestAnimationFrame:window.requestAnimationFrame.bind(window)
     });
     screen.initialize();
     gfxLayer = screen.createLayer("GfxLayer");
@@ -66,7 +66,7 @@ body {
       sourceHeight : 32
     });
 
-    element2 = new SL.ImageSprite({screenContext:screen, canvasContextWrapper:gfxLayer.getCanvasContext(),
+    element2 = new SL.ImageSprite({screenContext:screen, canvasContextWrapper:gfxLayer.getCanvasContextWrapper(),
       image:images.blueBall.image,
       x:200,
       y:100,
@@ -91,7 +91,7 @@ body {
 
     var el = null;
     for (var i = 0; i < 0; i++) {
-      el = new SL.ImageSprite({screenContext:screen, canvasContextWrapper:gfxLayer.getCanvasContext(),
+      el = new SL.ImageSprite({screenContext:screen, canvasContextWrapper:gfxLayer.getCanvasContextWrapper(),
         image:images.gnome.image,
         x:Math.floor(Math.random() * 640),
         y:Math.floor(Math.random() * 480),

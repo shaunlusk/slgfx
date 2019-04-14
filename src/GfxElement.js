@@ -35,15 +35,15 @@ var MouseEvent = require('./MouseEvent');
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
-* @param {number} props.x The X coordinate for this element.
-* @param {number} props.y The Y coordinate for this element.
+* @param {number} [props.x=0] The X coordinate for this element.
+* @param {number} [props.y=0] The Y coordinate for this element.
 * @param {number} props.width The width of this element.
 * @param {number} props.height The height this element.
-* @param {number} props.rotation The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
-* @param {number} props.baseRotation The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
-* @param {boolean} props.horizontalFlip Whether to flip the element horizontally.
-* @param {boolean} props.verticalFlip Whether to flip the element vertically.
-* @param {number} props.zIndex The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
+* @param {number} [props.rotation=0] The amount of rotation to apply to the element, in radians.  Applied on top of base rotation.
+* @param {number} [props.baseRotation=0] The amount of base rotation to apply to the element, in radians. Usually used to apply an initial, unchanging rotation to the element.  Useful for correcting orientation of images.
+* @param {boolean} [props.horizontalFlip=false] Whether to flip the element horizontally.
+* @param {boolean} [props.verticalFlip=false] Whether to flip the element vertically.
+* @param {number} [props.zIndex=-1] The z-index; elements with higher zIndex values will be drawn later than those with lower values (drawn on top of those with lower values).
 */
 function GfxElement(props) {
   props = props || {};

@@ -6,23 +6,24 @@ var CanvasContextWrapper = require('./CanvasContextWrapper');
 var Event = require('slcommon/src/Event');
 var MouseEvent = require('./MouseEvent');
 
-
 /** The Screen is the overriding container for Graphics components.
 * The Screen orchestrates updating and rendering its layers, propagates
 * mouse events down to the layers, and notifies event listeners when events occur.
 * @constructor
-* @param {HTMLElement} targetDiv The target HTMLElement into which the screen and its layers will be built.
-* @param {Object} config Supported configuration properties:
-* <ul>
-*   <li>scaleX - integer - the horizontal scale of the screen.  Default: 1</li>
-*   <li>scaleY - integer - the horizontal scale of the screen.  Default: 1</li>
-*   <li>width - integer - Width for the screen (in px). Default: 800
-*   <li>height - integer - Height for the screen (in px). Default: 600
-*   <li>fpsElem - HTMLElement - Element to write Frames-per-second information to. </li>
-*   <li>backgroundColor - Color - The color to set the screen background to.</li>
-*   <li>borderColor - Color - The color to set the screen border to.</li>
-*   <li>borderSize - integer - The borderSize of the screen, in pixels. Default: 1</li>
-* </ul>
+* @param {Object} props Properties
+* @param {HTMLElement} props.targetDiv The target HTMLElement into which the screen and its layers will be built.
+* @param {LayerFactory} [props.layerFactory=LayerFactory] The layer factory to use to create layers.  Defaults to LayerFactory.
+* @param {int} [props.scaleX=1] The horizontal scale of the screen.
+* @param {int} [props.scaleY=1] The vertical scale of the screen.
+* @param {int} [props.width=800] The width of the screen.
+* @param {int} [props.height=600] The height of the screen.
+* @param {HTMLElement} [props.fpsElem] Optional. An HTMLElement to write Frames-per-second information to.
+* @param {boolean} [props.imageSmoothingEnabled=false] Whether to use image smoothing on child canvases.
+* @param {boolean} [props.useMouseMoveEvents=true] Whether to listen for mouseevents on this screen.
+* @param {string} [props.backgroundColor=black] Background color of the screen. Any valid CSS color string.
+* @param {string} [props.borderColor=grey] Border color of the screen. Any valid CSS color string.
+* @param {number} [props.borderSize=1] The size of the border.
+* @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
 function Screen(props) {
   props = props || {};
@@ -56,7 +57,7 @@ function Screen(props) {
   this._pendingViewOriginY = null;
   this._layers = [];
 
-  this._requestAnimationFrame = props.requestAnimationFrame;
+  this._requestAnimationFrame = props.requestAnimationFrame || window.requestAnimationFrame.bind(window);
 };
 
 EventNotifierMixin.call(Screen.prototype);
@@ -70,6 +71,9 @@ Screen.prototype.initialize = function() {
   this._setupEventListeners();
 };
 
+/** Offset child layers horizontally by a specified amount.
+* @param {number} viewOriginX The x coordinate for the offset.
+*/
 Screen.prototype.setViewOriginX = function(viewOriginX) {
   this._pendingViewOriginX = viewOriginX;
   if (this._pendingViewOriginX !== null && this._pendingViewOriginX !== this.getViewOriginX()) {
@@ -78,6 +82,10 @@ Screen.prototype.setViewOriginX = function(viewOriginX) {
     });
   }
 };
+
+/** Offset child layers vertically by a specified amount.
+* @param {number} viewOriginY The y coordinate for the offset.
+*/
 Screen.prototype.setViewOriginY = function(viewOriginY) {
   this._pendingViewOriginY = viewOriginY;
   if (this._pendingViewOriginY !== null && this._pendingViewOriginY !== this.getViewOriginY()) {
@@ -87,10 +95,19 @@ Screen.prototype.setViewOriginY = function(viewOriginY) {
   }
 };
 
+/** Get the current horizontal layer offset
+* @return {number}
+*/
 Screen.prototype.getViewOriginX = function() {return this._viewOriginX;};
+
+/** Get the current vertical layer offset
+* @return {number}
+*/
 Screen.prototype.getViewOriginY = function() {return this._viewOriginY;};
 
+/** @private */
 Screen.prototype.getPendingViewOriginX = function() {return this._pendingViewOriginX;};
+/** @private */
 Screen.prototype.getPendingViewOriginY = function() {return this._pendingViewOriginY;};
 
 
@@ -202,9 +219,15 @@ Screen.prototype.getMouseX = function() {return this._mouseX;};
 */
 Screen.prototype.getMouseY = function() {return this._mouseY;};
 
+/** Return whether image smoothing is enabled on this screent.
+* @return {boolean}
+*/
 Screen.prototype.isImageSmoothingEnabled = function() {return this._imageSmoothingEnabled;};
-Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {this._imageSmoothingEnabled = imageSmoothingEnabled;};
 
+/** Turn image smoothing on or off for this layer.
+* @param {bool} imageSmoothingEnabled
+*/
+Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {this._imageSmoothingEnabled = imageSmoothingEnabled;};
 
 /** Create a new {@link Layer} and add it to this screen.  Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
@@ -225,6 +248,7 @@ Screen.prototype.createLayer = function(type, props) {
   return layer;
 };
 
+/** @private */
 Screen.prototype.createCanvasForLayer = function() {
   var canvas = Screen.document.createElement("CANVAS");
   this._targetDiv.appendChild(canvas);
@@ -234,6 +258,7 @@ Screen.prototype.createCanvasForLayer = function() {
   return canvas;
 };
 
+/** @private */
 Screen.prototype.createCanvasContextWrapper = function(canvas) {
   return new CanvasContextWrapper({
     canvasContext:canvas.getContext("2d"),
@@ -263,6 +288,8 @@ Screen.prototype.getLayers = function() {
 
 /** Pause or unpause the screen.
 * @param {boolean} boolean true = pause the screen; false = unpause the screen.
+* @fires Screen#SCREEN_PAUSED
+* @fires Screen#SCREEN_RESUMED
 */
 Screen.prototype.setPaused = function(boolean) {
   if (this._paused && !boolean) this._unpaused = true;
@@ -291,6 +318,7 @@ Screen.prototype.onNextFrameEnd = function(callback) {
   return this.on(EventType.NEXT_FRAME_END, callback);
 };
 
+/** @private */
 Screen.prototype._doBeforeRenderEvents = function(time, diff) {
   this.notify(
     new Event(EventType.NEXT_FRAME_BEGIN, {diff:diff}, time)
@@ -301,6 +329,7 @@ Screen.prototype._doBeforeRenderEvents = function(time, diff) {
   );
 };
 
+/** @private */
 Screen.prototype._doAfterRenderEvents = function(time, diff) {
   this.notify(
     new Event(EventType.NEXT_FRAME_END, {diff:diff}, time)
@@ -318,6 +347,11 @@ Screen.prototype.isPaused = function() {return this._paused;};
 
 /** Render the screen and all layers.
 * @param {number} time The current time in milliseconds.
+* @fires Screen#NEXT_FRAME_BEGIN
+* @fires Screen#NEXT_FRAME_END
+* @fires Screen#BEFORE_RENDER
+* @fires Screen#AFTER_RENDER
+* @fires Screen#MOUSE_MOVE
 */
 Screen.prototype.render = function(time) {
   time = time || 1;
@@ -352,6 +386,7 @@ Screen.prototype.render = function(time) {
   this._requestAnimationFrame(this.render.bind(this));
 };
 
+/** @private */
 Screen.prototype._updateViewOrigins = function() {
   if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
     this._viewOriginX = this.getPendingViewOriginX();
@@ -454,6 +489,8 @@ Screen.prototype._getCoordinateDataForMouseEvent = function(canvasX, canvasY) {
 
 /** Handles mouse up and mouse down events; notifies any local handlers and propagates the event to all layers.
 * @param {Event} e The mouse event
+* @fires Screen#MOUSE_UP
+* @fires Screen#MOUSE_DOWN
 */
 Screen.prototype.handleMouseEvent = function(e) {
   if (this._paused) return false;
@@ -543,3 +580,50 @@ Screen.prototype.setBorder = function(width, style, color) {
 };
 
 module.exports = Screen;
+
+/** The screen was paused.
+* @event Screen#SCREEN_PAUSED
+* @property {string} type EventType
+* @property {number} time The time the event was fired.
+*/
+
+/** The screen was unpaused.
+* @event Screen#SCREEN_RESUMED
+* @property {string} type EventType
+* @property {number} time The time the event was fired.
+*/
+
+/** Mouse button down on the screen.
+* @event Screen#MOUSE_DOWN
+* @type {ScreenMouseEvent}
+*/
+
+/** Mouse button up on the screen.
+* @event Screen#MOUSE_UP
+* @type {ScreenMouseEvent}
+*/
+
+/** Mouse moves inside the screen area.
+* @event Screen#MOUSE_MOVE
+* @type {ScreenMouseEvent}
+*/
+
+/** The screen is about to render.
+* @event Screen#BEFORE_RENDER
+* @type {ScreenRenderEvent}
+*/
+
+/** The screen just finished rendering.
+* @event Screen#AFTER_RENDER
+* @type {ScreenRenderEvent}
+*/
+
+/** The screen is about to render. (One time occurance.)
+* @event Screen#NEXT_FRAME_BEGIN
+* @type {ScreenRenderEvent}
+*/
+
+/** The screen just finished rendering. (One time occurance.)
+* @event Screen#NEXT_FRAME_END
+* @type {ScreenRenderEvent}
+*/
