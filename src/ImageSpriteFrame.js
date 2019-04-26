@@ -4,11 +4,11 @@ var SpriteAnimationFrame = require('../src/SpriteAnimationFrame');
 * @extends {SpriteAnimationFrame}
 * @constructor
 * @param {Object} props Properties
-* @param {number} duration How long (milliseconds) to display this frame.
-* @param {number} sourceX The starting x of the sub-section of the image for this frame.
-* @param {number} sourceY The starting y of the sub-section of the image for this frame.
-* @param {number} sourceWidth The width of the sub-section of the image for this frame.
-* @param {number} sourceHeight The height of the sub-section of the image for this frame.
+* @param {number} props.duration How long (milliseconds) to display this frame.
+* @param {number} props.sourceX The starting x of the sub-section of the image for this frame.
+* @param {number} props.sourceY The starting y of the sub-section of the image for this frame.
+* @param {number} props.sourceWidth The width of the sub-section of the image for this frame.
+* @param {number} props.sourceHeight The height of the sub-section of the image for this frame.
 */
 function ImageSpriteFrame(props) {
   props = props || {};
