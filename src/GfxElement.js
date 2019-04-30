@@ -559,7 +559,7 @@ GfxElement.prototype.nudge = function(offsetX, offsetY, decay, interval, interva
 * @param {number} interval How rapidly (milliseconds) the element should move to the offset, before starting a new iteration.
 * @param {number} intervalDecay Reduces the interval time after each iteration.
 * @param {number} notToExceedTime An upper limit in milliseconds to allow the shake to process.
-* @param {function} callback A function to call when the shake has completed.
+* @param {function} [callback] A function to call when the shake has completed.
 * @fires GfxElement#ELEMENT_STARTED_MOVING
 * @fires GfxElement#ELEMENT_STOPPED_MOVING
 */

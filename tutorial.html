@@ -1,0 +1,301 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>slgfx Tutorial</title>
+  <link rel="stylesheet" type="text/css" href="tutorial.css">
+  <script type="text/javascript" src="./dist/bundle.dev.js"></script>
+</head>
+<body>
+
+<h1>slgfx Tutorial</h1>
+<p>
+
+This tutorial shows some simple use cases for how to use slgfx.
+It assumes at least a basic working knowledge of HTML and Javascript.
+</p>
+<p>Full documentation can be found <a href="docs/index.html">here</a>.</p>
+
+<p>To start, import the bundle.js or bundle.dev.js file:</p>
+<p class="code newCode">&lt;script type="text/javascript" src="./dist/bundle.dev.js"&gt;&lt;/script&gt;</p>
+<p><b>Note:</b> All classes in the bundled js files are exported to the SL namespace for use in the browser.
+You will notice all calls to classes below are prefixed with "SL.".
+</p>
+<p>Then create a div to hold the Screen:</p>
+<p class="code newCode">&lt;div id="screenDiv"&gt;&lt;/div&gt;</p>
+
+<p>Before we do anything else, it is a good idea to load up the image(s) that we
+  will be working with later in the tutorial.  We can use the ImageLoader
+  class to tell us when the image has loaded, then we can safely call any other code we want.
+</p>
+<p>We will use the following sprite sheet as the source for our ImageElement and ImageSprites:</p>
+<p><img src="all_gnomes.png" /></p>
+<p>
+  <a href="https://opengameart.org/content/gnome">"Gnome"</a>
+  image sheet is by inosine, provided under the
+  <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0 license</a>.
+</p>
+<p>To setup the ImageLoader, do the following:</p>
+<p class="code newCode" id="ImageLoader"></p>
+<p>
+  Now we can begin seeting up our screen and elements.
+</p>
+
+<p>To setup a basic screen:</p>
+<p class="code" id="script0">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+</p>
+<div id="screen0"></div>
+
+<p>Create an ImageRenderer, an ImageElement, and add it to the canvas context:</p>
+<p class="code" id="script1">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageElement({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image: imagesHash.gnome.image,
+    sourceX:0,
+    sourceY:0,
+    sourceWidth:32,
+    sourceHeight:32,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer
+  });
+  gfxLayer.addElement(element);
+
+</p>
+<div id="screen1"></div>
+
+<p>Let's move the element, reset its position, and repeat:</p>
+<p class="code" id="script2">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageElement({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image: imagesHash.gnome.image,
+    sourceX:0,
+    sourceY:0,
+    sourceWidth:32,
+    sourceHeight:32,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer
+  });
+  gfxLayer.addElement(element);
+
+  function resetMovement(element) {
+    element.setX(0);
+    element.setY(0);
+    element.moveTo(32, 32, 5000, resetMovement.bind(null, element));
+  }
+  resetMovement(element);
+</p>
+<div id="screen2"></div>
+
+<p>Instead of a static image, let's create a sprite instead:</p>
+<p class="code" id="script3">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageSprite({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image:imagesHash.gnome.image,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new SL.ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new SL.ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  })
+  gfxLayer.addElement(element);
+</p>
+<div id="screen3"></div>
+
+<p>We can flip the element:</p>
+<p class="code" id="script4">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageSprite({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image:imagesHash.gnome.image,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new SL.ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new SL.ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  })
+  gfxLayer.addElement(element);
+  element.setHorizontallyFlipped(true);
+</p>
+<div id="screen4"></div>
+
+<p>We can leverage events on the screen to make it rotate over time:</p>
+<p class="code" id="script5">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageSprite({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image:imagesHash.gnome.image,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new SL.ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new SL.ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  })
+  gfxLayer.addElement(element);
+
+  screen.on(SL.EventType.BEFORE_RENDER, function(element, e) {
+    var degrees = (e.time / 10) % 360;
+    element.setRotation( SL.Utils.degreesToRadians(degrees) );
+  }.bind(null, element));
+</p>
+<div id="screen5"></div>
+
+<p>Let's make the element shake when clicked:</p>
+<p class="code" id="script6">
+  var screen = new SL.Screen({
+    targetDiv:document.getElementById("{screenId}"),
+    width:128,
+    height:96
+  });
+  screen.initialize();
+  var gfxLayer = screen.createLayer("GfxLayer");
+  screen.render();
+
+  var canvasContext = gfxLayer.getCanvasContextWrapper();
+  var imageRenderer = new SL.ImageRenderer(1,1);
+
+  var element = new SL.ImageSprite({
+    screenContext: screen,
+    canvasContextWrapper: canvasContext,
+    image:imagesHash.gnome.image,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new SL.ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new SL.ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  })
+  gfxLayer.addElement(element);
+
+  var currentlyShaking = false;
+  element.on(SL.EventType.MOUSE_UP_ON_ELEMENT, function(e) {
+
+    if (currentlyShaking) return;
+    currentlyShaking = true;
+    this.shake(20, 2, 50, 0, 3000, function() {currentlyShaking = false;});
+
+  }.bind(element));
+</p>
+<div id="screen6"></div>
+<script>
+var getImageLoaderTemplate = function(code) {
+  return 'new SL.ImageLoader({\n' +
+    '  gnome:{path:"all_gnomes.png"}\n' +
+    '}).loadImages(function(imagesHash) {\n' +
+    '<span class="newCode">' + code + '</span>' +
+    '});';
+}
+
+var a;
+new SL.ImageLoader({
+  gnome:{path:"all_gnomes.png"}
+}).loadImages(function(imagesHash) {
+  var idx = 0;
+  var element = null;
+  while (element = document.getElementById("script" + idx)) {
+    var script = element.innerText;
+    script = script.replace("{screenId}", "screen" + idx);
+    element.innerHTML = getImageLoaderTemplate(script);
+    eval(script);
+    idx++;
+  }
+
+});
+document.getElementById("ImageLoader").innerHTML = getImageLoaderTemplate("\n  // Screen and element setup code will go here...\n\n");
+
+</script>
+
+
+</body>
+</html>
