@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Layer</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: Layer</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>Layer<span class="signature">(props)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    
+    <h4 class="name" id="Layer"><span class="type-signature"></span>new Layer<span class="signature">(props)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Abstract class for graphical layers on a Screen.<br />Existing implementations: <a href="BackgroundLayer.html">BackgroundLayer</a>, <a href="GfxLayer.html">GfxLayer</a>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Configuration properties.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>screenContext</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Screen.html">Screen</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The parent screen.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canvasContextWrapper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="CanvasContextWrapper.html">CanvasContextWrapper</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The width of the layer.  Should match Screen.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The height of the layer.  Should match Screen.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="BackgroundLayer.html">BackgroundLayer</a></li>
+        
+            <li><a href="GfxLayer.html">GfxLayer</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="clearLayer"><span class="type-signature"></span>clearLayer<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Clears all contents of this Layer.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="dimLayer"><span class="type-signature"></span>dimLayer<span class="signature">(amount, steps, interval)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Progressively fade the layer to black.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>amount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The percentage to dim the layer; 1 = completely black; 0 = no dim.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>steps</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The number of stesp to take to reach the fade amount.  More steps = finer progression.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>interval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The number of milliseconds to wait between steps.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line150">line 150</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getCanvasContextWrapper"><span class="type-signature"></span>getCanvasContextWrapper<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="CanvasContextWrapper.html">CanvasContextWrapper</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the CanvasContextWrapper for this layer.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="CanvasContextWrapper.html">CanvasContextWrapper</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getHeight"><span class="type-signature"></span>getHeight<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the height of the Layer
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line75">line 75</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getViewOriginX"><span class="type-signature"></span>getViewOriginX<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Return the current x offset of the canvasContextWrapper.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The x offset.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getViewOriginY"><span class="type-signature"></span>getViewOriginY<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Return the current y offset of the viewport.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line60">line 60</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The y offset.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getWidth"><span class="type-signature"></span>getWidth<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the width of the Layer
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="handleMouseEvent"><span class="type-signature">(abstract) </span>handleMouseEvent<span class="signature">(event)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Propagate a mouse event to this Layer. <b>Sub-classes MUST implement this method</b>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The mouse event</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line137">line 137</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isDirty"><span class="type-signature"></span>isDirty<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Return whether this layer is dirty.  A dirty layer needs to be completely redrawn.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isImageSmoothingEnabled"><span class="type-signature"></span>isImageSmoothingEnabled<span class="signature">()</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check if image smoothing is enabled for this layer.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line85">line 85</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">bool</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="postrender"><span class="type-signature"></span>postrender<span class="signature">(time, diff)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Execute postrendering activities.  Sub-classes may override this, but should still call the base method.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current time (milliseconds)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>diff</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The difference between the last time and the current time  (milliseconds)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line129">line 129</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="prerender"><span class="type-signature"></span>prerender<span class="signature">(time, diff)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Execute prerendering activities.  Sub-classes may override this, but should still call the base method.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current time (milliseconds)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>diff</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The difference between the last time and the current time  (milliseconds)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line113">line 113</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="render"><span class="type-signature">(abstract) </span>render<span class="signature">(time, diff)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Render this Layer. <b>Sub-classes MUST implement this method</b>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current time (milliseconds)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>diff</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The difference between the last time and the current time  (milliseconds)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line107">line 107</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setDirty"><span class="type-signature"></span>setDirty<span class="signature">(dirty)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Set whether layer is dirty.  If dirty, the layer will be cleared and redrawn during the next render phase.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dirty</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setImageSmoothingEnabled"><span class="type-signature"></span>setImageSmoothingEnabled<span class="signature">(imageSmoothingEnabled)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Turn image smoothing on or off for this layer.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>imageSmoothingEnabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line90">line 90</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setViewOriginX"><span class="type-signature"></span>setViewOriginX<span class="signature">(viewOriginX)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Offset the canvasContextWrapper horizontally by a specified amount.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>viewOriginX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The X offset.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="setViewOriginY"><span class="type-signature"></span>setViewOriginY<span class="signature">(viewOriginY)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Offset the canvasContextWrapper vertically by a specified amount.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>viewOriginY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Y offset.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line47">line 47</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="update"><span class="type-signature">(abstract) </span>update<span class="signature">(time, diff)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Update this Layer. <b>Sub-classes MUST implement this method</b>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current time (milliseconds)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>diff</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The difference between the last time and the current time  (milliseconds)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Layer.js.html">Layer.js</a>, <a href="Layer.js.html#line100">line 100</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="CanvasContextWrapper.html">CanvasContextWrapper</a></li><li><a href="GfxElement.html">GfxElement</a></li><li><a href="GfxElementZIndexComparable.html">GfxElementZIndexComparable</a></li><li><a href="GfxLayer.html">GfxLayer</a></li><li><a href="ImageElement.html">ImageElement</a></li><li><a href="ImageLoader.html">ImageLoader</a></li><li><a href="ImageRenderer.html">ImageRenderer</a></li><li><a href="ImageSprite.html">ImageSprite</a></li><li><a href="ImageSpriteFrame.html">ImageSpriteFrame</a></li><li><a href="Layer.html">Layer</a></li><li><a href="LayerFactory.html">LayerFactory</a></li><li><a href="MouseEvent.html">MouseEvent</a></li><li><a href="MoveOrder.html">MoveOrder</a></li><li><a href="Screen.html">Screen</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Events</h3><ul><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="GfxElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="GfxElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="GfxElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="GfxElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="GfxElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="ImageElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageSprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageSprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageSprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageSprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li><li><a href="Screen.html#event:AFTER_RENDER">AFTER_RENDER</a></li><li><a href="Screen.html#event:BEFORE_RENDER">BEFORE_RENDER</a></li><li><a href="Screen.html#event:MOUSE_DOWN">MOUSE_DOWN</a></li><li><a href="Screen.html#event:MOUSE_MOVE">MOUSE_MOVE</a></li><li><a href="Screen.html#event:MOUSE_UP">MOUSE_UP</a></li><li><a href="Screen.html#event:NEXT_FRAME_BEGIN">NEXT_FRAME_BEGIN</a></li><li><a href="Screen.html#event:NEXT_FRAME_END">NEXT_FRAME_END</a></li><li><a href="Screen.html#event:SCREEN_PAUSED">SCREEN_PAUSED</a></li><li><a href="Screen.html#event:SCREEN_RESUMED">SCREEN_RESUMED</a></li><li><a href="Sprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="Sprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="Sprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="Sprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="Sprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="Sprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li></ul><h3>Namespaces</h3><ul><li><a href="EventType.html">EventType</a></li></ul><h3>Interfaces</h3><ul><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="ILayerFactory.html">ILayerFactory</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 29 2019 20:39:51 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
