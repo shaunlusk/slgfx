@@ -236,14 +236,16 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
+  props = props || {};
   var canvas = this.createCanvasForLayer();
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
-
-  var layer = this._layerFactory.getLayer(type, {
+  var layerProps = {
     canvasContextWrapper:canvasContextWrapper,
     width:this.getWidth(),
     height:this.getHeight()
-  });
+  };
+  Utils.mergeProperties(props, layerProps);
+  var layer = this._layerFactory.getLayer(type, layerProps);
 
   this.addLayer(layer);
   return layer;
