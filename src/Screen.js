@@ -543,7 +543,8 @@ Screen.prototype.getYFromMouseEvent = function(e) {
 * @return {int} The unscaled x.
 */
 Screen.prototype.getUnScaledX = function(x) {
-  return Math.floor(x / this.getScaleX());
+  // return Math.floor(x / this.getScaleX());
+  return x * this.getScaleX();
 };
 
 /** Return a y value with scale removed.
@@ -551,7 +552,8 @@ Screen.prototype.getUnScaledX = function(x) {
 * @return {int} The unscaled y.
 */
 Screen.prototype.getUnScaledY = function(y) {
-  return Math.floor(y / this.getScaleY());
+  // return Math.floor(y / this.getScaleY());
+  return y * this.getScaleY();
 };
 
 /** Return an x value adjusted for view origin.
