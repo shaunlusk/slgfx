@@ -25,6 +25,12 @@ table  td {
   <div id="content">
   </div>
   <div id="buttons"><button onclick="screen.setPaused(!screen.isPaused());">Pause</button></div>
+  <div>
+    Mouse Over Element?&nbsp;&nbsp;&nbsp;&nbsp;<span id="mouseMoveOverElement">false</span>
+  </div>
+  <div>
+    Mouse Down On Element?&nbsp;&nbsp;&nbsp;&nbsp;<span id="mouseMoveClickElement">false</span>
+  </div>
   <div id="mouseMoveInfo"></div>
   <div id="mouseClickInfo"></div>
   <div id="info"></div>
@@ -42,8 +48,8 @@ table  td {
       targetDiv:document.getElementById("content"),
       "backgroundColor":"#111111",
       borderColor:"grey",
-      "scaleX" : 2,
-      "scaleY" : 2,
+      "scaleX" : 3,
+      "scaleY" : 3,
       height:100,
       width:100,
       "fpsElem" : document.getElementById('info')
@@ -65,13 +71,29 @@ table  td {
       y:10,
       width:10,
       height:10,
-      scaleX:2,
-      scaleY:2,
+      scaleX:3,
+      scaleY:3,
       sourceX:0,
       sourceY:0,
       sourceWidth:20,
       sourceHeight:20,
       image:images.green.image
+    });
+    element.on(SL.EventType.MOUSE_ENTER_ELEMENT, function(event){
+      var elm = document.getElementById("mouseMoveOverElement");
+      elm.innerHTML = "true";
+    });
+    element.on(SL.EventType.MOUSE_EXIT_ELEMENT, function(event){
+      var elm = document.getElementById("mouseMoveOverElement");
+      elm.innerHTML = "false";
+    });
+    element.on(SL.EventType.MOUSE_DOWN_ON_ELEMENT, function(event){
+      var elm = document.getElementById("mouseMoveClickElement");
+      elm.innerHTML = "true";
+    });
+    element.on(SL.EventType.MOUSE_UP_ON_ELEMENT, function(event){
+      var elm = document.getElementById("mouseMoveClickElement");
+      elm.innerHTML = "false";
     });
 
     gfxLayer.addElement(element);
@@ -105,7 +127,9 @@ table  td {
       + "<tr><td>rawy</td><td>" + event.data.rawY + "</td></tr>"
       + "<tr><td>viewOriginAdjustedX</td><td>" + event.data.viewOriginAdjustedX + "</td></tr>"
       + "<tr><td>viewOriginAdjustedY</td><td>" + event.data.viewOriginAdjustedY + "</td></tr>"
-      + "<tr><td>isOverElement?</td><td>" + element.collidesWithCoordinates(event.data.viewOriginAdjustedX, event.data.viewOriginAdjustedY) + "</td></tr>"
+      + "<tr><td>isOverElement?</td><td>" + element.collidesWithCoordinates(event.data.x, event.data.y) + "</td></tr>"
+      + "<tr><td>isOverElement? raw</td><td>" + element.collidesWithCoordinates(event.data.rawX, event.data.rawY) + "</td></tr>"
+      + "<tr><td>isOverElement? viewOriginAdjusted</td><td>" + element.collidesWithCoordinates(event.data.viewOriginAdjustedX, event.data.viewOriginAdjustedY) + "</td></tr>"
       + "</table>"
     ;
     div.innerHTML = content;
