@@ -438,8 +438,8 @@ describe("Screen", function() {
       scrn._viewOriginX = 15;
       scrn._viewOriginY = 13;
       var expected = {
-        x : Math.floor(32 * scrn._scaleX),  // 32 / 2 = 16
-        y : Math.floor(43 * scrn._scaleY), // 43 / 3 = 14
+        x : Math.floor(32 / scrn._scaleX),  // 32 / 2 = 16
+        y : Math.floor(43 / scrn._scaleY), // 43 / 3 = 14
         viewOriginAdjustedX : 47 - scrn._viewOriginX, // 47 - 15 = 32
         viewOriginAdjustedY : 56 - scrn._viewOriginY, // 56 - 13 = 43
         rawX : x,
@@ -907,7 +907,7 @@ describe("Screen", function() {
     it("should return x (no scale)", function(done) {
       var x = 12;
       scrn._scaleX = 1;
-      var expected = Math.floor(x * scrn._scaleX);
+      var expected = Math.floor(x / scrn._scaleX);
 
       var result = scrn.getUnScaledX(x);
 
@@ -917,7 +917,7 @@ describe("Screen", function() {
     it("should return unscaledX", function(done) {
       var x = 12;
       scrn._scaleX = 2;
-      var expected = Math.floor(x * scrn._scaleX);
+      var expected = Math.floor(x / scrn._scaleX);
 
       var result = scrn.getUnScaledX(x);
 
@@ -929,7 +929,7 @@ describe("Screen", function() {
     it("should return y (no scale)", function(done) {
       var y = 12;
       scrn._scaleY = 1;
-      var expected = Math.floor(y * scrn._scaleY);
+      var expected = Math.floor(y / scrn._scaleY);
 
       var result = scrn.getUnScaledY(y);
 
@@ -939,7 +939,7 @@ describe("Screen", function() {
     it("should return unscaledY", function(done) {
       var y = 12;
       scrn._scaleY = 2;
-      var expected = Math.floor(y * scrn._scaleY);
+      var expected = Math.floor(y / scrn._scaleY);
 
       var result = scrn.getUnScaledY(y);
 
