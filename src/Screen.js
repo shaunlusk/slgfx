@@ -236,14 +236,16 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
+  props = props || {};
   var canvas = this.createCanvasForLayer();
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
-
-  var layer = this._layerFactory.getLayer(type, {
+  var layerProps = {
     canvasContextWrapper:canvasContextWrapper,
     width:this.getWidth(),
     height:this.getHeight()
-  });
+  };
+  Utils.mergeProperties(props, layerProps);
+  var layer = this._layerFactory.getLayer(type, layerProps);
 
   this.addLayer(layer);
   return layer;
@@ -444,9 +446,9 @@ Screen.prototype._update = function (time,diff) {
 /** @private */
 Screen.prototype._render = function(time,diff) {
   for (var i = 0; i < this._layers.length; i++) {
-    this._layers[i].prerender(time,diff);
+    this._layers[i].preRender(time,diff);
     this._layers[i].render(time,diff);
-    this._layers[i].postrender(time,diff);
+    this._layers[i].postRender(time,diff);
   }
 };
 
