@@ -40,12 +40,12 @@ describe('Layer', function() {
       expect(layer.isImageSmoothingEnabled()).toBeTruthy();
     });
   });
-  describe('#prerender', function() {
+  describe('#preRender', function() {
     var layer = new Layer({canvasContextWrapper:canvasContextWrapper});
     it('should clear canvas if dirty', function() {
       layer.setDirty(true);
 
-      layer.prerender(0,0);
+      layer.preRender(0,0);
 
       expect(canvasContextWrapper.cleared).toBeTruthy();
     });
@@ -53,7 +53,7 @@ describe('Layer', function() {
       var xval = 10;
       layer.setViewOriginX(xval);
 
-      layer.prerender(0,0);
+      layer.preRender(0,0);
 
       expect(canvasContextWrapper.viewOriginX).toBe(xval);
     });
@@ -61,7 +61,7 @@ describe('Layer', function() {
       var yval = 10;
       layer.setViewOriginY(yval);
 
-      layer.prerender(0,0);
+      layer.preRender(0,0);
 
       expect(canvasContextWrapper.viewOriginY).toBe(yval);
     });

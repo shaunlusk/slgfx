@@ -15,7 +15,6 @@ var Event = require('slcommon/src/Event');
 * @augments GfxElement
 * @param {Object} props Properties for this GfxElement.
 * @param {Screen} props.screenContext The target screen.
-* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
@@ -212,8 +211,8 @@ Sprite.prototype._updateTtl = function(diff) {
 * @param {number} time The current time (milliseconds).
 * @param {number} diff The difference between the previous render cycle and the current cycle (milliseconds).
 */
-Sprite.prototype.render = function(time,diff) {
-    this.renderFrame(time, diff, this._frames[this._fidx]);
+Sprite.prototype.render = function(canvasContext, time,diff) {
+    this.renderFrame(canvasContext, time, diff, this._frames[this._fidx]);
 };
 
 /** Render the specified AnimationFrame.  <br />

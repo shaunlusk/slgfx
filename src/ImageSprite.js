@@ -7,7 +7,6 @@ var ImageRenderer = require('./ImageRenderer');
 * @augments Sprite
 * @param {Object} props Properties for this GfxElement.
 * @param {Screen} props.screenContext The target screen.
-* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
@@ -57,9 +56,9 @@ ImageSprite.prototype.getImage = function() {return this._image;};
 * @param {number} diff The difference between the previous render cycle and the current cycle (milliseconds).
 * @param {AnimationFrame} frame The ImageSpriteFrame to be rendered.
 */
-ImageSprite.prototype.renderFrame = function(time, diff, frame) {
+ImageSprite.prototype.renderFrame = function(canvasContext, time, diff, frame) {
   this._imageRenderer.renderImage(
-    this.getCanvasContextWrapper(),
+    canvasContext,
     this.getImage(),
     frame.getSourceX(),
     frame.getSourceY(),

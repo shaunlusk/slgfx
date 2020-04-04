@@ -110,7 +110,7 @@ Layer.prototype.render = function(time,diff) {};
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-Layer.prototype.prerender = function(time,diff) {
+Layer.prototype.preRender = function(time,diff) {
   if (this.isDirty()) this.getCanvasContextWrapper().clear();
   if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
     this.getCanvasContextWrapper().setViewOriginX(this.getPendingViewOriginX());
@@ -126,7 +126,7 @@ Layer.prototype.prerender = function(time,diff) {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-Layer.prototype.postrender = function(time,diff) {
+Layer.prototype.postRender = function(time,diff) {
   this.setDirty(false);
 };
 

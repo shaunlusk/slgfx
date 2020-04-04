@@ -1,5 +1,6 @@
 var Screen = require('../src/Screen');
 var EventType = require('../src/EventType');
+var Event = require('slcommon/src/Event');
 var Mocks = require('./Mocks');
 
 describe("Screen", function() {
@@ -191,7 +192,7 @@ describe("Screen", function() {
   });
   describe("#notify()", function() {
     it("should notify listeners", function(done) {
-      var event = {type:"blerg"};
+      var event = new Event("blerg");
       scrn.getScreenContext = function() {
         return {notify:function(){}};
       };
@@ -406,18 +407,18 @@ describe("Screen", function() {
     });
   });
   describe("#_render()", function() {
-    it("should call update on each layer", function(done) {
+    it("should call render on each layer", function(done) {
       var calledRender1 = false;
       var layer1 = {
         render : function() {calledRender1 = true;},
-        prerender : function() {},
-        postrender : function() {}
+        preRender : function() {},
+        postRender : function() {}
       };
       var calledRender2 = false;
       var layer2 = {
         render : function() {calledRender2 = true;},
-        prerender : function() {},
-        postrender : function() {}
+        preRender : function() {},
+        postRender : function() {}
       };
       scrn.addLayer(layer1);
       scrn.addLayer(layer2);
