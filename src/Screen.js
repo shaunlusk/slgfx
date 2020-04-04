@@ -46,7 +46,7 @@ function Screen(props) {
 
   this._backgroundColor = props.backgroundColor || "black";
   this._borderColor = props.borderColor || "grey";
-  this._borderSize = props.borderSize || 1;
+  this._setBorderSize(props.borderSize || 1);
 
   this._fpsMonitorArray = [];
   this._fpsMonitorIndex = 0;
@@ -70,6 +70,14 @@ Screen.document = window.document;
 Screen.prototype.initialize = function() {
   this._prepareDiv();
   this._setupEventListeners();
+};
+
+Screen.prototype._setBorderSize = function(border) {
+  if (typeof border === "number") {
+    this._borderSize = border + "px";
+  } else {
+    this._borderSize = border;
+  }
 };
 
 /** Offset child layers horizontally by a specified amount.
@@ -117,7 +125,7 @@ Screen.prototype._prepareDiv = function() {
   this._targetDiv.style.width = this._width;
   this._targetDiv.style.height = this._height;
   this._targetDiv.style.backgroundColor = this._backgroundColor;
-  this._targetDiv.style.border = this._borderSize + "px solid " + this._borderColor;
+  this._targetDiv.style.border = this._borderSize + " solid " + this._borderColor;
 };
 
 /** @private */
@@ -165,7 +173,7 @@ Screen.prototype.getBackgroundColor = function(color) {
 */
 Screen.prototype.setBorderColor = function(color) {
   this._borderColor = color;
-  this._targetDiv.style.border = this._borderSize + "px solid " + color;
+  this._targetDiv.style.borderColor = color;
 };
 
 /** Return the current border color.
@@ -176,18 +184,48 @@ Screen.prototype.getBorderColor = function() {
 };
 
 /** Set the border size.
-* @param {int} size The size for the border; will be interpretted as pixels.
+* @param {int|string} size The size for the border.  If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 */
 Screen.prototype.setBorderSize = function(size) {
-  this._borderSize = size;
-  this._targetDiv.style.border = size + "px solid " + this._borderColor;
+  this._setBorderSize(size)
+  this._targetDiv.style.borderWidth = this._borderSize;
 };
 
-/** Return the current border size, in pixels.
+/** Return the current border size.
 * @returns {int}
 */
 Screen.prototype.getBorderSize = function() {
-  return this._borderSize;
+  return this._targetDiv.style.borderWidth;
+};
+
+/** Return the current top border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderTopSize = function() {
+  return this._targetDiv.style.borderTopWidth;
+};
+
+/** Return the current left border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderLeftSize = function() {
+  return this._targetDiv.style.borderLeftWidth;
+};
+
+/** Return the current right border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderRightSize = function() {
+  return this._targetDiv.style.borderRightWidth;
+};
+
+/** Return the current bottom border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderBottomSize = function() {
+  return this._targetDiv.style.borderBottomWidth;
 };
 
 /** Return the width.
@@ -526,14 +564,14 @@ Screen.prototype.propagateMouseEventThroughLayers = function(event) {
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getXFromMouseEvent = function(e) {
-  return (e.pageX - (this._targetDiv.offsetLeft + this._borderSize));
+  return (e.pageX - (this._targetDiv.offsetLeft + parseInt(this.getBorderLeftSize())));
 };
 
 /** Return the y coordinate from a mouse event.  Accounts for screen position.
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getYFromMouseEvent = function(e) {
-  return (e.pageY - (this._targetDiv.offsetTop + this._borderSize));
+  return (e.pageY - (this._targetDiv.offsetTop + parseInt(this.getBorderTopSize())));
 };
 
 /** Return an x value with scale removed.

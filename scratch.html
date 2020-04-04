@@ -117,6 +117,8 @@ body {
     element.addFrame(frame2);
     gfxLayer.addElement(element);
     element.identifier = true;
+
+    setInterval(updateLayer2, 32);
   }
 
   function updateLayer() {
@@ -138,12 +140,6 @@ body {
     if (layer.getViewOriginX() > 640){
      this.increment = -1;
     }
-  }
-
-  setInterval(updateLayer2, 32);
-  
-  function logElement1() {
-
   }
 
   var imgLoader = new SL.ImageLoader({
