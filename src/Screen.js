@@ -22,7 +22,9 @@ var MouseEvent = require('./MouseEvent');
 * @param {boolean} [props.useMouseMoveEvents=true] Whether to listen for mouseevents on this screen.
 * @param {string} [props.backgroundColor=black] Background color of the screen. Any valid CSS color string.
 * @param {string} [props.borderColor=grey] Border color of the screen. Any valid CSS color string.
-* @param {number} [props.borderSize=1] The size of the border.
+* @param {number|string} [props.borderSize=1] The size of the border. If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 * @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
 function Screen(props) {
