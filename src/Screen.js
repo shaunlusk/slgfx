@@ -272,18 +272,18 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 
 /** Create a new {@link Layer} and add it to this screen.  Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
-* @param {string} type The type of layer to add - either "TextLayer" or "GfxLayer"
+* @param {string} type The type of layer to add - either "BackgroundLayer" or "GfxLayer"
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
   var canvas = this.createCanvasForLayer();
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
+  var layerProps = {...props};
+  layerProps.width = layerProps.width || this.getWidth();
+  layerProps.height = layerProps.height || this.getHeight();
+  layerProps.canvasContextWrapper = canvasContextWrapper;
 
-  var layer = this._layerFactory.getLayer(type, {
-    canvasContextWrapper:canvasContextWrapper,
-    width:this.getWidth(),
-    height:this.getHeight()
-  });
+  var layer = this._layerFactory.getLayer(type, layerProps);
 
   this.addLayer(layer);
   return layer;
