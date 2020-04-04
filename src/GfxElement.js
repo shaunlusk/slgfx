@@ -31,7 +31,6 @@ var MouseEvent = require('./MouseEvent');
 * @constructor
 * @param {Object} props Properties for this GfxElement.
 * @param {Screen} props.screenContext The target screen.
-* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
@@ -49,7 +48,6 @@ function GfxElement(props) {
   props = props || {};
   this._id = GfxElement.id++;
   this._screenContext = props.screenContext;
-  this._canvasContextWrapper = props.canvasContextWrapper;
   this._scaleX = props.scaleX || 1;
   this._scaleY = props.scaleY || 1;
   this._currentMove = null;
@@ -194,12 +192,6 @@ GfxElement.prototype.setZIndex = function(zIndex) {
 GfxElement.prototype.getZIndexComparable = function() {
   return this._zIndexComparable;
 };
-
-/**
-* Return the canvas context for this element's parent layer.
-* @return {CanvasContextWrapper}
-*/
-GfxElement.prototype.getCanvasContextWrapper = function() {return this._canvasContextWrapper;};
 
 /**
 * Return the parent Screen for this element.
@@ -794,12 +786,13 @@ GfxElement.prototype._updateMoveOrder = function(time,diff) {
   }
 };
 
-/** Clears this element's bounding box. Time parameters are not used, just made available here for extension.
+/** Intended for immediately clearing this element's bounding box. 
+ * Called by the parent layer. Time parameters are not used, just made available here for extension.
 * @param {number} time
 * @param {number} diff
 */
-GfxElement.prototype.clear = function(time, diff) {
-  this.getCanvasContextWrapper().clearRect(
+GfxElement.prototype.clear = function(canvasContext, time, diff) {
+  canvasContext.clearRect(
     this._lastCollisionBoxX,
     this._lastCollisionBoxY,
     this._lastCollisionBoxWidth,
@@ -818,7 +811,7 @@ GfxElement.prototype.preRender = function(time, diff) {
 * The render method should be implemented in subclasses.
 * Time parameters provided for extension.
 */
-GfxElement.prototype.render = function(time, diff) {
+GfxElement.prototype.render = function(canvasContext, time, diff) {
   throw new Error("Not Implemented.");
 };
 

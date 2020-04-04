@@ -164,13 +164,13 @@ GfxLayer.prototype._updateElementOnCollision = function(element) {
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-GfxLayer.prototype.prerender = function(time,diff) {
+GfxLayer.prototype.preRender = function(time,diff) {
   var i;
-  Layer.prototype.prerender.call(this,time,diff);
+  Layer.prototype.preRender.call(this,time,diff);
   // layer will have been completely cleared if dirty, so no need to clear individual elements
   if (!this.isDirty()) {
     for (i = 0; i < this._dirtyElements.size(); i++) {
-      this._dirtyElements.getByIndex(i).getElement().clear(time,diff);
+      this._dirtyElements.getByIndex(i).getElement().clear(this.getCanvasContextWrapper(), time,diff);
     }
   }
 };
@@ -185,7 +185,7 @@ GfxLayer.prototype.render = function(time,diff) {
   while (this._dirtyElements.peek()) {
     var element = this._dirtyElements.pop().getElement();
     var doRender = element.preRender(time,diff);
-    if (doRender) element.render(time,diff);
+    if (doRender) element.render(this.getCanvasContextWrapper(), time,diff);
     element.postRender(time,diff);
   }
 

@@ -2,6 +2,7 @@ var GfxElement = require('../src/GfxElement');
 var GfxElementZIndexComparable = require('../src/GfxElementZIndexComparable');
 var Mocks = require('./Mocks');
 var EventType = require('../src/EventType');
+var Event = require('slcommon/src/Event');
 
 describe("GfxElement", function() {
   var element;
@@ -84,18 +85,6 @@ describe("GfxElement", function() {
       element.setZIndex(expected);
       var zindex = element.getZIndex();
       expect(zindex).toBeTruthy();
-    });
-  });
-  describe("#getCanvasContextWrapper()", function() {
-    it("should return canvas context", function() {
-      var context = element.getCanvasContextWrapper();
-      expect(context).toBeTruthy();
-    });
-  });
-  describe("#getScreenContext()", function() {
-    it("should return screen context", function() {
-      var context = element.getScreenContext();
-      expect(context).toBeTruthy();
     });
   });
   describe("#getScreenScaleX()", function() {
@@ -525,12 +514,12 @@ describe("GfxElement", function() {
   });
   describe("#clear()", function () {
     it("should clear last frame collision box", function(done) {
+      var mockContext = Mocks.getMockCanvasContextWrapper()
       element._lastCollisionBoxX = -1;
       element._lastCollisionBoxY = -1;
       element._lastCollisionBoxWidth = 7;
       element._lastCollisionBoxHeight = 8;
-      element.clear();
-      var mockContext = element.getCanvasContextWrapper();
+      element.clear(mockContext);
       expect(mockContext.clearedX).toBe(-1);
       expect(mockContext.clearedY).toBe(-1);
       expect(mockContext.clearedWidth).toBe(7);
@@ -880,7 +869,7 @@ describe("GfxElement", function() {
   });
   describe("#notify()", function() {
     it("should notify listeners", function(done) {
-      var event = {type:"blerg"};
+      var event = new Event("blerg");
       element.getScreenContext = function() {
         return {notify:function(){}};
       };
@@ -918,8 +907,7 @@ describe("GfxElement", function() {
 function getGfxElement(props) {
   var element = new GfxElement({
     ...props,
-    screenContext:Mocks.getMockScreen(),
-    canvasContextWrapper:Mocks.getMockCanvasContextWrapper()
+    screenContext:Mocks.getMockScreen()
   });
   return element;
 }

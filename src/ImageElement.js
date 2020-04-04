@@ -10,7 +10,6 @@ var GfxElement = require('./GfxElement');
 * @augments GfxElement
 * @param {Object} props The properties for this element.
 * @param {Screen} props.screenContext The target screen.
-* @param {CanvasContextWrapper} props.canvasContextWrapper The canvasContextWrapper. This layer will draw to the canvas' context, via wrapper's exposed methods.
 * @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
 * @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
@@ -89,9 +88,9 @@ ImageElement.prototype.getSourceHeight = function() {return this._sHeight;};
 * @param {number} time The current time (milliseconds)
 * @param {number} diff The difference between the last time and the current time  (milliseconds)
 */
-ImageElement.prototype.render = function(time,diff) {
+ImageElement.prototype.render = function(canvasContext, time,diff) {
     this._imageRenderer.renderImage(
-      this.getCanvasContextWrapper(),
+      canvasContext,
       this.getImage(),
       this.getSourceX(),
       this.getSourceY(),
