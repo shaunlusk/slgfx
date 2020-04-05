@@ -788,6 +788,7 @@ GfxElement.prototype._updateMoveOrder = function(time,diff) {
 
 /** Intended for immediately clearing this element's bounding box. 
  * Called by the parent layer. Time parameters are not used, just made available here for extension.
+ * @param {CanvasContext} canvasContext 
 * @param {number} time
 * @param {number} diff
 */
