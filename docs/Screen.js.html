@@ -50,7 +50,9 @@ var MouseEvent = require('./MouseEvent');
 * @param {boolean} [props.useMouseMoveEvents=true] Whether to listen for mouseevents on this screen.
 * @param {string} [props.backgroundColor=black] Background color of the screen. Any valid CSS color string.
 * @param {string} [props.borderColor=grey] Border color of the screen. Any valid CSS color string.
-* @param {number} [props.borderSize=1] The size of the border.
+* @param {number|string} [props.borderSize=1] The size of the border. If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 * @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
 function Screen(props) {
@@ -74,7 +76,7 @@ function Screen(props) {
 
   this._backgroundColor = props.backgroundColor || "black";
   this._borderColor = props.borderColor || "grey";
-  this._borderSize = props.borderSize || 1;
+  this._setBorderSize(props.borderSize || 1);
 
   this._fpsMonitorArray = [];
   this._fpsMonitorIndex = 0;
@@ -98,6 +100,14 @@ Screen.document = window.document;
 Screen.prototype.initialize = function() {
   this._prepareDiv();
   this._setupEventListeners();
+};
+
+Screen.prototype._setBorderSize = function(border) {
+  if (typeof border === "number") {
+    this._borderSize = border + "px";
+  } else {
+    this._borderSize = border;
+  }
 };
 
 /** Offset child layers horizontally by a specified amount.
@@ -145,7 +155,7 @@ Screen.prototype._prepareDiv = function() {
   this._targetDiv.style.width = this._width;
   this._targetDiv.style.height = this._height;
   this._targetDiv.style.backgroundColor = this._backgroundColor;
-  this._targetDiv.style.border = this._borderSize + "px solid " + this._borderColor;
+  this._targetDiv.style.border = this._borderSize + " solid " + this._borderColor;
 };
 
 /** @private */
@@ -193,7 +203,7 @@ Screen.prototype.getBackgroundColor = function(color) {
 */
 Screen.prototype.setBorderColor = function(color) {
   this._borderColor = color;
-  this._targetDiv.style.border = this._borderSize + "px solid " + color;
+  this._targetDiv.style.borderColor = color;
 };
 
 /** Return the current border color.
@@ -204,18 +214,48 @@ Screen.prototype.getBorderColor = function() {
 };
 
 /** Set the border size.
-* @param {int} size The size for the border; will be interpretted as pixels.
+* @param {int|string} size The size for the border.  If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 */
 Screen.prototype.setBorderSize = function(size) {
-  this._borderSize = size;
-  this._targetDiv.style.border = size + "px solid " + this._borderColor;
+  this._setBorderSize(size)
+  this._targetDiv.style.borderWidth = this._borderSize;
 };
 
-/** Return the current border size, in pixels.
+/** Return the current border size.
 * @returns {int}
 */
 Screen.prototype.getBorderSize = function() {
-  return this._borderSize;
+  return this._targetDiv.style.borderWidth;
+};
+
+/** Return the current top border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderTopSize = function() {
+  return this._targetDiv.style.borderTopWidth;
+};
+
+/** Return the current left border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderLeftSize = function() {
+  return this._targetDiv.style.borderLeftWidth;
+};
+
+/** Return the current right border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderRightSize = function() {
+  return this._targetDiv.style.borderRightWidth;
+};
+
+/** Return the current bottom border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderBottomSize = function() {
+  return this._targetDiv.style.borderBottomWidth;
 };
 
 /** Return the width.
@@ -260,18 +300,19 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 
 /** Create a new {@link Layer} and add it to this screen.  Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
-* @param {string} type The type of layer to add - either "TextLayer" or "GfxLayer"
+* @param {string} type The type of layer to add - either "BackgroundLayer" or "GfxLayer"
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
+  props = props || {};
   var canvas = this.createCanvasForLayer();
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
+  var layerProps = {...props};
+  layerProps.width = layerProps.width || this.getWidth();
+  layerProps.height = layerProps.height || this.getHeight();
+  layerProps.canvasContextWrapper = canvasContextWrapper;
 
-  var layer = this._layerFactory.getLayer(type, {
-    canvasContextWrapper:canvasContextWrapper,
-    width:this.getWidth(),
-    height:this.getHeight()
-  });
+  var layer = this._layerFactory.getLayer(type, layerProps);
 
   this.addLayer(layer);
   return layer;
@@ -472,9 +513,9 @@ Screen.prototype._update = function (time,diff) {
 /** @private */
 Screen.prototype._render = function(time,diff) {
   for (var i = 0; i &lt; this._layers.length; i++) {
-    this._layers[i].prerender(time,diff);
+    this._layers[i].preRender(time,diff);
     this._layers[i].render(time,diff);
-    this._layers[i].postrender(time,diff);
+    this._layers[i].postRender(time,diff);
   }
 };
 
@@ -554,14 +595,14 @@ Screen.prototype.propagateMouseEventThroughLayers = function(event) {
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getXFromMouseEvent = function(e) {
-  return (e.pageX - (this._targetDiv.offsetLeft + this._borderSize));
+  return (e.pageX - (this._targetDiv.offsetLeft + parseInt(this.getBorderLeftSize())));
 };
 
 /** Return the y coordinate from a mouse event.  Accounts for screen position.
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getYFromMouseEvent = function(e) {
-  return (e.pageY - (this._targetDiv.offsetTop + this._borderSize));
+  return (e.pageY - (this._targetDiv.offsetTop + parseInt(this.getBorderTopSize())));
 };
 
 /** Return an x value with scale removed.
@@ -666,13 +707,13 @@ module.exports = Screen;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="CanvasContextWrapper.html">CanvasContextWrapper</a></li><li><a href="GfxElement.html">GfxElement</a></li><li><a href="GfxElementZIndexComparable.html">GfxElementZIndexComparable</a></li><li><a href="GfxLayer.html">GfxLayer</a></li><li><a href="ImageElement.html">ImageElement</a></li><li><a href="ImageLoader.html">ImageLoader</a></li><li><a href="ImageRenderer.html">ImageRenderer</a></li><li><a href="ImageSprite.html">ImageSprite</a></li><li><a href="ImageSpriteFrame.html">ImageSpriteFrame</a></li><li><a href="Layer.html">Layer</a></li><li><a href="LayerFactory.html">LayerFactory</a></li><li><a href="MouseEvent.html">MouseEvent</a></li><li><a href="MoveOrder.html">MoveOrder</a></li><li><a href="Screen.html">Screen</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Events</h3><ul><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="GfxElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="GfxElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="GfxElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="GfxElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="GfxElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="ImageElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageSprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageSprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageSprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageSprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li><li><a href="Screen.html#event:AFTER_RENDER">AFTER_RENDER</a></li><li><a href="Screen.html#event:BEFORE_RENDER">BEFORE_RENDER</a></li><li><a href="Screen.html#event:MOUSE_DOWN">MOUSE_DOWN</a></li><li><a href="Screen.html#event:MOUSE_MOVE">MOUSE_MOVE</a></li><li><a href="Screen.html#event:MOUSE_UP">MOUSE_UP</a></li><li><a href="Screen.html#event:NEXT_FRAME_BEGIN">NEXT_FRAME_BEGIN</a></li><li><a href="Screen.html#event:NEXT_FRAME_END">NEXT_FRAME_END</a></li><li><a href="Screen.html#event:SCREEN_PAUSED">SCREEN_PAUSED</a></li><li><a href="Screen.html#event:SCREEN_RESUMED">SCREEN_RESUMED</a></li><li><a href="Sprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="Sprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="Sprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="Sprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="Sprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="Sprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li></ul><h3>Namespaces</h3><ul><li><a href="EventType.html">EventType</a></li></ul><h3>Interfaces</h3><ul><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="ILayerFactory.html">ILayerFactory</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="EventType.html">EventType</a></li></ul><h3>Classes</h3><ul><li><a href="BackgroundLayer.html">BackgroundLayer</a></li><li><a href="CanvasContextWrapper.html">CanvasContextWrapper</a></li><li><a href="GfxElement.html">GfxElement</a></li><li><a href="GfxElementZIndexComparable.html">GfxElementZIndexComparable</a></li><li><a href="GfxLayer.html">GfxLayer</a></li><li><a href="ImageElement.html">ImageElement</a></li><li><a href="ImageLoader.html">ImageLoader</a></li><li><a href="ImageRenderer.html">ImageRenderer</a></li><li><a href="ImageSprite.html">ImageSprite</a></li><li><a href="ImageSpriteFrame.html">ImageSpriteFrame</a></li><li><a href="Layer.html">Layer</a></li><li><a href="LayerFactory.html">LayerFactory</a></li><li><a href="MouseEvent.html">MouseEvent</a></li><li><a href="MoveOrder.html">MoveOrder</a></li><li><a href="Screen.html">Screen</a></li><li><a href="Sprite.html">Sprite</a></li></ul><h3>Interfaces</h3><ul><li><a href="AnimationFrame.html">AnimationFrame</a></li><li><a href="ILayerFactory.html">ILayerFactory</a></li></ul><h3>Events</h3><ul><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="BackgroundLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="GfxElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="GfxElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="GfxElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="GfxElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="GfxElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="GfxElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_BOTTOM_EDGE">ELEMENT_HIT_BOTTOM_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_LEFT_EDGE">ELEMENT_HIT_LEFT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_RIGHT_EDGE">ELEMENT_HIT_RIGHT_EDGE</a></li><li><a href="GfxLayer.html#event:ELEMENT_HIT_TOP_EDGE">ELEMENT_HIT_TOP_EDGE</a></li><li><a href="ImageElement.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageElement.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageElement.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageElement.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageElement.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageElement.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="ImageSprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="ImageSprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="ImageSprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="ImageSprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="ImageSprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="ImageSprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li><li><a href="Screen.html#event:AFTER_RENDER">AFTER_RENDER</a></li><li><a href="Screen.html#event:BEFORE_RENDER">BEFORE_RENDER</a></li><li><a href="Screen.html#event:MOUSE_DOWN">MOUSE_DOWN</a></li><li><a href="Screen.html#event:MOUSE_MOVE">MOUSE_MOVE</a></li><li><a href="Screen.html#event:MOUSE_UP">MOUSE_UP</a></li><li><a href="Screen.html#event:NEXT_FRAME_BEGIN">NEXT_FRAME_BEGIN</a></li><li><a href="Screen.html#event:NEXT_FRAME_END">NEXT_FRAME_END</a></li><li><a href="Screen.html#event:SCREEN_PAUSED">SCREEN_PAUSED</a></li><li><a href="Screen.html#event:SCREEN_RESUMED">SCREEN_RESUMED</a></li><li><a href="Sprite.html#event:ELEMENT_COLLISION">ELEMENT_COLLISION</a></li><li><a href="Sprite.html#event:ELEMENT_MOVED">ELEMENT_MOVED</a></li><li><a href="Sprite.html#event:ELEMENT_STARTED_MOVING">ELEMENT_STARTED_MOVING</a></li><li><a href="Sprite.html#event:ELEMENT_STOPPED_MOVING">ELEMENT_STOPPED_MOVING</a></li><li><a href="Sprite.html#event:MOUSE_DOWN_ON_ELEMENT">MOUSE_DOWN_ON_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_ENTER_ELEMENT">MOUSE_ENTER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_EXIT_ELEMENT">MOUSE_EXIT_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_MOVE_OVER_ELEMENT">MOUSE_MOVE_OVER_ELEMENT</a></li><li><a href="Sprite.html#event:MOUSE_UP_ON_ELEMENT">MOUSE_UP_ON_ELEMENT</a></li><li><a href="Sprite.html#event:SPRITE_ANIMATION_DONE">SPRITE_ANIMATION_DONE</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 29 2019 20:39:51 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sun Apr 05 2020 15:37:10 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
