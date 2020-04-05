@@ -64,7 +64,7 @@ describe("Screen", function() {
       expect(targetDiv.style.width).toBe(scrn._width, "should have set width");
       expect(targetDiv.style.height).toBe(scrn._height, "should have set heights");
       expect(targetDiv.style.backgroundColor).toBe(scrn._backgroundColor, "should have set backgroundColor");
-      expect(targetDiv.style.border).toBe(scrn._borderSize + "px solid " + scrn._borderColor, "should have set border");
+      expect(targetDiv.style.border).toBe(scrn._borderSize + " solid " + scrn._borderColor, "should have set border");
       done();
     });
   });
@@ -122,18 +122,26 @@ describe("Screen", function() {
       scrn.setBorderColor(color);
 
       expect(scrn.getBorderColor()).toBe(color, "should have set border color");
-      expect(targetDiv.style.border).toBe(scrn._borderSize + "px solid " + color, "should have set border color on target div");
+      expect(targetDiv.style.borderColor).toBe(color, "should have set border color on target div");
       done();
     });
   });
   describe("#setBorderSize()", function() {
-    it("should set border size", function(done) {
+    it("should set border size from number", function(done) {
       var amount = 50;
+      var expected = "50px";
+      scrn.setBorderSize(amount);
 
+      expect(scrn.getBorderSize()).toBe(expected, "should have set border size");
+      expect(targetDiv.style.borderWidth).toBe(expected, "should have set border size on target div");
+      done();
+    });
+    it("should set border size", function(done) {
+      var amount = "50px 10px 1px 3px";
       scrn.setBorderSize(amount);
 
       expect(scrn.getBorderSize()).toBe(amount, "should have set border size");
-      expect(targetDiv.style.border).toBe(amount + "px solid " + scrn._borderColor, "should have set border size on target div");
+      expect(targetDiv.style.borderWidth).toBe(amount, "should have set border size on target div");
       done();
     });
   });

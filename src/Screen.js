@@ -22,7 +22,9 @@ var MouseEvent = require('./MouseEvent');
 * @param {boolean} [props.useMouseMoveEvents=true] Whether to listen for mouseevents on this screen.
 * @param {string} [props.backgroundColor=black] Background color of the screen. Any valid CSS color string.
 * @param {string} [props.borderColor=grey] Border color of the screen. Any valid CSS color string.
-* @param {number} [props.borderSize=1] The size of the border.
+* @param {number|string} [props.borderSize=1] The size of the border. If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 * @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
 function Screen(props) {
@@ -46,7 +48,7 @@ function Screen(props) {
 
   this._backgroundColor = props.backgroundColor || "black";
   this._borderColor = props.borderColor || "grey";
-  this._borderSize = props.borderSize || 1;
+  this._setBorderSize(props.borderSize || 1);
 
   this._fpsMonitorArray = [];
   this._fpsMonitorIndex = 0;
@@ -70,6 +72,14 @@ Screen.document = window.document;
 Screen.prototype.initialize = function() {
   this._prepareDiv();
   this._setupEventListeners();
+};
+
+Screen.prototype._setBorderSize = function(border) {
+  if (typeof border === "number") {
+    this._borderSize = border + "px";
+  } else {
+    this._borderSize = border;
+  }
 };
 
 /** Offset child layers horizontally by a specified amount.
@@ -117,7 +127,7 @@ Screen.prototype._prepareDiv = function() {
   this._targetDiv.style.width = this._width;
   this._targetDiv.style.height = this._height;
   this._targetDiv.style.backgroundColor = this._backgroundColor;
-  this._targetDiv.style.border = this._borderSize + "px solid " + this._borderColor;
+  this._targetDiv.style.border = this._borderSize + " solid " + this._borderColor;
 };
 
 /** @private */
@@ -165,7 +175,7 @@ Screen.prototype.getBackgroundColor = function(color) {
 */
 Screen.prototype.setBorderColor = function(color) {
   this._borderColor = color;
-  this._targetDiv.style.border = this._borderSize + "px solid " + color;
+  this._targetDiv.style.borderColor = color;
 };
 
 /** Return the current border color.
@@ -176,18 +186,48 @@ Screen.prototype.getBorderColor = function() {
 };
 
 /** Set the border size.
-* @param {int} size The size for the border; will be interpretted as pixels.
+* @param {int|string} size The size for the border.  If a number
+* is provided, this will be interpretted as pixels, and a uniform border width will be set.
+* If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 */
 Screen.prototype.setBorderSize = function(size) {
-  this._borderSize = size;
-  this._targetDiv.style.border = size + "px solid " + this._borderColor;
+  this._setBorderSize(size)
+  this._targetDiv.style.borderWidth = this._borderSize;
 };
 
-/** Return the current border size, in pixels.
+/** Return the current border size.
 * @returns {int}
 */
 Screen.prototype.getBorderSize = function() {
-  return this._borderSize;
+  return this._targetDiv.style.borderWidth;
+};
+
+/** Return the current top border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderTopSize = function() {
+  return this._targetDiv.style.borderTopWidth;
+};
+
+/** Return the current left border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderLeftSize = function() {
+  return this._targetDiv.style.borderLeftWidth;
+};
+
+/** Return the current right border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderRightSize = function() {
+  return this._targetDiv.style.borderRightWidth;
+};
+
+/** Return the current bottom border size.
+* @returns {int}
+*/
+Screen.prototype.getBorderBottomSize = function() {
+  return this._targetDiv.style.borderBottomWidth;
 };
 
 /** Return the width.
@@ -232,19 +272,18 @@ Screen.prototype.setImageSmoothingEnabled = function(imageSmoothingEnabled) {thi
 
 /** Create a new {@link Layer} and add it to this screen.  Layers will be rendered in FIFO order,
 * so layers added later will be drawn on top of layers added earlier.
-* @param {string} type The type of layer to add - either "TextLayer" or "GfxLayer"
+* @param {string} type The type of layer to add - either "BackgroundLayer" or "GfxLayer"
 * @see Layer
 */
 Screen.prototype.createLayer = function(type, props) {
   props = props || {};
   var canvas = this.createCanvasForLayer();
   var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
-  var layerProps = {
-    canvasContextWrapper:canvasContextWrapper,
-    width:this.getWidth(),
-    height:this.getHeight()
-  };
-  Utils.mergeProperties(props, layerProps);
+  var layerProps = {...props};
+  layerProps.width = layerProps.width || this.getWidth();
+  layerProps.height = layerProps.height || this.getHeight();
+  layerProps.canvasContextWrapper = canvasContextWrapper;
+
   var layer = this._layerFactory.getLayer(type, layerProps);
 
   this.addLayer(layer);
@@ -528,14 +567,14 @@ Screen.prototype.propagateMouseEventThroughLayers = function(event) {
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getXFromMouseEvent = function(e) {
-  return (e.pageX - (this._targetDiv.offsetLeft + this._borderSize));
+  return (e.pageX - (this._targetDiv.offsetLeft + parseInt(this.getBorderLeftSize())));
 };
 
 /** Return the y coordinate from a mouse event.  Accounts for screen position.
 * @param {Event} e Mouse Event
 */
 Screen.prototype.getYFromMouseEvent = function(e) {
-  return (e.pageY - (this._targetDiv.offsetTop + this._borderSize));
+  return (e.pageY - (this._targetDiv.offsetTop + parseInt(this.getBorderTopSize())));
 };
 
 /** Return an x value with scale removed.
