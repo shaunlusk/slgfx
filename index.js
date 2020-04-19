@@ -27,33 +27,33 @@ import SpriteAnimationFrame from './src/SpriteAnimationFrame';
 
 import Utils from './src/Utils';
 
-if (typeof window !== 'undefined' && window) {
-  window.SL = window.SL || {};
-  window.SL.Event = Event;
-  window.SL.EventManager = EventManager;
-  window.SL.EventNotifierMixin = EventNotifierMixin;
-  window.SL.PriorityQueue = PriorityQueue;
-  window.SL.Queue = Queue;
-  window.SL.UniquePriorityQueue = UniquePriorityQueue;
+if (typeof self !== 'undefined' && self) {
+  self.SL = self.SL || {};
+  self.SL.Event = Event;
+  self.SL.EventManager = EventManager;
+  self.SL.EventNotifierMixin = EventNotifierMixin;
+  self.SL.PriorityQueue = PriorityQueue;
+  self.SL.Queue = Queue;
+  self.SL.UniquePriorityQueue = UniquePriorityQueue;
 
-  window.SL.BackgroundLayer = BackgroundLayer;
-  window.SL.CanvasContextWrapper = CanvasContextWrapper;
-  window.SL.EventType = EventType;
-  window.SL.GfxElement = GfxElement;
-  window.SL.GfxElementZIndexComparable = GfxElementZIndexComparable;
-  window.SL.GfxLayer = GfxLayer;
-  window.SL.ILayerFactory = ILayerFactory;
-  window.SL.ImageElement = ImageElement;
-  window.SL.ImageLoader = ImageLoader;
-  window.SL.ImageRenderer = ImageRenderer;
-  window.SL.ImageSprite = ImageSprite;
-  window.SL.ImageSpriteFrame = ImageSpriteFrame;
-  window.SL.Layer = Layer;
-  window.SL.LayerFactory = LayerFactory;
-  window.SL.MouseEvent = MouseEvent;
-  window.SL.MoveOrder = MoveOrder;
-  window.SL.Screen = Screen;
-  window.SL.Sprite = Sprite;
-  window.SL.SpriteAnimationFrame = SpriteAnimationFrame;
-  window.SL.Utils = Utils;
+  self.SL.BackgroundLayer = BackgroundLayer;
+  self.SL.CanvasContextWrapper = CanvasContextWrapper;
+  self.SL.EventType = EventType;
+  self.SL.GfxElement = GfxElement;
+  self.SL.GfxElementZIndexComparable = GfxElementZIndexComparable;
+  self.SL.GfxLayer = GfxLayer;
+  self.SL.ILayerFactory = ILayerFactory;
+  self.SL.ImageElement = ImageElement;
+  self.SL.ImageLoader = ImageLoader;
+  self.SL.ImageRenderer = ImageRenderer;
+  self.SL.ImageSprite = ImageSprite;
+  self.SL.ImageSpriteFrame = ImageSpriteFrame;
+  self.SL.Layer = Layer;
+  self.SL.LayerFactory = LayerFactory;
+  self.SL.MouseEvent = MouseEvent;
+  self.SL.MoveOrder = MoveOrder;
+  self.SL.Screen = Screen;
+  self.SL.Sprite = Sprite;
+  self.SL.SpriteAnimationFrame = SpriteAnimationFrame;
+  self.SL.Utils = Utils;
 }

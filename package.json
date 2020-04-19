@@ -1,6 +1,6 @@
 {
   "name": "slgfx",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Canvas graphics framework used by Shaun's JavaScript projects.",
   "main": "index.js",
   "repository": "https://github.com/shaunlusk/slgfx.git",
@@ -13,7 +13,7 @@
     "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/"
   },
   "dependencies": {
-    "slcommon": "github:shaunlusk/slcommon#1.1.4"
+    "slcommon": "github:shaunlusk/slcommon#1.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
