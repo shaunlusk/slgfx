@@ -41,4 +41,12 @@ Utils.clearCanvasContext = function (context) {
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 };
 
+Utils.getWindow = function() {
+  if (typeof window !== 'undefined' && window) {
+    return window;
+  } else {
+    return {};
+  }
+};
+
 module.exports = Utils;

@@ -6,6 +6,8 @@ var CanvasContextWrapper = require('./CanvasContextWrapper');
 var Event = require('slcommon/src/Event');
 var MouseEvent = require('./MouseEvent');
 
+var _window = Utils.getWindow();
+
 /** The Screen is the overriding container for Graphics components.
 * The Screen orchestrates updating and rendering its layers, propagates
 * mouse events down to the layers, and notifies event listeners when events occur.
@@ -59,7 +61,7 @@ function Screen(props) {
   this._pendingViewOriginY = null;
   this._layers = [];
 
-  this._requestAnimationFrame = props.requestAnimationFrame || window.requestAnimationFrame.bind(window);
+  this._requestAnimationFrame = props.requestAnimationFrame || (_window.requestAnimationFrame ? _window.requestAnimationFrame.bind(_window) : () => {});
   this.EventNotifierMixinInitializer();
 };
 
@@ -73,17 +75,7 @@ Screen.mockDocument = {
   }},
   hidden:false
 };
-Screen.document = (function() {
-  if (typeof window !== 'undefined'
-    && window 
-    && window.document
-  ) {
-    return window.document;
-  } else {
-    return Screen.mockDocument;
-  }
-})();
-
+Screen.document = _window.document || Screen.mockDocument;
 
 /** Setup the screen on the page. Must be called prior to rendering.
 */
