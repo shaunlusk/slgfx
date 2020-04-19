@@ -1,4 +1,6 @@
+var Utils = require('./Utils');
 
+var _window = Utils.getWindow();
 
 /**
 * @class
@@ -12,15 +14,7 @@ function ImageLoader(imagesHash) {
   this.imageLoadedCounter = 0;
 };
 
-ImageLoader.Image = (function() {
-  if (typeof window !== 'undefined'
-    && window 
-    && window.Image) {
-    return window.Image;
-  } else {
-    return function() {return {};};
-  }
-})();
+ImageLoader.Image = _window.Image || function() {return {};};
 
 /** Load the images and callback when done.
 * @param {function} callback Will call this function when all images have been loaded.
