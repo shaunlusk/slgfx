@@ -65,7 +65,25 @@ function Screen(props) {
 
 EventNotifierMixin.call(Screen.prototype);
 
-Screen.document = window.document;
+Screen.mockDocument = {
+  addEventListener : function() {},
+  createElement : function() {return {
+    style:{},
+    getContext:function() {return {}}
+  }},
+  hidden:false
+};
+Screen.document = (function() {
+  if (typeof window !== 'undefined'
+    && window 
+    && window.document
+  ) {
+    return window.document;
+  } else {
+    return Screen.mockDocument;
+  }
+})();
+
 
 /** Setup the screen on the page. Must be called prior to rendering.
 */
