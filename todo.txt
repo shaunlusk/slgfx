@@ -1,3 +1,11 @@
+Typescript todos:
+use of private / protected in base classes:
+  - use private and expose fields via properties?
+  - use protected?
+
+
+---------------------------------------------
+
 Proposed changes:
 
 move orders should pause with screen

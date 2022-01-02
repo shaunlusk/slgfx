@@ -2,30 +2,36 @@
   "name": "slgfx",
   "version": "3.1.1",
   "description": "Canvas graphics framework used by Shaun's JavaScript projects.",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/shaunlusk/slgfx.git",
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "npm run test && npm run build:docs && webpack --config webpack.config.js",
-    "build:dev": "webpack --config webpack.dev.config.js",
+    "build:dev": "tsc",
     "test": "node ./node_modules/jest/bin/jest ./test --colors --coverage",
-    "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/"
-  },
-  "dependencies": {
-    "slcommon": "github:shaunlusk/slcommon#1.2.0"
+    "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/",
+    "clean": "rimraf dist docs"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/node": "^7.8.7",
-    "@babel/preset-env": "^7.9.0",
-    "@babel/register": "^7.9.0",
-    "babel-jest": "^25.2.6",
-    "babel-loader": "^8.1.0",
-    "jest": "^25.2.7",
-    "jsdoc": "^3.6.3",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@types/jest": "^27.0.3",
+    "babel-jest": "^27.4.5",
+    "gh-pages": "^3.2.3",
+    "jest": "^27.4.5",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.2.6",
+    "typedoc": "^0.22.10",
+    "typemoq": "^2.1.0",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@shaunlusk/slcommon": "^2.0.6"
   }
 }

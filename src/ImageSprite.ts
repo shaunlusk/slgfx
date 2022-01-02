@@ -1,5 +1,14 @@
-var Sprite = require('./Sprite.js');
-var ImageRenderer = require('./ImageRenderer');
+import { ICanvasContextWrapper } from "./CanvasContextWrapper";
+import { IImageRenderer } from "./ImageRenderer";
+import { ImageSpriteFrame } from "./ImageSpriteFrame";
+import { ISpriteProps, Sprite } from "./Sprite";
+
+export interface IImageSpriteProps extends ISpriteProps {
+  image: HTMLImageElement;
+  width: number;
+  height: number;
+  imageRenderer: IImageRenderer;
+}
 
 /** Animated element that displays images frames in succession.<br />
 * Uses {@link ImageSpriteFrame} for its frames.
@@ -31,49 +40,46 @@ var ImageRenderer = require('./ImageRenderer');
 * @see AnimationFrame
 * @see ImageSpriteFrame
 */
-function ImageSprite(props) {
-  props = props || {};
-  Sprite.call(this, props);
+export class ImageSprite extends Sprite {
+  private _image: HTMLImageElement;
+  private _imageRenderer: IImageRenderer;
 
-  this._image = props.image;
-  this._width = props.width;
-  this._height = props.height;
+  constructor(props: IImageSpriteProps) {
+    super(props);
+    this._image = props.image;
 
-  this._imageRenderer = props.imageRenderer;
-};
+    this._imageRenderer = props.imageRenderer;
+  }
 
-ImageSprite.prototype = new Sprite();
-ImageSprite.prototype.constructor = ImageSprite;
+  /** Return the source image.
+  * @returns {Image}
+  */
+  public getImage() {return this._image;}
 
-/** Return the source image.
-* @returns {Image}
-*/
-ImageSprite.prototype.getImage = function() {return this._image;};
+  /** Render the specified frame.
+  * @override
+  * @param {number} time The current time (milliseconds).
+  * @param {number} diff The difference between the previous render cycle and the current cycle (milliseconds).
+  * @param {AnimationFrame} frame The ImageSpriteFrame to be rendered.
+  */
+  public renderFrame(canvasContext: ICanvasContextWrapper, time: number, diff: number, frame: ImageSpriteFrame) {
+    this._imageRenderer.renderImage(
+      canvasContext,
+      this.getImage(),
+      frame.getSourceX(),
+      frame.getSourceY(),
+      frame.getSourceWidth(),
+      frame.getSourceHeight(),
+      this.getX(),
+      this.getY(),
+      this.getWidth(),
+      this.getHeight(),
+      this.getElementScaleX(),
+      this.getElementScaleY(),
+      this.isHorizontallyFlipped(),
+      this.isVerticallyFlipped(),
+      this.getRotation()
+    );
+  }
 
-/** Render the specified frame.
-* @override
-* @param {number} time The current time (milliseconds).
-* @param {number} diff The difference between the previous render cycle and the current cycle (milliseconds).
-* @param {AnimationFrame} frame The ImageSpriteFrame to be rendered.
-*/
-ImageSprite.prototype.renderFrame = function(canvasContext, time, diff, frame) {
-  this._imageRenderer.renderImage(
-    canvasContext,
-    this.getImage(),
-    frame.getSourceX(),
-    frame.getSourceY(),
-    frame.getSourceWidth(),
-    frame.getSourceHeight(),
-    this.getX(),
-    this.getY(),
-    this.getWidth(),
-    this.getHeight(),
-    this.getElementScaleX(),
-    this.getElementScaleY(),
-    this.isHorizontallyFlipped(),
-    this.isVerticallyFlipped(),
-    this.getRotation()
-  );
-};
-
-module.exports = ImageSprite;
+}

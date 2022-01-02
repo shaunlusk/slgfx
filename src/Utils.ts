@@ -1,4 +1,6 @@
-var Utils = require('slcommon/src/Utils');
+import { ICanvasContextWrapper } from "./CanvasContextWrapper";
+
+export class Utils {
 
 /** Performs some translation on the canvas context before applying some rendering function.
  * @param  {CanvasContextWrapper} context The canvas context wrapper
@@ -9,7 +11,7 @@ var Utils = require('slcommon/src/Utils');
  * @param  {number} rotation         The amount to rotate the canvas, in radians.
  * @param  {function} renderCallback   The function to call to perform rendering.
  */
-Utils.renderWithTranslation = function (context, x, y, flipHorizontally, flipVertically, rotation, renderCallback) {
+public static renderWithTranslation(context: ICanvasContextWrapper, x: number, y: number, flipHorizontally: boolean, flipVertically: boolean, rotation: number, renderCallback: () => any) {
   context.save();
   Utils.translateCanvasContext(context, x, y, flipHorizontally, flipVertically, rotation);
   renderCallback();
@@ -24,7 +26,7 @@ Utils.renderWithTranslation = function (context, x, y, flipHorizontally, flipVer
  * @param  {boolean} flipVertically   Whether to vertically flip the canvas.
  * @param  {number} rotation         The amount to rotate the canvas, in radians.
  */
-Utils.translateCanvasContext = function (context, x, y, flipHorizontally, flipVertically, rotation) {
+public static translateCanvasContext(context: ICanvasContextWrapper, x: number, y: number, flipHorizontally: boolean, flipVertically: boolean, rotation: number) {
   context.translate(x, y);
   if (flipHorizontally || flipVertically) {
     context.scale(flipHorizontally ? -1 : 1, flipVertically ? -1 : 1);
@@ -32,21 +34,21 @@ Utils.translateCanvasContext = function (context, x, y, flipHorizontally, flipVe
   if (rotation) {
     context.rotate(rotation);
   }
-};
+}
 
-/** Clear the visible portion of a canvas context.
-* @param {CanvasContextWrapper} context
-*/
-Utils.clearCanvasContext = function (context) {
-  context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-};
-
-Utils.getWindow = function() {
-  if (typeof window !== 'undefined' && window) {
-    return window;
-  } else {
-    return {};
+  /** Clear the visible portion of a canvas context.
+  * @param {CanvasContextWrapper} context
+  */
+  public clearCanvasContext(context: ICanvasContextWrapper) {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
   }
-};
 
-module.exports = Utils;
+  public getWindow(): Window | {} {
+    if (typeof window !== 'undefined' && window) {
+      return window;
+    } else {
+      return {};
+    }
+  }
+
+}

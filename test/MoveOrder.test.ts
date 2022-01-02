@@ -1,6 +1,4 @@
-var MoveOrder = require('../src/MoveOrder');
-var Mocks = require('./Mocks');
-var Utils = require('../src/Utils');
+
 
 describe("MoveOrder", function(){
   describe("#update()", function(){
