@@ -5,8 +5,6 @@ import { ISpriteProps, Sprite } from "./Sprite";
 
 export interface IImageSpriteProps extends ISpriteProps {
   image: HTMLImageElement;
-  width: number;
-  height: number;
   imageRenderer: IImageRenderer;
 }
 

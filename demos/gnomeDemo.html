@@ -1,0 +1,28 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Scratch Page</title>
+<style>
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div id="buttons"><button onclick="gnomeDemo.togglePause();">Pause</button></div>
+  <div id="info"></div>
+  <script type="text/javascript" src="../bundled/index.js">
+  </script>
+  <script type="text/javascript">
+    var gnomeDemo = new slgfx.GnomeDemo({
+      targetDiv: document.getElementById('content'),
+      fpsElem: document.getElementById('info'),
+      backgroundColor: '#111122'
+    });
+  </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import { ILayer, Layer } from './Layer';
 import { ILayerFactory, LayerFactory } from './LayerFactory';
 import { SLGfxMouseEvent } from './SLGfxMouseEvent';
 
-export interface ISLGfxScreen {
+export interface IGfxPanel {
   initialize(): void;
   setViewOriginX(viewOriginX: number): void;
   setViewOriginY(viewOriginY: number): void;
@@ -56,14 +56,14 @@ export interface ISLGfxScreen {
   notify(eventOrEventType: Event | string, data: any, time: number): void;
 }
 
-export interface ISLGfxScreenProps {
-  targetDiv: HTMLElement; 
+export interface IGfxPanelProps {
+  targetElement: HTMLElement; 
   layerFactory?: ILayerFactory; 
   scaleX?: number; 
   scaleY?: number; 
   width?: any; 
   height?: any; 
-  fpsElem?: any; 
+  fpsElement?: any; 
   imageSmoothingEnabled?: boolean; 
   useMouseMoveEvents?: boolean;
   backgroundColor?: string; 
@@ -73,18 +73,18 @@ export interface ISLGfxScreenProps {
   requestAnimationFrame?: () => void; 
 }
 
-/** The Screen is the overriding container for Graphics components.
-* The Screen orchestrates updating and rendering its layers, propagates
+/** The Panel is the overriding container for Graphics components.
+* The panel orchestrates updating and rendering its layers, propagates
 * mouse events down to the layers, and notifies event listeners when events occur.
 * @constructor
 * @param {Object} props Properties
-* @param {HTMLElement} props.targetDiv The target HTMLElement into which the screen and its layers will be built.
+* @param {HTMLElement} props.targetElement The target HTMLElement into which the screen and its layers will be built.
 * @param {LayerFactory} [props.layerFactory=LayerFactory] The layer factory to use to create layers.  Defaults to LayerFactory.
 * @param {int} [props.scaleX=1] The horizontal scale of the screen.
 * @param {int} [props.scaleY=1] The vertical scale of the screen.
 * @param {int} [props.width=800] The width of the screen.
 * @param {int} [props.height=600] The height of the screen.
-* @param {HTMLElement} [props.fpsElem] Optional. An HTMLElement to write Frames-per-second information to.
+* @param {HTMLElement} [props.fpsElement] Optional. An HTMLElement to write Frames-per-second information to.
 * @param {boolean} [props.imageSmoothingEnabled=false] Whether to use image smoothing on child canvases.
 * @param {boolean} [props.useMouseMoveEvents=true] Whether to listen for mouseevents on this screen.
 * @param {string} [props.backgroundColor=black] Background color of the screen. Any valid CSS color string.
@@ -94,7 +94,7 @@ export interface ISLGfxScreenProps {
 * If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
 * @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
-export class SLGfxScreen implements ISLGfxScreen {
+export class GfxPanel implements IGfxPanel {
   private _targetDiv: HTMLElement;
   private _layerFactory: ILayerFactory;
   private _scaleX: number;
@@ -129,14 +129,14 @@ export class SLGfxScreen implements ISLGfxScreen {
 
   private _tabNotVisible: boolean;
 
-  constructor(props: ISLGfxScreenProps) {
-    this._targetDiv = props.targetDiv;
+  constructor(props: IGfxPanelProps) {
+    this._targetDiv = props.targetElement;
     this._layerFactory = props.layerFactory || new LayerFactory();
     this._scaleX = props.scaleX || 1;
     this._scaleY = props.scaleY || 1;
     this._width = (props.width || 640) * this._scaleX;
     this._height = (props.height || 480) * this._scaleY;
-    this._fpsElem = props.fpsElem || null;
+    this._fpsElem = props.fpsElement || null;
     this._imageSmoothingEnabled = props.imageSmoothingEnabled || false;
     this._last = 0;
     this._mouseX = -1;
@@ -495,7 +495,7 @@ export class SLGfxScreen implements ISLGfxScreen {
   * @fires Screen#AFTER_RENDER
   * @fires Screen#MOUSE_MOVE
   */
-  public render(time: number) {
+  public render(time?: number) {
     time = time || 1;
     if (this._paused || this._tabNotVisible) return;
     if (this._unpaused) {

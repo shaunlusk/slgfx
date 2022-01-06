@@ -16,7 +16,7 @@ export interface IImageRenderer {
 */
 export class ImageRenderer implements IImageRenderer {
 
-  constructor(private _screenScaleX: number, private _screenScaleY: number) {
+  constructor(private _screenScaleX: number = 1, private _screenScaleY: number = 1) {
   }
 
   /** Draws an image or portion of an image to the canvas.

@@ -4,7 +4,7 @@ import { ICanvasContextWrapper } from './CanvasContextWrapper';
 import { EventType } from './EventType';
 import { GfxElementZIndexComparable } from './GfxElementZIndexComparable';
 import { MoveOrder } from './MoveOrder';
-import { SLGfxScreen } from './SLGfxScreen';
+import { GfxPanel } from './GfxPanel';
 
 export interface IGfxElement {
   notify(event: Event): void;
@@ -18,9 +18,9 @@ export interface IGfxElement {
   getZIndex(): number;
   setZIndex(zIndex: number): void;
   getZIndexComparable(): GfxElementZIndexComparable;
-  getScreenContext(): SLGfxScreen;
-  getScreenScaleX(): number;
-  getScreenScaleY(): number;
+  getGfxPanel(): GfxPanel;
+  getPanelScaleX(): number;
+  getPanelScaleY(): number;
   getTotalScaleX(): number;
   getTotalScaleY(): number;
   getElementScaleX(): number;
@@ -48,15 +48,15 @@ export interface IGfxElement {
   isVerticallyFlipped(): boolean;
   setHorizontallyFlipped(flipped: boolean): void;
   setVerticallyFlipped(flipped: boolean): void;
-  flash(interval: number, duration: number, callback: () => any): void;
+  flash(interval: number, duration: number, callback: () => void): void;
   isFlashing(): boolean;
   turnFlashOff(): void;
-  nudge(offsetX: number, offsetY: number, decay: number, interval: number, intervalDecay: number, callback: () => any): void;
+  nudge(offsetX: number, offsetY: number, decay: number, interval: number, intervalDecay: number, callback: () => void): void;
   shake(intensity: number, intensityDecay: number, interval: number, intervalDecay: number, notToExceedTime: number, callback: () => any): void;
   setMoveRates(xMoveRate: number, yMoveRate: number): void;
   getMoveRateX(): number;
   getMoveRateY(): number;
-  moveTo(x: number, y: number, duration: number, callback: (element: GfxElement) => any): void;
+  moveTo(x: number, y: number, duration: number, callback: (element: GfxElement) => void): void;
   clearMoveQueue(): void;
   turnOff(): void;
   show(): void;
@@ -78,20 +78,20 @@ export interface IGfxElement {
 }
 
 export interface IGfxElementProps { 
-  screenContext: SLGfxScreen; 
-  scaleX: number; 
-  scaleY: number; 
-  hidden: boolean; 
-  x: number; 
-  y: number; 
-  zIndex: number; 
+  gfxPanel: GfxPanel; 
+  scaleX?: number; 
+  scaleY?: number; 
+  hidden?: boolean; 
+  x?: number; 
+  y?: number; 
+  zIndex?: number; 
   width: number; 
   height: number; 
-  rotation: any; 
-  baseRotation: any; 
-  horizontalFlip: boolean; 
-  verticalFlip: boolean; 
-  eventManager: EventManager; 
+  rotation?: number; 
+  baseRotation?: number; 
+  horizontalFlip?: boolean; 
+  verticalFlip?: boolean; 
+  eventManager?: EventManager; 
 }
 
 /** <p>Graphics element base class.</p>
@@ -113,13 +113,13 @@ export interface IGfxElementProps {
 * this will have element1 and element2 properties, where element1 is the element on which collidesWith() was called, and element2 was the element passed to the method.</p>
 * <p>In addition to the element property, the mouse events will also include x,y properties in the data, corresponding to the coordinates of the event. </p>
 *
-* <p>Event listeners can be attached to individual elements, or at the screen level.  Refer to documentation on the "on" and "notify" methods.</p>
+* <p>Event listeners can be attached to individual elements, or at the panel level.  Refer to documentation on the "on" and "notify" methods.</p>
 *
 * @constructor
 * @param {Object} props Properties for this GfxElement.
-* @param {SLGfxScreen} props.screenContext The target screen.
-* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of screen scale.
-* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of screen scale.
+* @param {GfxPanel} props.gfxPanel The target panel.
+* @param {int} [props.scaleX=1] Horizontal scale of this element.  Independent of panel scale.
+* @param {int} [props.scaleY=1] Vertical scale of this element.  Independent of panel scale.
 * @param {boolean} [props.hidden=false] Whether to hide this element.
 * @param {number} [props.x=0] The X coordinate for this element.
 * @param {number} [props.y=0] The Y coordinate for this element.
@@ -134,7 +134,7 @@ export interface IGfxElementProps {
 export abstract class GfxElement implements IGfxElement {
   private static id = 0;
   private _id = GfxElement.id++;
-  private _screenContext: SLGfxScreen;
+  private _gfxPanel: GfxPanel;
   private _scaleX: number;
   private _scaleY: number;
   private _currentMove?: MoveOrder;
@@ -168,22 +168,22 @@ export abstract class GfxElement implements IGfxElement {
   private _lastCollisionBoxHeight: number;
   private _horizontalFlip: boolean;
   private _verticalFlip: boolean;
-  private _flashDoneCallback?: () => any;
+  private _flashDoneCallback?: () => void;
   private _isFlashing: boolean;
   private _flashStartTime: number;
   private _flashDuration: number;
   private _flashHidden: boolean;
   private _flashElapsed: number;
   private _flashInterval: number;
-  private _nudgeDoneCallback?: () => any;
+  private _nudgeDoneCallback?: () => void;
   private _isProcessingNudge: boolean;
-  private _shakeDoneCallback?: () => any;
+  private _shakeDoneCallback?: () => void;
   private _isProcessingShake: boolean;
   private _eventManager: EventManager;
 
   constructor(props: IGfxElementProps) {
     this._id = GfxElement.id++;
-    this._screenContext = props.screenContext;
+    this._gfxPanel = props.gfxPanel;
     this._scaleX = props.scaleX || 1;
     this._scaleY = props.scaleY || 1;
     this._currentMove = null;
@@ -236,7 +236,7 @@ export abstract class GfxElement implements IGfxElement {
     this._shakeDoneCallback = null;
     this._isProcessingShake = false;
 
-    this._eventManager = props.eventManager;
+    this._eventManager = props.eventManager || new EventManager();
 
     this._recalculateRotatedCollisionBox();
 
@@ -254,13 +254,35 @@ export abstract class GfxElement implements IGfxElement {
     sizeAdjustment: 2
   }
 
+  public addEventListener(eventType: string, callback: (ev: Event) => any, id?: string): string {
+    return this._eventManager.addEventListener(eventType, callback, id);
+  }
+
+  public on = this.addEventListener;
+
+  public removeEventListener(eventListenerId: string): void {
+    this._eventManager.removeEventListener(eventListenerId);
+  }
+
+  public clearEventListeners(eventType: string): void {
+    this._eventManager.clearEventListeners(eventType);
+  }
+
   /** Notify event handlers when an event has occured.
   * @param {Event} event The event that occured
   */
-  public notify(event: Event) {
+  public notify(event: Event): void;
+  public notify(eventType: string, data?: any, time?: number): void;
+  public notify(eventOrEventType: Event|string, data?: any, time?: number): void {
+    let event = null;
+    if (eventOrEventType instanceof Event) {
+      event = eventOrEventType;
+    } else {
+      event = new Event(eventOrEventType, data, time);
+    }
     this._eventManager.notify(event);
-    this.getScreenContext().notify(event);
-  }
+    this.getGfxPanel().notify(event);
+  }  
 
   /** Return the unique id of this element.
   * @return {int} This element's unique id.
@@ -329,34 +351,34 @@ export abstract class GfxElement implements IGfxElement {
   }
 
   /**
-  * Return the parent Screen for this element.
-  * @return {SLGfxScreen}
+  * Return the parent GfxPanel for this element.
+  * @return {GfxPanel}
   */
-  public getScreenContext() {return this._screenContext;}
+  public getGfxPanel() {return this._gfxPanel;}
 
   /**
-  * Return the horizontal scale of this element's parent screen.
+  * Return the horizontal scale of this element's parent panel.
   * @return {int}
   */
-  public getScreenScaleX() { return this.getScreenContext().getScaleX(); }
+  public getPanelScaleX() { return this.getGfxPanel().getScaleX(); }
 
   /**
-  * Return the vertical scale of this element's parent screen.
+  * Return the vertical scale of this element's parent panel.
   * @return {int}
   */
-  public getScreenScaleY() { return this.getScreenContext().getScaleY(); }
+  public getPanelScaleY() { return this.getGfxPanel().getScaleY(); }
 
   /**
-  * Return the total horizontal scale for this element (screen scale * element scale).
+  * Return the total horizontal scale for this element (panel scale * element scale).
   * @return {int}
   */
-  public getTotalScaleX() { return this.getElementScaleX() * this.getScreenContext().getScaleX(); }
+  public getTotalScaleX() { return this.getElementScaleX() * this.getGfxPanel().getScaleX(); }
 
   /**
-  * Return the total vertical scale for this element (screen scale * element scale).
+  * Return the total vertical scale for this element (panel scale * element scale).
   * @return {int}
   */
-  public getTotalScaleY() { return this.getElementScaleY() * this.getScreenContext().getScaleY(); }
+  public getTotalScaleY() { return this.getElementScaleY() * this.getGfxPanel().getScaleY(); }
 
   /**
   * Return the horizontal scale of this element.
@@ -391,11 +413,11 @@ export abstract class GfxElement implements IGfxElement {
   public getX() { return this._x; }
 
   /**
-  * Get the screen x coordinate of this element.
+  * Get the panel x coordinate of this element.
   * @return {number}
   */
   public getScaledX() {
-    return this.getX() * this.getScreenScaleX();
+    return this.getX() * this.getPanelScaleX();
   }
 
   /**
@@ -405,11 +427,11 @@ export abstract class GfxElement implements IGfxElement {
   public getY() { return this._y; }
 
   /**
-  * Get the screen x coordinate of this element.
+  * Get the panel x coordinate of this element.
   * @return {number}
   */
   public getScaledY() {
-    return this.getY() * this.getScreenScaleY();
+    return this.getY() * this.getPanelScaleY();
   }
 
   /**
@@ -457,7 +479,7 @@ export abstract class GfxElement implements IGfxElement {
   public getWidth() { return this._width; }
 
   /**
-  * Return this element's width, incorporating screen and element-local scaling.
+  * Return this element's width, incorporating parent panel and element-local scaling.
   * @return {number}
   */
   public getScaledWidth() { return this.getWidth() * this.getTotalScaleX(); }
@@ -470,7 +492,7 @@ export abstract class GfxElement implements IGfxElement {
   public getHeight() { return this._height; }
 
   /**
-  * Return this element's height, incorporating screen and element-local scaling.
+  * Return this element's height, incorporating parent panel and element-local scaling.
   * @return {number}
   */
   public getScaledHeight() { return this.getHeight() * this.getTotalScaleY(); }
@@ -585,7 +607,7 @@ export abstract class GfxElement implements IGfxElement {
   * @param {number} duration How long to keep flashing. If duration is -1, will flash until turned off.
   * @param {function} callback A function to call when flashing ends.
   */
-  public flash(interval: number, duration: number, callback?: () => any) {
+  public flash(interval: number, duration: number, callback?: () => void) {
     this._flashInterval = interval;
     this._flashDuration = duration;
     this._isFlashing = true;
@@ -645,10 +667,10 @@ export abstract class GfxElement implements IGfxElement {
   * @fires GfxElement#ELEMENT_STARTED_MOVING
   * @fires GfxElement#ELEMENT_STOPPED_MOVING
   */
-  public nudge(offsetX: number, offsetY: number, decay: number, interval: number, intervalDecay: number, callback?: () => any) {
+  public nudge(offsetX: number, offsetY: number, decay: number, interval: number, intervalDecay: number, callback?: () => void) {
     if (interval < 0) throw new Error ("interval cannot be less than 0");
     this._nudgeDoneCallback = callback;
-    var tx: any,ty: any;
+    var tx: number, ty: number;
     var xdir = offsetX >= 0 ? 1 : -1;
     var ydir = offsetY >= 0 ? 1 : -1;
     var count = 0;
@@ -686,7 +708,7 @@ export abstract class GfxElement implements IGfxElement {
   * @fires GfxElement#ELEMENT_STARTED_MOVING
   * @fires GfxElement#ELEMENT_STOPPED_MOVING
   */
-  public shake(intensity: number, intensityDecay: number, interval: number, intervalDecay?: number, notToExceedTime?: number, callback?: () => any) {
+  public shake(intensity: number, intensityDecay: number, interval: number, intervalDecay?: number, notToExceedTime?: number, callback?: () => void) {
     if (interval < 0) throw new Error ("interval cannot be less than 0");
     if (intervalDecay === 0 && !notToExceedTime) throw new Error("must specify either intervalDecay or notToExceedTime");
     this._shakeDoneCallback = callback;
@@ -763,7 +785,7 @@ export abstract class GfxElement implements IGfxElement {
   * @fires GfxElement#ELEMENT_STARTED_MOVING
   * @fires GfxElement#ELEMENT_STOPPED_MOVING
   */
-  public moveTo(x: number,y: number,duration: number, callback?: (element: GfxElement) => any) {
+  public moveTo(x: number,y: number,duration: number, callback?: (element: GfxElement) => void) {
     duration = duration || 16;
     var moveOrder = new MoveOrder(this, x, y, duration, this._moveOrderCallback.bind(this), callback);
     this._moveQueue.push(moveOrder);
@@ -909,7 +931,7 @@ export abstract class GfxElement implements IGfxElement {
   * @param {number} time
   * @param {number} diff
   */
-  private _updateMoveOrder(time: number,diff: any) {
+  private _updateMoveOrder(time: number, diff: number) {
     if (this._currentMove !== null) {
       this._currentMove.update(diff);
       this.setDirty(true);
@@ -1012,7 +1034,7 @@ export abstract class GfxElement implements IGfxElement {
     return result;
   }
 
-  /** Check whether this element intersects a specific point on the screen.
+  /** Check whether this element intersects a specific point on the panel.
   * @param {number} x
   * @param {number} y
   * @return {boolean}
@@ -1045,7 +1067,7 @@ export abstract class GfxElement implements IGfxElement {
     return result;
   }
 
-  /** Returns the x value of the collision box.  Incorporates screen scale.
+  /** Returns the x value of the collision box.  Incorporates panel scale.
   * @return {number}
   */
   public getCollisionBoxX() {
@@ -1053,7 +1075,7 @@ export abstract class GfxElement implements IGfxElement {
     return this.getScaledX() + GfxElement.AntiAliasCorrection.coordinateOffset;
   }
 
-  /** Returns the y value of the collision box.  Incorporates screen scale.
+  /** Returns the y value of the collision box.  Incorporates panel scale.
   * @return {number}
   */
   public getCollisionBoxY() {
@@ -1088,7 +1110,7 @@ export abstract class GfxElement implements IGfxElement {
   public handleMouseEvent(event: SLGfxMouseEvent) {
     var eventData = this._setupSecondaryEventData(event);
     var secondaryEvents = [];
-    // GfxElement will use screen scaled coordinates for comparison;
+    // GfxElement will use panel scaled coordinates for comparison;
     // so, don't use final x & y from event, but rather use scaled values
     // TODO: name things better to make them less confusing?
     if (this.collidesWithCoordinates(event.data.viewOriginAdjustedX, event.data.viewOriginAdjustedY)) {
