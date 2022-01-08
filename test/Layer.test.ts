@@ -1,7 +1,7 @@
 import * as TypeMoq from 'typemoq';
 import { ICanvasContextWrapper } from '../src/CanvasContextWrapper';
 import { Layer, ILayerProps } from '../src/Layer';
-import { MouseEvent } from '../src/MouseEvent';
+import { SLGfxMouseEvent } from '../src/SLGfxMouseEvent';
 
 class TestLayer extends Layer {
   constructor(props: ILayerProps) {
@@ -11,7 +11,7 @@ class TestLayer extends Layer {
   }
   public render(diff: number) {
   }
-  public handleMouseEvent(event: MouseEvent) {
+  public handleMouseEvent(event: SLGfxMouseEvent) {
   }
   
 }

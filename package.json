@@ -11,12 +11,12 @@
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "npm run test && npm run build:docs && webpack --config webpack.config.js",
+    "build": "npm run test && npm run build:docs && webpack",
     "build:dev": "tsc",
     "test": "node ./node_modules/jest/bin/jest ./test --colors --coverage",
     "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/",
-    "clean": "rimraf dist docs",
-    "webpack": "webpack"
+    "clean": "rimraf dist docs bundle",
+    "webpack": "webpack --config webpack.config.dev.js"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",

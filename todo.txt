@@ -2,6 +2,8 @@ Typescript todos:
 use of private / protected in base classes:
   - use private and expose fields via properties?
   - use protected?
+Interfaces galore!
+ - update slcommon as well
 
 
 ---------------------------------------------
