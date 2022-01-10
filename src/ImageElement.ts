@@ -1,8 +1,9 @@
+import { IGfxElementProps } from ".";
 import { ICanvasContextWrapper } from "./CanvasContextWrapper";
 import { GfxElement } from "./GfxElement";
 import { IImageRenderer } from "./ImageRenderer";
 
-export interface IImageElementProps {
+export interface IImageElementProps extends IGfxElementProps {
   image: HTMLImageElement;
   sourceX: number;
   sourceY: number;
@@ -51,7 +52,8 @@ export class ImageElement extends GfxElement {
 
   private _imageRenderer: IImageRenderer;
 
-  constructur(props: IImageElementProps) {
+  constructor(props: IImageElementProps) {
+    super(props);
     this._image = props.image;
     this._sx = props.sourceX;
     this._sy = props.sourceY;
@@ -70,13 +72,13 @@ export class ImageElement extends GfxElement {
   * @override
   * @returns {number}
   */
-  public getWidth() {return this._sWidth;}
+  // public getWidth() {return this._sWidth;}
 
   /** Return the height for this element
   * @override
   * @returns {number}
   */
-  public getHeight() {return this._sHeight;}
+  // public getHeight() {return this._sHeight;}
 
   /** Return the starting x point on the source Image for this element
   * @returns {number}

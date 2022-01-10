@@ -1,9 +1,18 @@
 Typescript todos:
+get rid of 'var's
 use of private / protected in base classes:
   - use private and expose fields via properties?
   - use protected?
 Interfaces galore!
  - update slcommon as well
+Image element has (had) overrides for getWidth/Height.  Why.  Explore this.
+  // public getWidth() {return this._sWidth;}
+
+  /** Return the height for this element
+  * @override
+  * @returns {number}
+  */
+  // public getHeight() {return this._sHeight;}
 
 
 ---------------------------------------------

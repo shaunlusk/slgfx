@@ -1,128 +1,69 @@
-
+import * as TypeMoq from 'typemoq';
+import { ICanvasContextWrapper } from '../src/CanvasContextWrapper';
+import { MoveOrder } from '../src/MoveOrder';
+import { IGfxElement } from '../src/GfxElement';
 
 describe("MoveOrder", function(){
+  const canvasContextMock: TypeMoq.IMock<ICanvasContextWrapper> = TypeMoq.Mock.ofType<ICanvasContextWrapper>();
+  const gfxElementMock: TypeMoq.IMock<IGfxElement> = TypeMoq.Mock.ofType<IGfxElement>();
+
+
+  beforeEach(() => {
+    gfxElementMock.reset();
+    gfxElementMock.setup(x => x.getX()).returns(() => 10);
+    gfxElementMock.setup(x => x.getY()).returns(() => 20);
+  });
+
   describe("#update()", function(){
-    it("should return if not started", function(done){
-      var time = 0;
-      var diff = 16;
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
+    it('should not move the parent element if not started', () => {
+      const mo = new MoveOrder(gfxElementMock.object, 100, 110, 10, () => {});
 
-      move.update(time,diff);
+      mo.update(1);
 
-      expect(move._startTime).toBe(-1);
-      done();
+      gfxElementMock.verify(x => x.setX(TypeMoq.It.isAnyNumber()), TypeMoq.Times.never());
+      gfxElementMock.verify(x => x.setY(TypeMoq.It.isAnyNumber()), TypeMoq.Times.never());
     });
-    it("should return if ended", function(done){
-      var time = 0;
-      var diff = 16;
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-      move._end = true;
+    it('should move the parent element', () => {
+      const mo = new MoveOrder(gfxElementMock.object, 100, 110, 10, () => {});
+      mo.start();
 
-      move.update(time,diff);
+      mo.update(1);
 
-      expect(move._startTime).toBe(-1);
-      done();
+      gfxElementMock.verify(x => x.setX(TypeMoq.It.isValue(19)), TypeMoq.Times.once());
+      gfxElementMock.verify(x => x.setY(TypeMoq.It.isValue(29)), TypeMoq.Times.once());
     });
-    it("should set start time if start time is -1", function(done){
-      var time = 0;
-      var diff = 16;
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-      move.start();
+    it('should not move the parent element if already done.', () => {
+      const mo = new MoveOrder(gfxElementMock.object, 100, 110, 10, () => {});
+      mo.start();
+      mo.end();
 
-      move.update(time,diff);
+      mo.update(1);
 
-      expect(move._startTime).toBe(0);
-      done();
+      // should only move it to final position - no further updates
+      gfxElementMock.verify(x => x.setX(TypeMoq.It.isValue(100)), TypeMoq.Times.once());
+      gfxElementMock.verify(x => x.setY(TypeMoq.It.isValue(110)), TypeMoq.Times.once());
     });
-    it("should not set start time if start time is not -1", function(done){
-      var time = 0;
-      var diff = 16;
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-      move.start();
-      move.update(time,diff);
-      time = 8;
+    it('should end when time reached', () => {
+      let done = false;
+      const mo = new MoveOrder(gfxElementMock.object, 100, 110, 10, () => {done = true;});
+      mo.start();
 
-      move.update(time,diff);
+      mo.update(10);
 
-      expect(move._startTime).toBe(0);
-      done();
+      gfxElementMock.verify(x => x.setX(TypeMoq.It.isValue(100)), TypeMoq.Times.once());
+      gfxElementMock.verify(x => x.setY(TypeMoq.It.isValue(110)), TypeMoq.Times.once());
+      expect(done).toBeTruthy();
     });
-    it("should end if time percent is >=1", function(done){
-      var time = 0;
-      var diff = 16;
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-      move.start();
-      move.update(time,diff);
-      time = 100;
+    it('should callback', () => {
+      let callbackCalled = false;
+      const mo = new MoveOrder(gfxElementMock.object, 100, 110, 10, () => {}, () => {callbackCalled = true;});
+      mo.start();
 
-      move.update(time,diff);
+      mo.update(10);
 
-      expect(move._end).toBeTruthy();
-      done();
-    });
-    it("should update element coords if time percent is < 1", function(done){
-      var time = 0;
-      var diff = 16;
-      var element = Mocks.getMockGfxElement();
-      var move = new MoveOrder(element,5, 5, 100);
-
-      move.start();
-      move.update(time,diff);
-      time = 50;
-      move.update(time,diff);
-
-      expect(element.getX()).toBeGreaterThan(2);
-      expect(element.getY()).toBeGreaterThan(2);
-      done();
-    });
-  });
-  describe("#_end()", function(){
-    it("should set end true", function(done){
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-
-      move.end();
-
-      expect(move._end).toBeTruthy();
-      done();
-    });
-    it("should set element coords to move target coords", function(done){
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100);
-
-      move.end();
-
-      expect(move._element.x).toBe(5);
-      expect(move._element.y).toBe(5);
-      done();
-    });
-    it("should call elementCallback", function(done){
-      var a = {};
-      var move = new MoveOrder(Mocks.getMockGfxElement(),5, 5, 100, function() {
-        a.calledIt = true;
-      });
-
-      move.end();
-      expect(a.calledIt).toBeTruthy();
-      done();
-    });
-  });
-  describe("#_timePercent()", function() {
-    it("it should return proper time percent", function(done){
-      var move = new MoveOrder(Mocks.getMockGfxElement(), null, null, 100);
-      move._startTime = 0;
-      var result, time;
-      time = 0;
-      result = move._timePercent(time);
-      expect(result).toBe(0);
-      time = 45;
-      result = move._timePercent(time);
-      expect(result).toBe(0.45);
-      time = 99;
-      result = move._timePercent(time);
-      expect(result).toBe(0.99);
-      time = 100;
-      result = move._timePercent(time);
-      expect(result).toBe(1);
-      done();
+      gfxElementMock.verify(x => x.setX(TypeMoq.It.isValue(100)), TypeMoq.Times.once());
+      gfxElementMock.verify(x => x.setY(TypeMoq.It.isValue(110)), TypeMoq.Times.once());
+      expect(callbackCalled).toBeTruthy();
     });
   });
 });

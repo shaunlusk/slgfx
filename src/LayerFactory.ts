@@ -29,15 +29,15 @@ export class LayerFactory implements ILayerFactory {
 
   /** Creates a layer of a specified type with specified properties.
   * @param {string} type The type of layer to create.
-  * @param {Object} layerProps The properties to pass to the l
+  * @param {Object} layerProps The properties to pass to the layer constructor
   */
-  public createLayer(type: string, layerProps?: ILayerProps) {
+  public createLayer<T extends ILayer, P extends ILayerProps>(type: string, layerProps: P): T {
     var layer = null;
     var ctor = this._registeredTypes[type];
     if (ctor && Utils.isFunction(ctor)) {
       layer = ctor(layerProps);
     }
-    return layer;
+    return layer as T;
   }
 
   public static DefaultTypes: {[key: string]: (layerProps: ILayerProps) => Layer} = {

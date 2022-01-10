@@ -4,7 +4,7 @@ import { ICanvasContextWrapper } from './CanvasContextWrapper';
 import { EventType } from './EventType';
 import { GfxElementZIndexComparable } from './GfxElementZIndexComparable';
 import { MoveOrder } from './MoveOrder';
-import { GfxPanel } from './GfxPanel';
+import { IGfxPanel } from './GfxPanel';
 
 export interface IGfxElement {
   notify(event: Event): void;
@@ -18,7 +18,7 @@ export interface IGfxElement {
   getZIndex(): number;
   setZIndex(zIndex: number): void;
   getZIndexComparable(): GfxElementZIndexComparable;
-  getGfxPanel(): GfxPanel;
+  getGfxPanel(): IGfxPanel;
   getPanelScaleX(): number;
   getPanelScaleY(): number;
   getTotalScaleX(): number;
@@ -78,7 +78,7 @@ export interface IGfxElement {
 }
 
 export interface IGfxElementProps { 
-  gfxPanel: GfxPanel; 
+  gfxPanel: IGfxPanel; 
   scaleX?: number; 
   scaleY?: number; 
   hidden?: boolean; 
@@ -134,7 +134,7 @@ export interface IGfxElementProps {
 export abstract class GfxElement implements IGfxElement {
   private static id = 0;
   private _id = GfxElement.id++;
-  private _gfxPanel: GfxPanel;
+  private _gfxPanel: IGfxPanel;
   private _scaleX: number;
   private _scaleY: number;
   private _currentMove?: MoveOrder;

@@ -18,8 +18,8 @@ export class MoveOrder {
   private _startY: number;
   private _duration: number;
   private _timeElapsed: number;
-  private _elementCallback: () => any;
-  private _callback?: (element: any) => any;
+  private _elementCallback: () => void;
+  private _callback?: (element: any) => void;
   private _end: boolean;
   private _started: boolean;
 

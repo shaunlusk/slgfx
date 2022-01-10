@@ -1,5 +1,4 @@
 import * as TypeMoq from 'typemoq';
-import { Event } from '@shaunlusk/slcommon';
 import { ICanvasContextWrapper } from '../src/CanvasContextWrapper';
 import { EventType } from '../src/EventType';
 import { IGfxElement } from '../src/GfxElement';
@@ -203,7 +202,6 @@ describe("GfxLayer", function() {
       expect(type).toBe(EventType.ELEMENT_HIT_BOTTOM_EDGE);
       done();
     });
-  // });
   });
   describe("#handleMouseEvent()", function() {
     it("should call handleMouseEvent on elements", function(done) {
