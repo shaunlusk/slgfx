@@ -36,8 +36,8 @@ describe("ImageElement", function() {
       imageElement.render(canvasContextMock.object, 0, 0);
 
       imageRendererMock.verify(x => x.renderImage(
-        TypeMoq.It.isValue(canvasContextMock.object),
-        TypeMoq.It.isValue(imageMock.object),
+        canvasContextMock.object,
+        imageMock.object,
         TypeMoq.It.isValue(elementProps.sourceX),
         TypeMoq.It.isValue(elementProps.sourceY),
         TypeMoq.It.isValue(elementProps.sourceWidth),

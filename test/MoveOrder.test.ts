@@ -1,12 +1,9 @@
 import * as TypeMoq from 'typemoq';
-import { ICanvasContextWrapper } from '../src/CanvasContextWrapper';
 import { MoveOrder } from '../src/MoveOrder';
 import { IGfxElement } from '../src/GfxElement';
 
 describe("MoveOrder", function(){
-  const canvasContextMock: TypeMoq.IMock<ICanvasContextWrapper> = TypeMoq.Mock.ofType<ICanvasContextWrapper>();
   const gfxElementMock: TypeMoq.IMock<IGfxElement> = TypeMoq.Mock.ofType<IGfxElement>();
-
 
   beforeEach(() => {
     gfxElementMock.reset();

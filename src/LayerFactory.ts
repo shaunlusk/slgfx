@@ -4,7 +4,7 @@ import { GfxLayer } from "./GfxLayer";
 import { ILayer, ILayerProps, Layer } from "./Layer";
 
 export interface ILayerFactory {
-  createLayer(type: string, layerProps: ILayerProps): ILayer;
+  createLayer<T extends ILayer, P extends ILayerProps>(type: string, layerProps: P): T;
 }
 
 /** Creates Layers.

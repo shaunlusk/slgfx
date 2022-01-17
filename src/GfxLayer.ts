@@ -30,7 +30,6 @@ export class GfxLayer extends Layer {
     this._dirtyElements.setInvertPriority(false);
     this._removedElements = {};
     this._zIndexCounter = 0;
-    // If "removeAllElements()" was called, this flag allows cleanup to do so more efficiently.
     this._allElementsRemoved = false;
   }
 

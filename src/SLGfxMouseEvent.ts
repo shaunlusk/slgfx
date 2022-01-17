@@ -8,10 +8,19 @@ import { Event } from '@shaunlusk/slcommon';
 * @param {time} [time] Optional.  The time the event occurred. If not specified, uses performance.now()
 */
 export class SLGfxMouseEvent extends Event {
-  constructor(type: string, data: any, time?: number) {
+  constructor(type: string, data: MouseEventData, time?: number) {
     super(type, data, time);
     this.endEventPropagation = false; 
   }
 
   public endEventPropagation: boolean;
+}
+
+export interface MouseEventData {
+  x: number;
+  y: number;
+  viewOriginAdjustedX: number;
+  viewOriginAdjustedY: number;
+  rawX: number;
+  rawY: number;
 }

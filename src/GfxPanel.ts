@@ -3,10 +3,9 @@ import { CanvasContextWrapper } from './CanvasContextWrapper';
 import { EventType } from './EventType';
 import { ILayer, Layer } from './Layer';
 import { ILayerFactory, LayerFactory } from './LayerFactory';
-import { SLGfxMouseEvent } from './SLGfxMouseEvent';
+import { MouseEventData, SLGfxMouseEvent } from './SLGfxMouseEvent';
 
 export interface IGfxPanel {
-  initialize(): void;
   setViewOriginX(viewOriginX: number): void;
   setViewOriginY(viewOriginY: number): void;
   getViewOriginX(): void;
@@ -16,7 +15,7 @@ export interface IGfxPanel {
   getBackgroundColor(): string;
   setBorderColor(color: string): void;
   getBorderColor(): string;
-  setBorderSize(size: number): void;
+  setBorderSize(size: string | number): void;
   getBorderSize(): string;
   getBorderTopSize(): string;
   getBorderLeftSize(): string;
@@ -38,8 +37,6 @@ export interface IGfxPanel {
   onNextFrameEnd(callback: () => void): void;
   isPaused(): boolean;
   render(time: number): void;
-  handleMouseMoveEvent(e: MouseEvent): void;
-  handleMouseEvent(e: MouseEvent): void;
   getXFromMouseEvent(e: MouseEvent): number;
   getYFromMouseEvent(e: MouseEvent): number;
   getUnScaledX(x: number): number;
@@ -63,7 +60,7 @@ export interface IGfxPanelProps {
   scaleY?: number; 
   width?: any; 
   height?: any; 
-  fpsElement?: any; 
+  fpsElement?: HTMLElement; 
   imageSmoothingEnabled?: boolean; 
   useMouseMoveEvents?: boolean;
   backgroundColor?: string; 
@@ -71,6 +68,7 @@ export interface IGfxPanelProps {
   borderSize?: number | string; 
   eventManager?: EventManager; 
   requestAnimationFrame?: () => void; 
+  document?: Document;
 }
 
 /** The Panel is the overriding container for Graphics components.
@@ -95,7 +93,7 @@ export interface IGfxPanelProps {
 * @param {function} [props.requestAnimationFrame=window.requestAnimationFrame] A function that regulates render rate.  Uses window.requestAnimationFrame by default.
 */
 export class GfxPanel implements IGfxPanel {
-  private _targetDiv: HTMLElement;
+  private _targetElement: HTMLElement;
   private _layerFactory: ILayerFactory;
   private _scaleX: number;
   private _scaleY: number;
@@ -125,12 +123,13 @@ export class GfxPanel implements IGfxPanel {
   private _layers: Layer[];
 
   private _requestAnimationFrame
+  private _document: Document;
   private _eventManager: EventManager;
 
   private _tabNotVisible: boolean;
 
   constructor(props: IGfxPanelProps) {
-    this._targetDiv = props.targetElement;
+    this._targetElement = props.targetElement;
     this._layerFactory = props.layerFactory || new LayerFactory();
     this._scaleX = props.scaleX || 1;
     this._scaleY = props.scaleY || 1;
@@ -160,13 +159,8 @@ export class GfxPanel implements IGfxPanel {
     this._layers = [];
 
     this._eventManager = props.eventManager || new EventManager();
-
+    this._document = props.document || document;
     this._requestAnimationFrame = props.requestAnimationFrame || (window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : () => {});
-  }
-
-  /** Setup the screen on the page. Must be called prior to rendering.
-  */
-  public initialize() {
     this._prepareDiv();
     this._setupEventListeners();
   }
@@ -221,23 +215,23 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _prepareDiv() {
-    this._targetDiv.style.width = this._width.toString();
-    this._targetDiv.style.height = this._height.toString();
-    this._targetDiv.style.backgroundColor = this._backgroundColor;
-    this._targetDiv.style.border = this._borderSize + " solid " + this._borderColor;
+    this._targetElement.style.width = this._width.toString();
+    this._targetElement.style.height = this._height.toString();
+    this._targetElement.style.backgroundColor = this._backgroundColor;
+    this._targetElement.style.border = this._borderSize + " solid " + this._borderColor;
   }
 
   /** @private */
   private _setupEventListeners() {
-    this._targetDiv.addEventListener("mouseup",this.handleMouseEvent.bind(this), true);
-    this._targetDiv.addEventListener("mousedown",this.handleMouseEvent.bind(this), true);
-    if (this._useMouseMoveEvents) this._targetDiv.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
-    document.addEventListener("visibilitychange", this._handleVisibilityChange.bind(this), false);
+    this._targetElement.addEventListener("mouseup",this._handleMouseEvent.bind(this), true);
+    this._targetElement.addEventListener("mousedown",this._handleMouseEvent.bind(this), true);
+    if (this._useMouseMoveEvents) this._targetElement.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
+    this._document.addEventListener("visibilitychange", this._handleVisibilityChange.bind(this), false);
   }
 
   /** @private */
   private _handleVisibilityChange() {
-    this._tabNotVisible = document.hidden;
+    this._tabNotVisible = this._document.hidden;
     if (!this._tabNotVisible && !this._paused) {
       this._unpaused = true;
       this._requestAnimationFrame(this.render.bind(this));
@@ -249,7 +243,7 @@ export class GfxPanel implements IGfxPanel {
   * @param {Function} listener The function to call when the event occurs.
   */
   public addEventListenerToDocument(event: EventType, listener: (event: any) => void) {
-    document.addEventListener(event, listener);
+    this._document.addEventListener(event, listener);
   }
 
   /** Set the background color.
@@ -257,7 +251,7 @@ export class GfxPanel implements IGfxPanel {
   */
   public setBackgroundColor(color: string) {
     this._backgroundColor = color;
-    this._targetDiv.style.backgroundColor = color;
+    this._targetElement.style.backgroundColor = color;
   }
 
   /** Return the current backgroundColor.
@@ -272,7 +266,7 @@ export class GfxPanel implements IGfxPanel {
   */
   public setBorderColor(color: string) {
     this._borderColor = color;
-    this._targetDiv.style.borderColor = color;
+    this._targetElement.style.borderColor = color;
   }
 
   /** Return the current border color.
@@ -287,44 +281,44 @@ export class GfxPanel implements IGfxPanel {
   * is provided, this will be interpretted as pixels, and a uniform border width will be set.
   * If a string is provided it will be interpretted as a CSS string, e.g. "10px 0px 10px 0px";
   */
-  public setBorderSize(size: number) {
+  public setBorderSize(size: number | string) {
     this._setBorderSize(size)
-    this._targetDiv.style.borderWidth = this._borderSize;
+    this._targetElement.style.borderWidth = this._borderSize;
   }
 
   /** Return the current border size.
   * @returns {int}
   */
   public getBorderSize() {
-    return this._targetDiv.style.borderWidth;
+    return this._targetElement.style.borderWidth;
   }
 
   /** Return the current top border size.
   * @returns {int}
   */
   public getBorderTopSize() {
-    return this._targetDiv.style.borderTopWidth;
+    return this._targetElement.style.borderTopWidth;
   }
 
   /** Return the current left border size.
   * @returns {int}
   */
   public getBorderLeftSize() {
-    return this._targetDiv.style.borderLeftWidth;
+    return this._targetElement.style.borderLeftWidth;
   }
 
   /** Return the current right border size.
   * @returns {int}
   */
   public getBorderRightSize() {
-    return this._targetDiv.style.borderRightWidth;
+    return this._targetElement.style.borderRightWidth;
   }
 
   /** Return the current bottom border size.
   * @returns {int}
   */
   public getBorderBottomSize() {
-    return this._targetDiv.style.borderBottomWidth;
+    return this._targetElement.style.borderBottomWidth;
   }
 
   /** Return the width.
@@ -389,12 +383,10 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private createCanvasForLayer(): HTMLCanvasElement {
-    var canvas = document.createElement("CANVAS") as HTMLCanvasElement;
-    this._targetDiv.appendChild(canvas);
+    var canvas = this._document.createElement("CANVAS") as HTMLCanvasElement;
+    this._targetElement.appendChild(canvas);
     canvas.width = this._width;
     canvas.height = this._height;
-    // canvas.style.width = this._width.toString();
-    // canvas.style.height = this._height.toString();
     canvas.style.position = "absolute";
     return canvas;
   }
@@ -542,14 +534,14 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _handleMouseMoveEvent(time: number) {
-    var coordinateData = this._getCoordinateDataForMouseEvent(this._mouseX, this._mouseY);
+    var coordinateData = this._getDataForMouseEvent(this._mouseX, this._mouseY);
 
     var event = new SLGfxMouseEvent(
       EventType.MOUSE_MOVE,
       coordinateData,
       time
     );
-    this.propagateMouseEventThroughLayers(event);
+    this._propagateMouseEventThroughLayers(event);
     if (!event.endEventPropagation) this._eventManager.notify(event);
     this._mouseMoved = false;
   }
@@ -596,7 +588,7 @@ export class GfxPanel implements IGfxPanel {
   * The event will be propagated during the next render cycle.
   * @param {Event} e The mouse event
   */
-  public handleMouseMoveEvent(e: MouseEvent) {
+  private handleMouseMoveEvent(e: MouseEvent) {
     if (this._paused) return false;
     this._mouseMoved = true;
     var x = this.getXFromMouseEvent(e);
@@ -612,13 +604,13 @@ export class GfxPanel implements IGfxPanel {
   }
 
   /** @private */
-  private _getCoordinateDataForMouseEvent(canvasX: number, canvasY: number): any {
+  private _getDataForMouseEvent(canvasX: number, canvasY: number): MouseEventData {
     var viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
     var viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
 
     var x = this.getUnScaledX(viewOriginAdjustedX);
     var y = this.getUnScaledY(viewOriginAdjustedY);
-    var data = {
+    var data: MouseEventData = {
       x : x,
       y : y,
       viewOriginAdjustedX : viewOriginAdjustedX,
@@ -634,7 +626,7 @@ export class GfxPanel implements IGfxPanel {
   * @fires Screen#MOUSE_UP
   * @fires Screen#MOUSE_DOWN
   */
-  public handleMouseEvent(e: MouseEvent) {
+  private _handleMouseEvent(e: MouseEvent) {
     if (this._paused) return false;
     var canvasX = this.getXFromMouseEvent(e);
     var canvasY = this.getYFromMouseEvent(e);
@@ -643,20 +635,20 @@ export class GfxPanel implements IGfxPanel {
       return false;
     }
 
-    var data = this._getCoordinateDataForMouseEvent(canvasX, canvasY);
-    data.baseEvent = e;
+    var data = this._getDataForMouseEvent(canvasX, canvasY);
+
     var type = e.type === "mouseup" ? EventType.MOUSE_UP : EventType.MOUSE_DOWN;
     var event = new SLGfxMouseEvent(type, data);
 
     // propagate through layers
-    this.propagateMouseEventThroughLayers(event);
+    this._propagateMouseEventThroughLayers(event);
     if (!event.endEventPropagation) this._eventManager.notify(event);
 
     if (e.button === 1) return false;
   }
 
   /** @private */
-  private propagateMouseEventThroughLayers(event: SLGfxMouseEvent) {
+  private _propagateMouseEventThroughLayers(event: SLGfxMouseEvent) {
     for (var i = this._layers.length - 1; i >= 0; i--) {
       if (event.endEventPropagation) return;
       this._layers[i].handleMouseEvent(event);
@@ -667,14 +659,14 @@ export class GfxPanel implements IGfxPanel {
   * @param {Event} e Mouse Event
   */
   public getXFromMouseEvent(e: MouseEvent) {
-    return (e.pageX - (this._targetDiv.offsetLeft + parseInt(this.getBorderLeftSize())));
+    return (e.pageX - (this._targetElement.offsetLeft + parseInt(this.getBorderLeftSize())));
   }
 
   /** Return the y coordinate from a mouse event.  Accounts for screen position.
   * @param {Event} e Mouse Event
   */
   public getYFromMouseEvent(e: MouseEvent) {
-    return (e.pageY - (this._targetDiv.offsetTop + parseInt(this.getBorderTopSize())));
+    return (e.pageY - (this._targetElement.offsetTop + parseInt(this.getBorderTopSize())));
   }
 
   /** Return an x value with scale removed.
@@ -716,9 +708,9 @@ export class GfxPanel implements IGfxPanel {
   * @param {string} color Any valid CSS Border color string.
   */
   public setBorder(width: any, style: any, color: any) {
-    this._targetDiv.style.borderWidth = width;
-    this._targetDiv.style.borderStyle = style;
-    this._targetDiv.style.borderColor = color;
+    this._targetElement.style.borderWidth = width;
+    this._targetElement.style.borderStyle = style;
+    this._targetElement.style.borderColor = color;
   }
 
   public addEventListener(eventType: string, callback: (ev: Event) => any, id?: string): string {
