@@ -275,7 +275,6 @@ describe("GfxElement", function() {
     it("should return move rate", function() {
       const expected = 7;
       element.setMoveRates(0, 7);
-      debugger;
       const result = element.getMoveRateY();
       expect(result).toBe(expected);
     });

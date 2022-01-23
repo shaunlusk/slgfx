@@ -13,7 +13,7 @@ export { IImageSpriteFrameProps, ImageSpriteFrame } from './ImageSpriteFrame';
 export { ILayer, ILayerProps, Layer } from './Layer';
 export { ILayerFactory, LayerFactory } from './LayerFactory';
 export { MoveOrder } from './MoveOrder';
-export { IGfxPanel as ISLGfxScreen, IGfxPanelProps as ISLGfxScreenProps, GfxPanel as SLGfxScreen } from './GfxPanel';
+export { IGfxPanel, IGfxPanelProps, GfxPanel } from './GfxPanel';
 export { SLGfxMouseEvent } from './SLGfxMouseEvent';
 export { Sprite } from './Sprite';
 export { Utils } from './Utils';

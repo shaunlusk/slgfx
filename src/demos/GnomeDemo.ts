@@ -5,10 +5,11 @@ import { GfxPanel } from "../GfxPanel";
 import { ImageLoader } from '../ImageLoader';
 import { ImageSpriteFrame } from '../ImageSpriteFrame';
 import { ImageSprite } from '../ImageSprite';
+import { ILayerProps } from '..';
 
 export interface IDemoProps {
-  targetDiv: HTMLElement;
-  fpsElem?: HTMLElement;
+  targetElement: HTMLElement;
+  fpsElement?: HTMLElement;
   backgroundColor?: string;
   borderColor?: string;
   borderSize?: string;
@@ -24,17 +25,16 @@ export class GnomeDemo {
   public constructor(props: IDemoProps) {
     this._increment = 1;
     this._panel = new GfxPanel({
-      targetElement: props.targetDiv,
+      targetElement: props.targetElement,
       backgroundColor: props.backgroundColor,
       borderColor: props.borderColor,
       borderSize: props.borderSize,
       scaleX : props.scaleX,
       scaleY : props.scaleY,
-      fpsElement : props.fpsElem
+      fpsElement : props.fpsElement
     });
 
-    this._panel.initialize();
-    this._gfxLayer = this._panel.createLayer("GfxLayer") as GfxLayer;
+    this._gfxLayer = this._panel.createLayer<GfxLayer, ILayerProps>("GfxLayer");
     this._panel.render();
 
     const imgLoader = new ImageLoader();

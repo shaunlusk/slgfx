@@ -11,10 +11,10 @@
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "npm run test && npm run build:docs && webpack",
+    "build": "npm run test && npm run build:docs && webpack --config webpack.config.js",
     "build:dev": "tsc",
     "test": "node ./node_modules/jest/bin/jest ./test --colors --coverage",
-    "build:docs": "node ./node_modules/jsdoc/jsdoc.js -R DOCSREADME.MD -d docs ./src/",
+    "build:docs": "typedoc",
     "clean": "rimraf dist docs bundle",
     "webpack": "webpack --config webpack.config.dev.js"
   },
@@ -35,6 +35,6 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
-    "@shaunlusk/slcommon": "^2.0.6"
+    "@shaunlusk/slcommon": "^2.0.7"
   }
 }

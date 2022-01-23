@@ -34,7 +34,6 @@ export class SimpleDemo {
       fpsElement : props.fpsElem
     });
 
-    this._panel.initialize();
     this._gfxLayer = this._panel.createLayer("GfxLayer") as GfxLayer;
     this._panel.render();
 

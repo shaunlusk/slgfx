@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -15,12 +16,17 @@ body {
   </div>
   <div id="buttons"><button onclick="gnomeDemo.togglePause();">Pause</button></div>
   <div id="info"></div>
-  <script type="text/javascript" src="../bundled/index.js">
+  <p>
+    <a href="https://opengameart.org/content/gnome">"Gnome"</a>
+    image sheet is by inosine, provided under the
+    <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0 license</a>.
+  </p>
+  <script type="text/javascript" src="../bundle/index.js">
   </script>
   <script type="text/javascript">
     var gnomeDemo = new slgfx.GnomeDemo({
-      targetDiv: document.getElementById('content'),
-      fpsElem: document.getElementById('info'),
+      targetElement: document.getElementById('content'),
+      fpsElement: document.getElementById('info'),
       backgroundColor: '#111122'
     });
   </script>

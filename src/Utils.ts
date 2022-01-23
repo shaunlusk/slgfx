@@ -1,6 +1,7 @@
+import { Utils as SlCommonUtils } from '@shaunlusk/slcommon';
 import { ICanvasContextWrapper } from "./CanvasContextWrapper";
 
-export class Utils {
+export class Utils extends SlCommonUtils {
 
   /** Performs some translation on the canvas context before applying some rendering function.
    * @param  {CanvasContextWrapper} context The canvas context wrapper

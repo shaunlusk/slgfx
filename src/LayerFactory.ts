@@ -32,12 +32,13 @@ export class LayerFactory implements ILayerFactory {
   * @param {Object} layerProps The properties to pass to the layer constructor
   */
   public createLayer<T extends ILayer, P extends ILayerProps>(type: string, layerProps: P): T {
-    var layer = null;
+    let layer:T;
+
     var ctor = this._registeredTypes[type];
     if (ctor && Utils.isFunction(ctor)) {
-      layer = ctor(layerProps);
+      layer = ctor(layerProps) as T;
     }
-    return layer as T;
+    return layer;
   }
 
   public static DefaultTypes: {[key: string]: (layerProps: ILayerProps) => Layer} = {

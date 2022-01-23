@@ -1,7 +1,7 @@
 import { Event, EventManager, Utils } from '@shaunlusk/slcommon';
 import { CanvasContextWrapper } from './CanvasContextWrapper';
 import { EventType } from './EventType';
-import { ILayer, Layer } from './Layer';
+import { ILayer, ILayerProps, Layer } from './Layer';
 import { ILayerFactory, LayerFactory } from './LayerFactory';
 import { MouseEventData, SLGfxMouseEvent } from './SLGfxMouseEvent';
 
@@ -215,8 +215,8 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _prepareDiv() {
-    this._targetElement.style.width = this._width.toString();
-    this._targetElement.style.height = this._height.toString();
+    this._targetElement.style.width = this._width + 'px';
+    this._targetElement.style.height = this._height + 'px';
     this._targetElement.style.backgroundColor = this._backgroundColor;
     this._targetElement.style.border = this._borderSize + " solid " + this._borderColor;
   }
@@ -366,7 +366,7 @@ export class GfxPanel implements IGfxPanel {
   * @param {string} type The type of layer to add - either "BackgroundLayer" or "GfxLayer"
   * @see Layer
   */
-  public createLayer(type: string, props?: any) {
+  public createLayer<T extends ILayer, P extends ILayerProps>(type: string, props?: any) {
     props = props || {};
     var canvas = this.createCanvasForLayer();
     var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
@@ -375,7 +375,7 @@ export class GfxPanel implements IGfxPanel {
     layerProps.height = layerProps.height || this.getHeight();
     layerProps.canvasContextWrapper = canvasContextWrapper;
 
-    var layer = this._layerFactory.createLayer(type, layerProps);
+    var layer = this._layerFactory.createLayer<T, P>(type, layerProps);
 
     this.addLayer(layer);
     return layer;
