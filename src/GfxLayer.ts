@@ -53,7 +53,7 @@ export class GfxLayer extends Layer {
   * @return {GfxElement} The removed element, if found.
   */
   public removeElementById(id: number) {
-    var idx = this._elements.findIndex(x => x.getId() === id);
+    const idx = this._elements.findIndex(x => x.getId() === id);
     if (idx > -1) {
       return this._removeElementByIndex(idx);
     }
@@ -73,7 +73,7 @@ export class GfxLayer extends Layer {
   */
   private _removeElementByIndex(idx: number) {
     this._removedElements[this._elements[idx].getId()] = this._elements[idx];
-    var elem = this._elements[idx];
+    const elem = this._elements[idx];
     // ensure it gets cleared
     elem.setDirty(true);
     elem.setHidden(true);
@@ -84,7 +84,7 @@ export class GfxLayer extends Layer {
   /** Remove all elements from the layer.
   */
   public removeAllElements() {
-    for (var i = 0; i < this._elements.length; i++) {
+    for (let i = 0; i < this._elements.length; i++) {
       this._removeElementByIndex(i);
     }
     this._allElementsRemoved = true;
@@ -106,9 +106,8 @@ export class GfxLayer extends Layer {
   * @fires GfxLayer#ELEMENT_HIT_BOTTOM_EDGE
   */
   public update(time: number, diff: number) {
-    var dirtyElement;
-    var i;
-    for (i = 0; i < this._elements.length; i++) {
+    let dirtyElement: IGfxElement;
+    for (let i = 0; i < this._elements.length; i++) {
         // ensure all elements are redrawn if the layer is dirty
         if (this.isDirty()) this._elements[i].setDirty(true);
         dirtyElement = this._elements[i].update(time, diff);
@@ -170,11 +169,10 @@ export class GfxLayer extends Layer {
   * @param {number} diff The difference between the last time and the current time  (milliseconds)
   */
   public preRender(time: number, diff: number) {
-    var i;
     Layer.prototype.preRender.call(this,time,diff);
     // layer will have been completely cleared if dirty, so no need to clear individual elements
     if (!this.isDirty()) {
-      for (i = 0; i < this._dirtyElements.size(); i++) {
+      for (let i = 0; i < this._dirtyElements.size(); i++) {
         this._dirtyElements.getByIndex(i).getElement().clear(this.getCanvasContextWrapper());
       }
     }
@@ -188,8 +186,8 @@ export class GfxLayer extends Layer {
   */
   public render(time: number, diff: number) {
     while (this._dirtyElements.peek()) {
-      var element = this._dirtyElements.pop().getElement();
-      var doRender = element.preRender(time, diff);
+      const element = this._dirtyElements.pop().getElement();
+      const doRender = element.preRender(time, diff);
       if (doRender) element.render(this.getCanvasContextWrapper(), time, diff);
       element.postRender(time,diff);
     }
@@ -205,7 +203,7 @@ export class GfxLayer extends Layer {
     } else {
       Object.keys(this._removedElements).forEach(elementIdString => {
         const elementId = parseInt(elementIdString);
-        var idx = this._elements.findIndex(x => x.getId() === elementId);
+        const idx = this._elements.findIndex(x => x.getId() === elementId);
         this._elements.splice(idx,1);
       });
     }
@@ -218,7 +216,7 @@ export class GfxLayer extends Layer {
   * @param {Event} event
   */
   public handleMouseEvent(event: SLGfxMouseEvent) {
-    for (var i = 0; i < this._elements.length; i++) {
+    for (let i = 0; i < this._elements.length; i++) {
       this._elements[i].handleMouseEvent(event);
     }
   }

@@ -670,10 +670,10 @@ export abstract class GfxElement implements IGfxElement {
   public nudge(offsetX: number, offsetY: number, decay: number, interval: number, intervalDecay: number, callback?: () => void) {
     if (interval < 0) throw new Error ("interval cannot be less than 0");
     this._nudgeDoneCallback = callback;
-    var tx: number, ty: number;
-    var xdir = offsetX >= 0 ? 1 : -1;
-    var ydir = offsetY >= 0 ? 1 : -1;
-    var count = 0;
+    let tx: number, ty: number;
+    let xdir = offsetX >= 0 ? 1 : -1;
+    let ydir = offsetY >= 0 ? 1 : -1;
+    let count = 0;
 
     while((Math.abs(offsetX) > decay || Math.abs(offsetY) > decay) && interval >= 0) {
       tx = this.getX() + offsetX;
@@ -712,11 +712,11 @@ export abstract class GfxElement implements IGfxElement {
     if (interval < 0) throw new Error ("interval cannot be less than 0");
     if (intervalDecay === 0 && !notToExceedTime) throw new Error("must specify either intervalDecay or notToExceedTime");
     this._shakeDoneCallback = callback;
-    var tx: number,ty: number;
-    var count = 0;
-    var elapsed = 0;
-    var offsetX = intensity - Math.floor(Math.random() * intensity * 2);
-    var offsetY = intensity - Math.floor(Math.random() * intensity * 2);
+    let tx: number,ty: number;
+    let count = 0;
+    let elapsed = 0;
+    let offsetX = intensity - Math.floor(Math.random() * intensity * 2);
+    let offsetY = intensity - Math.floor(Math.random() * intensity * 2);
 
     while(intensity > 0 && interval > 0 && elapsed < (notToExceedTime||Number.POSITIVE_INFINITY)) {
       tx = this.getX() + offsetX;
@@ -787,7 +787,7 @@ export abstract class GfxElement implements IGfxElement {
   */
   public moveTo(x: number,y: number,duration: number, callback?: (element: GfxElement) => void) {
     duration = duration || 16;
-    var moveOrder = new MoveOrder(this, x, y, duration, this._moveOrderCallback.bind(this), callback);
+    const moveOrder = new MoveOrder(this, x, y, duration, this._moveOrderCallback.bind(this), callback);
     this._moveQueue.push(moveOrder);
     if (this._currentMove === null) {
       this._runMove();
@@ -902,7 +902,7 @@ export abstract class GfxElement implements IGfxElement {
   * @param {number} diff
   */
   private _updateLocationFromMoveRates(diff: number) {
-    var amount: number,sign: number,intAmount: number;
+    let amount: number, sign: number, intAmount: number;
 
     if (this._xMoveRate !== 0) {
       amount = this._xMoveFractionalAccumulator + diff * this._xMoveRate / 1000;
@@ -1001,15 +1001,15 @@ export abstract class GfxElement implements IGfxElement {
   * @fires GfxElement#ELEMENT_COLLISION
   */
   public collidesWith(element: GfxElement) {
-    var thisX = this.getCollisionBoxX();
-    var thatX = element.getCollisionBoxX();
-    var thisWidth = this.getCollisionBoxWidth();
-    var thatWidth = element.getCollisionBoxWidth();
-    var thisY = this.getCollisionBoxY();
-    var thatY = element.getCollisionBoxY();
-    var thisHeight = this.getCollisionBoxHeight();
-    var thatHeight = element.getCollisionBoxHeight();
-    var result = thisX < thatX + thatWidth &&
+    const thisX = this.getCollisionBoxX();
+    const thatX = element.getCollisionBoxX();
+    const thisWidth = this.getCollisionBoxWidth();
+    const thatWidth = element.getCollisionBoxWidth();
+    const thisY = this.getCollisionBoxY();
+    const thatY = element.getCollisionBoxY();
+    const thisHeight = this.getCollisionBoxHeight();
+    const thatHeight = element.getCollisionBoxHeight();
+    const result = thisX < thatX + thatWidth &&
       thisX + thisWidth > thatX &&
       thisY < thatY + thatHeight &&
       thisY + thisHeight > thatY;
@@ -1040,7 +1040,7 @@ export abstract class GfxElement implements IGfxElement {
   * @return {boolean}
   */
   public collidesWithCoordinates(x: number, y: number) {
-    var result = x >= this.getCollisionBoxX() &&
+    const result = x >= this.getCollisionBoxX() &&
       x <= this.getCollisionBoxX() + this.getCollisionBoxWidth() &&
       y >= this.getCollisionBoxY() &&
         y <= this.getCollisionBoxY() + this.getCollisionBoxHeight();
@@ -1052,7 +1052,7 @@ export abstract class GfxElement implements IGfxElement {
   * @return {boolean}
   */
   public collidesWithX(x: number) {
-    var result = x >= this.getCollisionBoxX() &&
+    const result = x >= this.getCollisionBoxX() &&
       x <= this.getCollisionBoxX() + this.getCollisionBoxWidth();
     return result;
   }
@@ -1062,7 +1062,7 @@ export abstract class GfxElement implements IGfxElement {
   * @return {boolean}
   */
   public collidesWithY(y: number) {
-    var result = y >= this.getCollisionBoxY() &&
+    const result = y >= this.getCollisionBoxY() &&
         y <= this.getCollisionBoxY() + this.getCollisionBoxHeight();
     return result;
   }
@@ -1108,8 +1108,8 @@ export abstract class GfxElement implements IGfxElement {
   * @param {Event}
   */
   public handleMouseEvent(event: SLGfxMouseEvent) {
-    var eventData = this._setupSecondaryEventData(event);
-    var secondaryEvents = [];
+    const eventData = this._setupSecondaryEventData(event);
+    const secondaryEvents = [];
     // GfxElement will use panel scaled coordinates for comparison;
     // so, don't use final x & y from event, but rather use scaled values
     // TODO: name things better to make them less confusing?
@@ -1123,7 +1123,7 @@ export abstract class GfxElement implements IGfxElement {
       }
 
       this._mouseIsOver = true;
-      var type = null;
+      let type: EventType;
       switch(event.type) {
         case EventType.MOUSE_MOVE:
           type = EventType.MOUSE_MOVE_OVER_ELEMENT;
@@ -1150,8 +1150,8 @@ export abstract class GfxElement implements IGfxElement {
         this._mouseIsOver = false;
       }
     }
-    for (var i = 0; i < secondaryEvents.length; i++) {
-      var secondaryEvent = secondaryEvents[i];
+    for (let i = 0; i < secondaryEvents.length; i++) {
+      const secondaryEvent = secondaryEvents[i];
       this.notify(secondaryEvent);
       if (secondaryEvent.endEventPropagation)
         event.endEventPropagation = true;
@@ -1160,7 +1160,7 @@ export abstract class GfxElement implements IGfxElement {
 
   /** @private */
   private _setupSecondaryEventData(event: SLGfxMouseEvent) {
-    var eventData = {
+    const eventData = {
         x : event.data.x,
         y : event.data.y,
         viewOriginAdjustedX : event.data.viewOriginAdjustedX,

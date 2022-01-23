@@ -80,7 +80,7 @@ export class GnomeDemo {
     element.addFrame(frame2);
     this._gfxLayer.addElement(element);
 
-    for (var i = 0; i < 40; i++) {
+    for (let i = 0; i < 40; i++) {
       const el = new ImageSprite({
         gfxPanel: this._panel,
         image: image,

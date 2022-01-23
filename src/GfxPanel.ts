@@ -368,14 +368,14 @@ export class GfxPanel implements IGfxPanel {
   */
   public createLayer<T extends ILayer, P extends ILayerProps>(type: string, props?: any) {
     props = props || {};
-    var canvas = this.createCanvasForLayer();
-    var canvasContextWrapper = this.createCanvasContextWrapper(canvas);
-    var layerProps = {...props};
+    const canvas = this.createCanvasForLayer();
+    const canvasContextWrapper = this.createCanvasContextWrapper(canvas);
+    const layerProps = {...props};
     layerProps.width = layerProps.width || this.getWidth();
     layerProps.height = layerProps.height || this.getHeight();
     layerProps.canvasContextWrapper = canvasContextWrapper;
 
-    var layer = this._layerFactory.createLayer<T, P>(type, layerProps);
+    const layer = this._layerFactory.createLayer<T, P>(type, layerProps);
 
     this.addLayer(layer);
     return layer;
@@ -383,7 +383,7 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private createCanvasForLayer(): HTMLCanvasElement {
-    var canvas = this._document.createElement("CANVAS") as HTMLCanvasElement;
+    const canvas = this._document.createElement("CANVAS") as HTMLCanvasElement;
     this._targetElement.appendChild(canvas);
     canvas.width = this._width;
     canvas.height = this._height;
@@ -495,8 +495,8 @@ export class GfxPanel implements IGfxPanel {
       this._last = Math.floor(time) - 1;
     }
     time = Math.floor(time);
-    var elapsed = Date.now();
-    var diff = time - this._last;
+    let elapsed = Date.now();
+    const diff = time - this._last;
     this._last = time;
 
     if (this._mouseMoved) {
@@ -534,9 +534,9 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _handleMouseMoveEvent(time: number) {
-    var coordinateData = this._getDataForMouseEvent(this._mouseX, this._mouseY);
+    const coordinateData = this._getDataForMouseEvent(this._mouseX, this._mouseY);
 
-    var event = new SLGfxMouseEvent(
+    const event = new SLGfxMouseEvent(
       EventType.MOUSE_MOVE,
       coordinateData,
       time
@@ -549,7 +549,7 @@ export class GfxPanel implements IGfxPanel {
   /** @private */
   private _updateFps(diff: number) {
     if (this._fpsElem) {
-      var fps = Math.floor(1000 / diff);
+      const fps = Math.floor(1000 / diff);
       if (this._fpsMonitorArray.length < 30){
         this._fpsMonitorArray.push(fps);
       } else {
@@ -558,8 +558,8 @@ export class GfxPanel implements IGfxPanel {
       this._fpsMonitorIndex++;
       if (this._fpsMonitorIndex >= 30) this._fpsMonitorIndex = 0;
 
-      var fpsa = 1;
-      for (var i = 0; i < this._fpsMonitorArray.length; i++){
+      let fpsa = 1;
+      for (let i = 0; i < this._fpsMonitorArray.length; i++){
         fpsa += this._fpsMonitorArray[i] / 30;
       }
       if (this._fpsElem && this._fpsMonitorIndex === 0)
@@ -569,14 +569,14 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _update(time: number, diff: number) {
-    for (var i = 0; i < this._layers.length; i++) {
+    for (let i = 0; i < this._layers.length; i++) {
       this._layers[i].update(time,diff);
     }
   }
 
   /** @private */
   private _render(time: number, diff: number) {
-    for (var i = 0; i < this._layers.length; i++) {
+    for (let i = 0; i < this._layers.length; i++) {
       this._layers[i].preRender(time,diff);
       this._layers[i].render(time,diff);
       this._layers[i].postRender(time,diff);
@@ -591,8 +591,8 @@ export class GfxPanel implements IGfxPanel {
   private handleMouseMoveEvent(e: MouseEvent) {
     if (this._paused) return false;
     this._mouseMoved = true;
-    var x = this.getXFromMouseEvent(e);
-    var y = this.getYFromMouseEvent(e);
+    const x = this.getXFromMouseEvent(e);
+    const y = this.getYFromMouseEvent(e);
 
     if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
       this._mouseX = -1;
@@ -605,12 +605,12 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _getDataForMouseEvent(canvasX: number, canvasY: number): MouseEventData {
-    var viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
-    var viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
+    const viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
+    const viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
 
-    var x = this.getUnScaledX(viewOriginAdjustedX);
-    var y = this.getUnScaledY(viewOriginAdjustedY);
-    var data: MouseEventData = {
+    const x = this.getUnScaledX(viewOriginAdjustedX);
+    const y = this.getUnScaledY(viewOriginAdjustedY);
+    const data: MouseEventData = {
       x : x,
       y : y,
       viewOriginAdjustedX : viewOriginAdjustedX,
@@ -628,17 +628,17 @@ export class GfxPanel implements IGfxPanel {
   */
   private _handleMouseEvent(e: MouseEvent) {
     if (this._paused) return false;
-    var canvasX = this.getXFromMouseEvent(e);
-    var canvasY = this.getYFromMouseEvent(e);
+    const canvasX = this.getXFromMouseEvent(e);
+    const canvasY = this.getYFromMouseEvent(e);
 
     if (canvasX < 0 || canvasX >= this._width || canvasY < 0 || canvasY >= this._height) {
       return false;
     }
 
-    var data = this._getDataForMouseEvent(canvasX, canvasY);
+    const data = this._getDataForMouseEvent(canvasX, canvasY);
 
-    var type = e.type === "mouseup" ? EventType.MOUSE_UP : EventType.MOUSE_DOWN;
-    var event = new SLGfxMouseEvent(type, data);
+    const type = e.type === "mouseup" ? EventType.MOUSE_UP : EventType.MOUSE_DOWN;
+    const event = new SLGfxMouseEvent(type, data);
 
     // propagate through layers
     this._propagateMouseEventThroughLayers(event);
@@ -649,7 +649,7 @@ export class GfxPanel implements IGfxPanel {
 
   /** @private */
   private _propagateMouseEventThroughLayers(event: SLGfxMouseEvent) {
-    for (var i = this._layers.length - 1; i >= 0; i--) {
+    for (let i = this._layers.length - 1; i >= 0; i--) {
       if (event.endEventPropagation) return;
       this._layers[i].handleMouseEvent(event);
     }

@@ -25,7 +25,7 @@ export class ImageLoader {
   ) {
     
     const imageCount = Object.keys(inputHash).length;
-    var outputHash: {[key: string]: HTMLImageElement} = {};
+    const outputHash: {[key: string]: HTMLImageElement} = {};
     for (const key in inputHash) {
       outputHash[key] = new Image();
       outputHash[key].src = inputHash[key];
@@ -56,4 +56,8 @@ export class ImageLoader {
     }
   }
 
+}
+
+export interface IImageLoader {
+    loadImages(inputHash: {[key: string]: string}, callback: (imageHash: {[key: string]: HTMLImageElement}) => void, updatesCallback: (updates: IImageLoadUpdates) => void): {};
 }

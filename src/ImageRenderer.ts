@@ -92,8 +92,8 @@ export class ImageRenderer implements IImageRenderer {
     flipHorizontally?: boolean, flipVertically?: boolean, 
     rotation?: number
   ) {
-    var translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
-    var translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;
+    const translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
+    const translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;
     Utils.renderWithTranslation(context, translationX, translationY, flipHorizontally, flipVertically, rotation, () => {
       context.drawImageWithTranslation(
         image,

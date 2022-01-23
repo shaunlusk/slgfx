@@ -1,5 +1,4 @@
 Typescript todos:
-get rid of 'var's
 use of private / protected in base classes:
   - use private and expose fields via properties?
   - use protected?

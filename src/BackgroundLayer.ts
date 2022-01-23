@@ -27,8 +27,8 @@ export class BackgroundLayer extends GfxLayer {
   * @override
   */
   public update(time: number, diff: number) {
-    var dirtyElement;
-    var i;
+    let dirtyElement;
+    let i;
     for (i = 0; i < this._elements.length; i++) {
         // ensure all elements are redrawn if the layer is dirty
         if (this.isDirty()) this._elements[i].setDirty(true);

@@ -34,7 +34,7 @@ export class LayerFactory implements ILayerFactory {
   public createLayer<T extends ILayer, P extends ILayerProps>(type: string, layerProps: P): T {
     let layer:T;
 
-    var ctor = this._registeredTypes[type];
+    const ctor = this._registeredTypes[type];
     if (ctor && Utils.isFunction(ctor)) {
       layer = ctor(layerProps) as T;
     }
