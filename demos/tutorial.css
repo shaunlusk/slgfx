@@ -1,24 +1,25 @@
 .code {
   white-space: pre;
-  font-family:monospace;
-  background-color: grey;
-  color:#B0C0C0;
-  padding:8px;
+  font-family: monospace;
+  background-color: #606060;
+  color: #AAA;
+  padding: 8px;
   border: 1px solid black;
   font-weight: bold;
+  border-radius: 3px;
 }
 
-.newCode {
-  color:white;
+.new-code {
+  color: #CCFFEE
 }
 
 img {
-    padding:8px;
+    padding: 8px;
     border: 1px solid black;
 }
 
 body {
-  font-family:sans-serif;
+  font-family: sans-serif;
   margin : auto;
-  width:1024px
+  width: 1024px;
 }

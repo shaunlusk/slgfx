@@ -4,6 +4,7 @@ import { GfxPanel } from "../GfxPanel";
 import { ImageLoader } from '../ImageLoader';
 import { ImageSpriteFrame } from '../ImageSpriteFrame';
 import { IImageSpriteProps, ImageSprite } from '../ImageSprite';
+import * as BlueBall from '../../assets/spriteTest.png';
 
 export interface IDemoProps {
   targetDiv: HTMLElement;
@@ -38,7 +39,7 @@ export class SimpleDemo {
     this._panel.render();
 
     const imgLoader = new ImageLoader();
-    imgLoader.loadImages({blueBall: 'spriteTest.png'}, imagesHash => {
+    imgLoader.loadImages({blueBall: BlueBall}, imagesHash => {
       this.initialize(imagesHash['blueBall']);
     });
 

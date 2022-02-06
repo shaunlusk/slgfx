@@ -6,6 +6,7 @@ import { ImageLoader } from '../ImageLoader';
 import { ImageSpriteFrame } from '../ImageSpriteFrame';
 import { ImageSprite } from '../ImageSprite';
 import { ILayerProps } from '..';
+import * as GnomeImage from '../../assets/all_gnomes.png';
 
 export interface IDemoProps {
   targetElement: HTMLElement;
@@ -21,6 +22,7 @@ export class GnomeDemo {
   private _panel: GfxPanel;
   private _gfxLayer: GfxLayer;
   private _increment: number;
+  private _gnomeImage = GnomeImage;
 
   public constructor(props: IDemoProps) {
     this._increment = 1;
@@ -38,10 +40,9 @@ export class GnomeDemo {
     this._panel.render();
 
     const imgLoader = new ImageLoader();
-    imgLoader.loadImages({gnome: 'all_gnomes.png'}, imagesHash => {
+    imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
       this.initialize(imagesHash['gnome']);
     });
-
   }
 
   private initialize(image: HTMLImageElement) {

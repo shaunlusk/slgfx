@@ -1,0 +1,9 @@
+{
+  "{{tut1}}": "./src/demos/Tutorial1.ts",
+  "{{tut2}}": "./src/demos/Tutorial2.ts",
+  "{{tut3}}": "./src/demos/Tutorial3.ts",
+  "{{tut4}}": "./src/demos/Tutorial4.ts",
+  "{{tut5}}": "./src/demos/Tutorial5.ts",
+  "{{tut6}}": "./src/demos/Tutorial6.ts",
+  "{{tut7}}": "./src/demos/Tutorial7.ts"
+}
