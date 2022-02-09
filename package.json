@@ -5,19 +5,22 @@
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist", "bundle", "assets"
+    "dist", "bundle"
   ],
   "repository": "https://github.com/shaunlusk/slgfx.git",
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "npm run test && npm run build:docs && tsc && webpack --config webpack.config.js",
-    "build:dev": "tsc",
+    "build": "npm run test && tsc && webpack --config webpack.config.js && npm run build:docs && npm run build:tutorial",
+    "build:dev": "tsc && npm run webpack --config webpack.config.dev.js",
     "test": "node ./node_modules/jest/bin/jest ./test --colors --coverage",
     "build:docs": "typedoc",
     "build:tutorial": "buildTutorial.sh",
-    "clean": "rimraf dist docs bundle",
-    "webpack": "webpack --config webpack.config.dev.js"    
+    "build:check": "npm run build:docs && npm run build:tutorial",
+    "clean": "rimraf dist docs bundle gh-pages",
+    "prepghpages": "mkdir gh-pages && cp -r bundle demos docs index.html styles.css gh-pages",
+    "predeploy": "npm run clean && npm run build && npm run prepghpages",
+    "deploy": "gh-pages -d gh-pages" 
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
@@ -36,6 +39,6 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
-    "@shaunlusk/slcommon": "^2.0.8-rc"
+    "@shaunlusk/slcommon": "^2.0.8"
   }
 }

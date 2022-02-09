@@ -19,6 +19,8 @@ img {
 }
 
 body {
+  background-color: black;
+  color: white;
   font-family: sans-serif;
   margin : auto;
   width: 1024px;

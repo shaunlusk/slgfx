@@ -3,5 +3,5 @@
 Common Graphics framework for Shaun's projects.
 
 
-Documentation [here](./docs/index.html).
-Quickstart Tutorial [here](./demos/tutorial.html).
+Documentation [here](https://shaunlusk.github.io/docs/index.html).
+Quickstart Tutorial [here](https://shaunlusk.github.io/demos/tutorial.html).

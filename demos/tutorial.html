@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>slgfx Tutorial</title>
-    <link rel="stylesheet" type="text/css" href="tutorial.css">
+    <link rel="stylesheet" type="text/css" href="../styles.css">
   </head>
   <body>
     <h1>slgfx Tutorial</h1>
@@ -12,12 +12,14 @@
     It assumes at least a basic working knowledge of HTML and Javascript.
     The code is written in Typescript, as are the examples for this tutorial.
     </p>
-    <p>Full documentation can be found <a href="docs/index.html">here</a>.</p>
+    <p>Full documentation can be found <a href="../docs/index.html">here</a>.</p>
+    <p>The current recommended approach for development is using Typescript modules, Webpack for transpiling and packaging.  
+      However, other approaches are possible. 
+    </p>
 
     <p>To start, install the package:</p>
     <p class="code new-code">npm i @shaunlusk/slgfx</p>
     
-    <p class="code new-code">&lt;script type="text/javascript" src="./bundle/index.js"&gt;&lt;/script&gt;</p>
     <p>Then create an element to hold the GfxPanel:</p>
     <p class="code new-code">&lt;div id="gfxPanelDiv"&gt;&lt;/div&gt;</p>
 
@@ -307,6 +309,20 @@ function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement
 }
 </p>
     <div id="gfxPanelDiv7"></div>
+    <h2>Plain Javscript in the Browser</h2>
+    <p>
+      For plain javascript files that will be imported directly to the browser, 
+      all classes are exported to the slgfx namespace.  Import the 'index.js' found in the bundle directory, e.g.: 
+    </p>
+    <p class="code new-code">&lt;script type="text/javascript" src="./bundle/index.js"&gt;&lt;/script&gt;</p>
+    <p>and then reference the classes like so:</p> 
+    <p class="code new-code">
+      var gfxPanel = new slgfx.GfxPanel({
+        targetElement: document.getElementById("targetElementId"),
+        width:128,
+        height:96
+      });
+    </p>
   </body>
   <script type="text/javascript" src="../bundle/index.js"></script>
   <script>
