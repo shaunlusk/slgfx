@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Scratch Page</title>
+  <link rel="stylesheet" type="text/css" href="../styles.css">
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div id="buttons"><button onclick="simpleDemo.togglePause();">Pause</button></div>
+  <div id="info"></div>
+  <script type="text/javascript" src="../bundle/index.js">
+  </script>
+  <script type="text/javascript">
+    var simpleDemo = new slgfx.SimpleDemo({
+      targetDiv: document.getElementById('content'),
+      fpsElem: document.getElementById('info'),
+      backgroundColor: '#111122'
+    });
+  </script>
+</body>
+</html>

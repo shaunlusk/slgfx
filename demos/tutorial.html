@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <!-- ****************************************** -->
+  <!-- MAKE CHANGES IN tutorialTemplate.html ONLY -->
+  <!-- ****************************************** -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>slgfx Tutorial</title>
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+  </head>
+  <body>
+    <h1>slgfx Tutorial</h1>
+    <p>
+    This tutorial shows some simple use cases for how to use slgfx.
+    It assumes at least a basic working knowledge of HTML and Javascript.
+    The code is written in Typescript, as are the examples for this tutorial.
+    </p>
+    <p>Full documentation can be found <a href="../docs/index.html">here</a>.</p>
+    <p>The current recommended approach for development is using Typescript modules, Webpack for transpiling and packaging.  
+      However, other approaches are possible. 
+    </p>
+
+    <p>To start, install the package:</p>
+    <p class="code new-code">npm i @shaunlusk/slgfx</p>
+    
+    <p>Then create an element to hold the GfxPanel:</p>
+    <p class="code new-code">&lt;div id="gfxPanelDiv"&gt;&lt;/div&gt;</p>
+
+    <p>To setup a basic GfxPanel:</p>
+    <p class="code"><span class="new-code">import { GfxLayer, GfxPanel, ILayerProps } from "@shaunlusk/slgfx";
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width: 128,
+    height: 96
+  });
+
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  gfxPanel.render();
+}
+</span></p>
+    <div id="gfxPanelDiv1"></div>
+
+    <p>Create an ImageRenderer, an ImageElement, and add it to the canvas context:</p>
+    <p class="code">import { GfxLayer, GfxPanel, ILayerProps, ImageElement, ImageLoader, ImageRenderer } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  <span class="new-code">const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });</span>
+}
+
+<span class="new-code">function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  var element = new ImageElement({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    sourceX:0,
+    sourceY:0,
+    sourceWidth:32,
+    sourceHeight:32,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer
+  });
+  gfxLayer.addElement(element);
+}
+</span></p>
+    <div id="gfxPanelDiv2"></div>
+
+    <p>Let's move the element, reset its position, and repeat:</p>
+    <p class="code">import { GfxElement, GfxLayer, GfxPanel, ILayerProps, ImageElement, ImageLoader, ImageRenderer } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });
+}
+
+function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  var element = new ImageElement({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    sourceX:0,
+    sourceY:0,
+    sourceWidth:32,
+    sourceHeight:32,
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer
+  });
+  gfxLayer.addElement(element);
+
+  <span class="new-code">resetMovement(element);</span>
+}
+
+<span class="new-code">function resetMovement(element: GfxElement) {
+  element.setX(0);
+  element.setY(0);
+  element.moveTo(32, 32, 5000, () => resetMovement(element));
+}
+</span></p>
+    <div id="gfxPanelDiv3"></div>
+
+    <p>Instead of a static image, let's create a sprite instead:</p>
+    <p class="code">import { GfxLayer, GfxPanel, ILayerProps, ImageLoader, ImageRenderer, ImageSprite, ImageSpriteFrame } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });
+}
+
+function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  <span class="new-code">var element = new ImageSprite({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  });</span>
+  gfxLayer.addElement(element);
+}
+
+</p>
+    <div id="gfxPanelDiv4"></div>
+
+    <p>We can flip the element:</p>
+    <p class="code">import { GfxLayer, GfxPanel, ILayerProps, ImageLoader, ImageRenderer, ImageSprite, ImageSpriteFrame } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });
+}
+
+function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  var element = new ImageSprite({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  });
+  gfxLayer.addElement(element);
+  <span class="new-code">element.setHorizontallyFlipped(true);</span>
+}
+</p>
+    <div id="gfxPanelDiv5"></div>
+
+    <p>We can leverage events on the panel to make it rotate over time:</p>
+    <p class="code">import { Event } from "@shaunlusk/slcommon";
+import { EventType, GfxLayer, GfxPanel, ILayerProps, ImageLoader, ImageRenderer, ImageSprite, ImageSpriteFrame, Utils } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });
+}
+
+function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  var element = new ImageSprite({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  });
+  gfxLayer.addElement(element);
+
+  <span class="new-code">gfxPanel.on(EventType.BEFORE_RENDER, (e: Event) => {
+    var degrees = (e.time / 10) % 360;
+    element.setRotation( Utils.degreesToRadians(degrees) );
+  });</span>
+}
+</p>
+    <div id="gfxPanelDiv6"></div>
+
+    <p>Let's make the element shake when clicked:</p>
+    <p class="code">import { EventType, GfxLayer, GfxPanel, ILayerProps, ImageLoader, ImageRenderer, ImageSprite, ImageSpriteFrame } from "@shaunlusk/slgfx";
+import * as GnomeImage from '../../assets/all_gnomes.png';
+
+export function initialize(targetElement: HTMLElement) {
+  var gfxPanel = new GfxPanel({
+    targetElement: targetElement,
+    width:128,
+    height:96
+  });
+
+  gfxPanel.render();
+
+  const imgLoader = new ImageLoader();
+  imgLoader.loadImages({gnome: GnomeImage}, imagesHash => {
+    render(gfxPanel, imagesHash);
+  });
+}
+
+function render(gfxPanel: GfxPanel, imagesHash: {[key: string]: HTMLImageElement}) {
+  var gfxLayer = gfxPanel.createLayer&lt;GfxLayer, ILayerProps&gt;("GfxLayer");
+  var imageRenderer = new ImageRenderer();
+
+  var element = new ImageSprite({
+    gfxPanel: gfxPanel,
+    image: imagesHash['gnome'],
+    width:32,
+    height:32,
+    scaleX:2,
+    scaleY:2,
+    imageRenderer:imageRenderer,
+    frames: [
+      new ImageSpriteFrame({duration:350, sourceX:0, sourceY:0, sourceWidth:32, sourceHeight:32}),
+      new ImageSpriteFrame({duration:350, sourceX:64, sourceY:0, sourceWidth:32, sourceHeight:32})
+    ]
+  });
+  gfxLayer.addElement(element);
+
+  <span class="new-code">var currentlyShaking = false;
+  element.on(EventType.MOUSE_UP_ON_ELEMENT, () => {
+
+    if (currentlyShaking) return;
+    currentlyShaking = true;
+    element.shake(20, 2, 50, 0, 3000, () => {currentlyShaking = false;});
+
+  });</span>
+}
+</p>
+    <div id="gfxPanelDiv7"></div>
+    <h2>Plain Javscript in the Browser</h2>
+    <p>
+      For plain javascript files that will be imported directly to the browser, 
+      all classes are exported to the slgfx namespace.  Import the 'index.js' found in the bundle directory, e.g.: 
+    </p>
+    <p class="code new-code">&lt;script type="text/javascript" src="./bundle/index.js"&gt;&lt;/script&gt;</p>
+    <p>and then reference the classes like so:</p> 
+    <p class="code new-code">
+      var gfxPanel = new slgfx.GfxPanel({
+        targetElement: document.getElementById("targetElementId"),
+        width:128,
+        height:96
+      });
+    </p>
+  </body>
+  <script type="text/javascript" src="../bundle/index.js"></script>
+  <script>
+    slgfx.TutorialIndex.renderTutorial1(document.getElementById('gfxPanelDiv1'));
+    slgfx.TutorialIndex.renderTutorial2(document.getElementById('gfxPanelDiv2'));
+    slgfx.TutorialIndex.renderTutorial3(document.getElementById('gfxPanelDiv3'));
+    slgfx.TutorialIndex.renderTutorial4(document.getElementById('gfxPanelDiv4'));
+    slgfx.TutorialIndex.renderTutorial5(document.getElementById('gfxPanelDiv5'));
+    slgfx.TutorialIndex.renderTutorial6(document.getElementById('gfxPanelDiv6'));
+    slgfx.TutorialIndex.renderTutorial7(document.getElementById('gfxPanelDiv7'));
+  </script>
+</html>
