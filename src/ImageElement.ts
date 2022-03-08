@@ -72,13 +72,13 @@ export class ImageElement extends GfxElement {
   * @override
   * @returns {number}
   */
-  // public getWidth() {return this._sWidth;}
+  public override getWidth() { return this._sWidth; }
 
   /** Return the height for this element
   * @override
   * @returns {number}
   */
-  // public getHeight() {return this._sHeight;}
+  public override getHeight() {return this._sHeight;}
 
   /** Return the starting x point on the source Image for this element
   * @returns {number}

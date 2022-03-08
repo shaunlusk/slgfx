@@ -25,9 +25,7 @@ describe("ImageElement", function() {
       sourceWidth: 4,
       sourceHeight: 3,
       sourceX: 1,
-      sourceY: 2,
-      width: 5,
-      height: 6
+      sourceY: 2
     };
     imageElement = new ImageElement(elementProps);
   });
@@ -44,8 +42,8 @@ describe("ImageElement", function() {
         TypeMoq.It.isValue(elementProps.sourceHeight),
         TypeMoq.It.isValue(0), 
         TypeMoq.It.isValue(0), 
-        TypeMoq.It.isValue(elementProps.width),
-        TypeMoq.It.isValue(elementProps.height),
+        TypeMoq.It.isValue(elementProps.sourceWidth),
+        TypeMoq.It.isValue(elementProps.sourceHeight),
         TypeMoq.It.isValue(1),
         TypeMoq.It.isValue(1), 
         TypeMoq.It.isValue(false),

@@ -85,8 +85,6 @@ export interface IGfxElementProps {
   x?: number; 
   y?: number; 
   zIndex?: number; 
-  width: number; 
-  height: number; 
   rotation?: number; 
   baseRotation?: number; 
   horizontalFlip?: boolean; 
@@ -154,8 +152,6 @@ export abstract class GfxElement implements IGfxElement {
   private _mouseIsOver: boolean;
   private _zIndex: number;
   private _zIndexComparable: GfxElementZIndexComparable;
-  private _width: number;
-  private _height: number;
   private _rotation?: number;
   private _baseRotation?: number;
   private _wasRotated: boolean;
@@ -203,8 +199,6 @@ export abstract class GfxElement implements IGfxElement {
     this._mouseIsOver = false;
     this._zIndex = props.zIndex || -1;
     this._zIndexComparable = new GfxElementZIndexComparable(this);
-    this._width = props.width;
-    this._height = props.height;
 
     this._rotation = props.rotation || null;
     this._baseRotation = props.baseRotation || null;
@@ -457,10 +451,6 @@ export abstract class GfxElement implements IGfxElement {
   /** @private */
   private getLastY() { return this._lastY; }
   /** @private */
-  private getLastWidth() { return this.getWidth(); }
-  /** @private */
-  private getLastHeight() { return this.getHeight(); }
-  /** @private */
   private setLastX(x: number) {this._lastX = x;}
   /** @private */
   private setLastY(y: number) {this._lastY = y;}
@@ -476,7 +466,7 @@ export abstract class GfxElement implements IGfxElement {
   * @abstract
   * @return {number}
   */
-  public getWidth() { return this._width; }
+  public abstract getWidth(): number; // { return this._width; }
 
   /**
   * Return this element's width, incorporating parent panel and element-local scaling.
@@ -489,7 +479,7 @@ export abstract class GfxElement implements IGfxElement {
   * @abstract
   * @return {number}
   */
-  public getHeight() { return this._height; }
+  public abstract getHeight(): number; //{ return this._height; }
 
   /**
   * Return this element's height, incorporating parent panel and element-local scaling.

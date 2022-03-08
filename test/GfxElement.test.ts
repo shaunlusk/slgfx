@@ -1,12 +1,32 @@
 import * as TypeMoq from 'typemoq';
 import { ICanvasContextWrapper } from '../src/CanvasContextWrapper';
 import { EventType } from '../src/EventType';
-import { GfxElement } from '../src/GfxElement';
+import { GfxElement, IGfxElementProps } from '../src/GfxElement';
 import { GfxElementZIndexComparable } from '../src/GfxElementZIndexComparable';
 import { IGfxPanel } from '../src/GfxPanel';
 import { SLGfxMouseEvent } from '../src/SLGfxMouseEvent';
 
+interface ITestGfxElementProps extends IGfxElementProps {
+  width: number;
+  height: number;
+}
+
 class TestGfxElement extends GfxElement {
+  private _width: number;
+  private _height: number;
+
+  constructor(props: ITestGfxElementProps) {
+    super(props);
+    this._width = props.width;
+    this._height = props.height;
+  }
+
+  public getWidth(): number {
+    return this._width;
+  }
+  public getHeight(): number {
+    return this._height;
+  }
   public render(canvasContext: ICanvasContextWrapper, time: number, diff: number): void {
     
   }

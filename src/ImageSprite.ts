@@ -5,6 +5,8 @@ import { ISpriteProps, Sprite } from "./Sprite";
 
 export interface IImageSpriteProps extends ISpriteProps {
   image: HTMLImageElement;
+  width: number;
+  height: number;
   imageRenderer: IImageRenderer;
 }
 
@@ -41,10 +43,14 @@ export interface IImageSpriteProps extends ISpriteProps {
 export class ImageSprite extends Sprite {
   private _image: HTMLImageElement;
   private _imageRenderer: IImageRenderer;
+  private _sWidth: number;
+  private _sHeight: number;
 
   constructor(props: IImageSpriteProps) {
     super(props);
     this._image = props.image;
+    this._sWidth = props.width;
+    this._sHeight = props.height;
 
     this._imageRenderer = props.imageRenderer;
   }
@@ -80,4 +86,15 @@ export class ImageSprite extends Sprite {
     );
   }
 
+  /** Return the width for this element
+  * @override
+  * @returns {number}
+  */
+  public override getWidth() { return this._sWidth; }
+
+  /** Return the height for this element
+  * @override
+  * @returns {number}
+  */
+  public override getHeight() {return this._sHeight;}
 }

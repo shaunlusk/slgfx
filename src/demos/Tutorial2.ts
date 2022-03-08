@@ -27,8 +27,6 @@ export function initialize(targetElement: HTMLElement) {
     sourceY:0,
     sourceWidth:32,
     sourceHeight:32,
-    width:32,
-    height:32,
     scaleX:2,
     scaleY:2,
     imageRenderer:imageRenderer
