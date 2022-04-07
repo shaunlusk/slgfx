@@ -1,12 +1,13 @@
 {
   "name": "@shaunlusk/slgfx",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Canvas graphics framework used by Shaun's JavaScript projects.",
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "bundle"
+    "bundle",
+    "assets"
   ],
   "repository": "https://github.com/shaunlusk/slgfx.git",
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
