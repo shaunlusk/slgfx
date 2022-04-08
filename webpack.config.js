@@ -19,7 +19,8 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   entry: {
-    index: './src/index.ts'
+    index: './src/index.ts',
+    demos: './src/demos.ts'
   },
   output: {
     filename: '[name].js',

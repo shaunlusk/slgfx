@@ -1,6 +1,6 @@
 {
   "name": "@shaunlusk/slgfx",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Canvas graphics framework used by Shaun's JavaScript projects.",
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
   "author": "Shaun Lusk <shaun.lusk@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "npm run test && tsc && webpack --config webpack.config.js && npm run build:docs && npm run build:tutorial",
+    "build": "npm run clean && npm run test && tsc && webpack --config webpack.config.js && npm run build:docs && npm run build:tutorial",
     "build:dev": "tsc && npm run webpack --config webpack.config.dev.js",
     "test": "node ./node_modules/jest/bin/jest ./test --colors --coverage",
     "build:docs": "typedoc",
@@ -21,7 +21,7 @@
     "build:check": "npm run build:docs && npm run build:tutorial",
     "clean": "rimraf dist docs bundle gh-pages",
     "prepghpages": "mkdir gh-pages && cp -r bundle demos docs index.html styles.css gh-pages",
-    "predeploy": "npm run clean && npm run build && npm run prepghpages",
+    "predeploy": "npm run build && npm run prepghpages",
     "deploy": "gh-pages -d gh-pages"
   },
   "devDependencies": {

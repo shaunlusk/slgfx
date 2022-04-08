@@ -17,6 +17,3 @@ export { IGfxPanel, IGfxPanelProps, GfxPanel } from './GfxPanel';
 export { SLGfxMouseEvent, MouseEventData } from './SLGfxMouseEvent';
 export { Sprite, ISpriteProps } from './Sprite';
 export { Utils } from './Utils';
-export { SimpleDemo } from './demos/SimpleDemo';
-export { GnomeDemo } from './demos/GnomeDemo';
-export { TutorialIndex } from './demos/TutorialIndex';
