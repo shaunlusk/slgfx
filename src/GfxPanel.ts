@@ -165,7 +165,7 @@ export class GfxPanel implements IGfxPanel {
     this._setupEventListeners();
   }
 
-  private _setBorderSize(border: number | string) {
+  protected _setBorderSize(border: number | string) {
     if (typeof border === "number") {
       this._borderSize = border + "px";
     } else {
@@ -213,24 +213,24 @@ export class GfxPanel implements IGfxPanel {
   private getPendingViewOriginY() {return this._pendingViewOriginY;}
 
 
-  /** @private */
-  private _prepareDiv() {
+  /** @protected */
+  protected _prepareDiv() {
     this._targetElement.style.width = this._width + 'px';
     this._targetElement.style.height = this._height + 'px';
     this._targetElement.style.backgroundColor = this._backgroundColor;
     this._targetElement.style.border = this._borderSize + " solid " + this._borderColor;
   }
 
-  /** @private */
-  private _setupEventListeners() {
+  /** @protected */
+  protected _setupEventListeners() {
     this._targetElement.addEventListener("mouseup",this._handleMouseEvent.bind(this), true);
     this._targetElement.addEventListener("mousedown",this._handleMouseEvent.bind(this), true);
-    if (this._useMouseMoveEvents) this._targetElement.addEventListener("mousemove",this.handleMouseMoveEvent.bind(this), true);
+    if (this._useMouseMoveEvents) this._targetElement.addEventListener("mousemove",this.captureMouseMoveEvent.bind(this), true);
     this._document.addEventListener("visibilitychange", this._handleVisibilityChange.bind(this), false);
   }
 
-  /** @private */
-  private _handleVisibilityChange() {
+  /** @protected */
+  protected _handleVisibilityChange() {
     this._tabNotVisible = this._document.hidden;
     if (!this._tabNotVisible && !this._paused) {
       this._unpaused = true;
@@ -381,8 +381,8 @@ export class GfxPanel implements IGfxPanel {
     return layer;
   }
 
-  /** @private */
-  private createCanvasForLayer(): HTMLCanvasElement {
+  /** @protected */
+  protected createCanvasForLayer(): HTMLCanvasElement {
     const canvas = this._document.createElement("CANVAS") as HTMLCanvasElement;
     this._targetElement.appendChild(canvas);
     canvas.width = this._width;
@@ -391,8 +391,8 @@ export class GfxPanel implements IGfxPanel {
     return canvas;
   }
 
-  /** @private */
-  private createCanvasContextWrapper(canvas: HTMLCanvasElement) {
+  /** @protected */
+  protected createCanvasContextWrapper(canvas: HTMLCanvasElement) {
     return new CanvasContextWrapper({
       canvasContext: canvas.getContext("2d"),
       imageSmoothingEnabled: this._imageSmoothingEnabled,
@@ -452,8 +452,8 @@ export class GfxPanel implements IGfxPanel {
     this._eventManager.on(EventType.NEXT_FRAME_END, callback);
   }
 
-  /** @private */
-  private _doBeforeRenderEvents(time: any, diff: any) {
+  /** @protected */
+  protected _doBeforeRenderEvents(time: any, diff: any) {
     this._eventManager.notify(
       new Event(EventType.NEXT_FRAME_BEGIN, {diff:diff}, time)
     );
@@ -463,8 +463,8 @@ export class GfxPanel implements IGfxPanel {
     );
   }
 
-  /** @private */
-  private _doAfterRenderEvents(time: any, diff: any) {
+  /** @protected */
+  protected _doAfterRenderEvents(time: any, diff: any) {
     this._eventManager.notify(
       new Event(EventType.NEXT_FRAME_END, {diff:diff}, time)
     );
@@ -520,8 +520,8 @@ export class GfxPanel implements IGfxPanel {
     this._requestAnimationFrame(this.render.bind(this));
   }
 
-  /** @private */
-  private _updateViewOrigins() {
+  /** @protected */
+  protected _updateViewOrigins() {
     if (!Utils.isNullOrUndefined(this.getPendingViewOriginX())) {
       this._viewOriginX = this.getPendingViewOriginX();
       this._pendingViewOriginX = null;
@@ -532,8 +532,8 @@ export class GfxPanel implements IGfxPanel {
     }
   }
 
-  /** @private */
-  private _handleMouseMoveEvent(time: number) {
+  /** @protected */
+  protected _handleMouseMoveEvent(time: number) {
     const coordinateData = this._getDataForMouseEvent(this._mouseX, this._mouseY);
 
     const event = new SLGfxMouseEvent(
@@ -546,8 +546,8 @@ export class GfxPanel implements IGfxPanel {
     this._mouseMoved = false;
   }
 
-  /** @private */
-  private _updateFps(diff: number) {
+  /** @protected */
+  protected _updateFps(diff: number) {
     if (this._fpsElem) {
       const fps = Math.floor(1000 / diff);
       if (this._fpsMonitorArray.length < 30){
@@ -567,15 +567,15 @@ export class GfxPanel implements IGfxPanel {
     }
   }
 
-  /** @private */
-  private _update(time: number, diff: number) {
+  /** @protected */
+  protected _update(time: number, diff: number) {
     for (let i = 0; i < this._layers.length; i++) {
       this._layers[i].update(time,diff);
     }
   }
 
-  /** @private */
-  private _render(time: number, diff: number) {
+  /** @protected */
+  protected _render(time: number, diff: number) {
     for (let i = 0; i < this._layers.length; i++) {
       this._layers[i].preRender(time,diff);
       this._layers[i].render(time,diff);
@@ -588,7 +588,7 @@ export class GfxPanel implements IGfxPanel {
   * The event will be propagated during the next render cycle.
   * @param {Event} e The mouse event
   */
-  private handleMouseMoveEvent(e: MouseEvent) {
+   protected captureMouseMoveEvent(e: MouseEvent) {
     if (this._paused) return false;
     this._mouseMoved = true;
     const x = this.getXFromMouseEvent(e);
@@ -603,8 +603,8 @@ export class GfxPanel implements IGfxPanel {
     this._mouseY = y;
   }
 
-  /** @private */
-  private _getDataForMouseEvent(canvasX: number, canvasY: number): MouseEventData {
+  /** @protected */
+  protected _getDataForMouseEvent(canvasX: number, canvasY: number): MouseEventData {
     const viewOriginAdjustedX = this.getViewOriginAdjustedX(canvasX);
     const viewOriginAdjustedY = this.getViewOriginAdjustedY(canvasY);
 
@@ -626,7 +626,7 @@ export class GfxPanel implements IGfxPanel {
   * @fires Screen#MOUSE_UP
   * @fires Screen#MOUSE_DOWN
   */
-  private _handleMouseEvent(e: MouseEvent) {
+   protected _handleMouseEvent(e: MouseEvent) {
     if (this._paused) return false;
     const canvasX = this.getXFromMouseEvent(e);
     const canvasY = this.getYFromMouseEvent(e);
@@ -647,8 +647,8 @@ export class GfxPanel implements IGfxPanel {
     if (e.button === 1) return false;
   }
 
-  /** @private */
-  private _propagateMouseEventThroughLayers(event: SLGfxMouseEvent) {
+  /** @protected */
+  protected _propagateMouseEventThroughLayers(event: SLGfxMouseEvent) {
     for (let i = this._layers.length - 1; i >= 0; i--) {
       if (event.endEventPropagation) return;
       this._layers[i].handleMouseEvent(event);
