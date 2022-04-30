@@ -23,13 +23,12 @@ export class ImageLoader {
     callback: (imageHash: {[key: string]: HTMLImageElement}) => void, 
     updatesCallback?: (updates: IImageLoadUpdates) => void
   ) {
-    
-    const imageCount = Object.keys(inputHash).length;
+    const loadedCountObject = {"total": 0};
     const outputHash: {[key: string]: HTMLImageElement} = {};
     for (const key in inputHash) {
       outputHash[key] = new Image();
       outputHash[key].src = inputHash[key];
-      outputHash[key].onload = () => this.loadImagesCallback(key, outputHash, callback, updatesCallback);
+      outputHash[key].onload = () => this.loadImagesCallback(key, outputHash, loadedCountObject, callback, updatesCallback);
     }
   }
 
@@ -37,21 +36,22 @@ export class ImageLoader {
   private loadImagesCallback(
     lastLoadedKey: string,
     outputHash: {[key: string]: HTMLImageElement}, 
+    loadedObjectCount: {[key: string]: number},
     finalCallback: (imageHash: {[key: string]: HTMLImageElement}) => void,
     updatesCallback?: (updates: IImageLoadUpdates) => void
   ) {
     const completeEntries = Object.entries(outputHash).filter(x => x[1].complete).map(x => x[0]);
-    const loadedCount = completeEntries.length;
+    loadedObjectCount.total++;
     const totalCount = Object.keys(outputHash).length;
     if (updatesCallback) {
       updatesCallback({
         lastLoadedImageKey: lastLoadedKey,
-        loadedCount: loadedCount,
+        loadedCount: loadedObjectCount.total,
         totalImageCount: totalCount,
         loadedImageKeys: completeEntries
       });
     }
-    if (loadedCount === totalCount) {
+    if (loadedObjectCount.total === totalCount) {
       finalCallback(outputHash);
     }
   }
