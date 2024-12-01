@@ -1,0 +1,13 @@
+
+handle mouse move events
+do before render events
+  once notify NEXT_FRAME_BEGIN
+  notify every time BEFORE_RENDER
+_update
+  update layers
+_render
+  prerender, render, and post render on each layer
+_updateViewOrigins - tested
+_doAfterRenderEvents
+  once notify NEXT_FRAME_END
+  notify every time AFTER_RENDER

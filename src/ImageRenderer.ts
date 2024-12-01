@@ -45,22 +45,38 @@ export class ImageRenderer implements IImageRenderer {
       width: number, height: number, 
       imageScaleX: number, imageScaleY: number, 
       flipHorizontally?: boolean, flipVertically?: boolean, 
-      rotation?: number
+      rotation?: number,
+      shadeColor?: string
     ) {
     if (flipHorizontally || flipVertically || rotation) {
       this.renderImageWithTranslation(context, image, sx, sy, sWidth, sHeight, x, y, width, height, imageScaleX, imageScaleY, flipHorizontally, flipVertically, rotation);
     } else {
+      const xpos = x * this.getScreenScaleX();
+      const ypos = y * this.getScreenScaleY();
+      const totalWidth = width * this.getTotalScaleX(imageScaleX);
+      const totalHeight = height * this.getTotalScaleY(imageScaleY);
+
+      context.save();
+      context.setFillStyle("#00AA11");
+      context.setGlobalAlpha(0.8);
+      context.fillRect(xpos, ypos, totalWidth, totalHeight);
+      context.getCanvasContext().globalCompositeOperation = "destination-atop";
+      context.setGlobalAlpha(1);
+
       context.drawImage(
         image,
         sx,
         sy,
         sWidth,
         sHeight,
-        x * this.getScreenScaleX(),
-        y * this.getScreenScaleY(),
-        width * this.getTotalScaleX(imageScaleX),
-        height * this.getTotalScaleY(imageScaleY));
-    }
+        xpos,
+        ypos,
+        totalWidth,
+        totalHeight
+      );
+
+      context.restore();
+    }    
   }
 
   /** Draws an image or portion of an image to the canvas where the canvas has been translated (rotated/flipped).
@@ -90,7 +106,8 @@ export class ImageRenderer implements IImageRenderer {
     width: number, height: number, 
     imageScaleX: number, imageScaleY: number, 
     flipHorizontally?: boolean, flipVertically?: boolean, 
-    rotation?: number
+    rotation?: number,
+    shadeColor?: string
   ) {
     const translationX = x * this.getScreenScaleX() + (width * this.getTotalScaleX(imageScaleX))/2;
     const translationY = y * this.getScreenScaleY() + (height * this.getTotalScaleY(imageScaleY))/2;

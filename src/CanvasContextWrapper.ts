@@ -35,6 +35,7 @@ export interface ICanvasContextWrapper {
   setTextAlign(val: CanvasTextAlign): void;
   setTextBaseline(val: CanvasTextBaseline): void;
   setTextDirection(val: CanvasDirection): void;
+  setGlobalAlpha(val: number): void;
 }
 
 export interface ICanvasContextWrapperProps {
@@ -363,6 +364,10 @@ export class CanvasContextWrapper implements ICanvasContextWrapper {
   */
   public setTextDirection(val: CanvasDirection) {
     this._canvasContext.direction = val;
+  }
+
+  public setGlobalAlpha(val: number): void {
+    this._canvasContext.globalAlpha = val;
   }
 
 }
